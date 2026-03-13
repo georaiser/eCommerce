@@ -4,12 +4,13 @@
   "description": "A RESTful User Management API built with **Node.js** and **Express**.",
   "main": "server.js",
   "scripts": {
+    "dev": "nodemon --env-file=.env ./src/app.js ",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Jorge Rodriguez",
+  "license": "MIT",
   "type": "module",
   "dependencies": {
     "express": "^5.2.1"
