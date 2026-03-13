@@ -27,6 +27,13 @@
       "email": "jorge@example.com",
       "role": "user",
       "createdAt": "2026-03-12T09:45:00Z"
+    },
+    {
+      "id": 10,
+      "name": "jorge antonio",
+      "email": "jorge@example.com",
+      "role": "user",
+      "createdAt": "2026-03-12T09:45:00Z"
     }
   ]
 }
