@@ -3,7 +3,7 @@ const login = (req, res) => {
 };
 
 const home = (req, res) => {
-    res.render('home', { nombrePagina: 'home' });
+    res.render('home', { pageName: 'home' });
 };
 
 export { login, home };
