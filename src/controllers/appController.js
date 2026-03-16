@@ -3,7 +3,7 @@ const login = (req, res) => {
 };
 
 const home = (req, res) => {
-    res.send('Welcome to the User Management API');
+    res.render('home', { nombrePagina: 'home' });
 };
 
 export { login, home };
