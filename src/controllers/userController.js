@@ -13,4 +13,15 @@ const addUser = (req, res) => {
     res.send(`User ${user.name} added successfully!`);
 };
 
-export { getUsers, addUser };
+const deleteUser = (req, res) => {
+    const { id } = req.params;
+  
+};
+
+const updateUser = (req, res) => {
+    const { id } = req.params;
+    const user = req.body;
+
+};
+
+export { getUsers, addUser, deleteUser, updateUser };

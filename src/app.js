@@ -1,4 +1,5 @@
 import express from 'express';
+// Importing the routes
 import appRoutes from './routes/appRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 
@@ -10,6 +11,9 @@ const app = express();
 
 // Middleware — parse incoming JSON requests
 app.use(express.json());
+
+// Serve static files (CSS, images, etc.)
+app.use(express.static('public'));
 
 const __dirname =path.resolve();
 

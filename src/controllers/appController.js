@@ -1,9 +1,9 @@
 const login = (req, res) => {
-    res.send('Login page');
+    res.render('login', { pageName: 'Login', layout: 'auth' });
 };
 
 const home = (req, res) => {
-    res.render('home', { pageName: 'home' });
+    res.render('home', { pageName: 'Home' });
 };
 
 export { login, home };

@@ -1,0 +1,32 @@
+/* ── Layout ── */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #f8f9fa;
+}
+
+main {
+    flex: 1;
+}
+
+/* ── Navbar ── */
+.navbar-brand span {
+    color: #0d6efd;
+}
+
+/* ── Footer ── */
+footer {
+    background-color: #212529;
+    color: #adb5bd;
+    font-size: 0.875rem;
+}
+
+footer a {
+    color: #6ea8fe;
+    text-decoration: none;
+}
+
+footer a:hover {
+    color: #fff;
+}
