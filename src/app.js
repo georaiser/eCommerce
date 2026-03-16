@@ -1,16 +1,14 @@
-import express from "express";
-import userRoutes from "./routes/userRoutes.js";
+import express from 'express';
+import appRoutes from './routes/appRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
-//middleware (allow sending json data to server)
+// Middleware — parse incoming JSON requests
 app.use(express.json());
 
 // Routes
+app.use('/', appRoutes);
 app.use('/', userRoutes);
 
-app.listen(PORT, () => {
-    console.log(`server started in http://localhost:${PORT}`)
-});
-
+export default app;

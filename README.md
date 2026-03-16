@@ -1,6 +1,8 @@
 # User Management API
 
-A RESTful User Management API built with **Node.js** and **Express**.
+A RESTful User Management API built with **Node.js**, **Express**, and **ES6** (import/export).
+
+> Currently using a local `users.json` file as data source. PostgreSQL + Sequelize integration is planned.
 
 ---
 
@@ -11,29 +13,36 @@ user-management-api/
 │
 ├── src/
 │   ├── controllers/
-│   │   ├── userController.js
-│   │   └── authController.js
-│   │
-│   ├── models/
-│   │   └── userModel.js
+│   │   ├── appController.js      ← home & login page handlers
+│   │   ├── userController.js     ← getUsers, addUser (reads/writes users.json)
+│   │   └── authController.js     ← (empty — planned for JWT auth)
 │   │
 │   ├── routes/
-│   │   ├── userRoutes.js
-│   │   └── authRoutes.js
+│   │   ├── appRoutes.js          ← GET /, GET /login
+│   │   ├── userRoutes.js         ← GET /users, POST /user
+│   │   └── authRoutes.js         ← (empty — planned for auth endpoints)
 │   │
-│   ├── middleware/
-│   │   └── authMiddleware.js
+│   ├── models/
+│   │   └── userModel.js          ← (empty — planned for Sequelize model)
 │   │
 │   ├── services/
-│   │   └── userService.js
+│   │   └── userService.js        ← (empty — planned for DB business logic)
+│   │
+│   ├── middleware/
+│   │   └── authMiddleware.js     ← (empty — planned for JWT verification)
 │   │
 │   ├── config/
-│   │   └── db.js
+│   │   └── db.js                 ← (empty — planned for PostgreSQL connection)
 │   │
-│   └── app.js
+│   ├── data/
+│   │   └── users.json            ← local data source (temporary, dev only)
+│   │
+│   └── app.js                    ← Express setup, middleware, routes
 │
+├── .env
+├── .gitignore
 ├── package.json
-└── server.js
+└── server.js                     ← entry point, starts the server
 ```
 
 ---
@@ -44,74 +53,58 @@ user-management-api/
 
 | File | Purpose |
 |------|---------|
-| `server.js` | Entry point — starts the HTTP server and connects to the database |
-| `package.json` | Project metadata, scripts and dependencies |
+| `server.js` | Imports `app`, reads `PORT` from env, starts the HTTP server |
+| `package.json` | Scripts (`dev`, `start`) and dependencies. Has `"type": "module"` for ES6 |
+| `.env` | Local environment variables (never commit) |
+| `.gitignore` | Excludes `node_modules`, `.env` from git |
 
 ---
 
-### `src/`
-
-| File | Purpose |
-|------|---------|
-| `app.js` | Creates the Express app, registers middlewares and mounts all routes |
-
----
-
-### `src/config/`
-
-| File | Purpose |
-|------|---------|
-| `db.js` | PostgreSQL connection setup using **Sequelize** (defines the `sequelize` instance) |
-
----
-
-### `src/models/`
-
-| File | Purpose |
-|------|---------|
-| `userModel.js` | Sequelize model — defines the `users` table with fields `name`, `email`, `password`, `role` |
-
----
-
-### `src/services/`
-
-| File | Purpose |
-|------|---------|
-| `userService.js` | Business logic for users — queries the DB and returns processed data |
+### `src/app.js`
+Creates and configures the Express app. Registers middleware and mounts all routes. Exports `app` — never calls `listen` here.
 
 ---
 
 ### `src/controllers/`
-Receive HTTP requests, call the service, and send the response.
 
-| File | Purpose |
-|------|---------|
-| `userController.js` | Handles `GET /users`, `GET /users/:id`, `PATCH /users/:id`, `DELETE /users/:id` |
-| `authController.js` | Handles `POST /auth/register` and `POST /auth/login` |
+| File | Exports | Purpose |
+|------|---------|---------|
+| `appController.js` | `home`, `login` | Basic page response handlers |
+| `userController.js` | `getUsers`, `addUser` | Reads/writes `users.json` (temporary, until DB is wired) |
+| `authController.js` | — | Planned: register, login with JWT |
 
 ---
 
 ### `src/routes/`
-Map URL endpoints to their controller functions.
 
-| File | Purpose |
-|------|---------|
-| `userRoutes.js` | Defines user-related routes, applies `authMiddleware` to protected endpoints |
-| `authRoutes.js` | Defines public auth routes (register, login) |
+| File | Endpoints | Purpose |
+|------|-----------|---------|
+| `appRoutes.js` | `GET /`, `GET /login` | General app pages |
+| `userRoutes.js` | `GET /users`, `POST /user` | User CRUD |
+| `authRoutes.js` | — | Planned: `POST /auth/register`, `POST /auth/login` |
 
 ---
 
-### `src/middleware/`
+### `src/data/`
 
 | File | Purpose |
 |------|---------|
-| `authMiddleware.js` | Verifies the JWT token on protected routes before reaching the controller |
+| `users.json` | Temporary local data store used by `userController.js` while DB is not yet connected |
+
+---
+
+### Planned (empty files)
+
+| File | Plan |
+|------|------|
+| `config/db.js` | PostgreSQL connection via Sequelize |
+| `models/userModel.js` | Sequelize `User` model |
+| `services/userService.js` | DB queries and business logic |
+| `middleware/authMiddleware.js` | JWT token verification |
 
 ---
 
 ## 🔑 Environment Variables
-
-Create a `.env` file in the root:
 
 ```env
 PORT=3000
@@ -132,28 +125,19 @@ JWT_EXPIRES_IN=7d
 ## 🚀 Dependencies
 
 ```bash
-# Core
-npm install express dotenv
-
-# Database
-npm install sequelize pg pg-hstore
-
-# Auth
-npm install bcryptjs jsonwebtoken
-
-# Dev
-npm install -D nodemon
+npm install express dotenv        # core
+npm install sequelize pg pg-hstore # database (postgres)
+npm install bcryptjs jsonwebtoken  # auth
+npm install -D nodemon             # dev
 ```
 
 ---
 
-## 📌 API Endpoints
+## 📌 Current API Endpoints
 
-| Method | Endpoint | Access | Description |
-|--------|----------|--------|-------------|
-| POST | `/auth/register` | Public | Register a new user |
-| POST | `/auth/login` | Public | Login and receive a JWT |
-| GET | `/users` | Protected | Get all users |
-| GET | `/users/:id` | Protected | Get a single user |
-| PATCH | `/users/:id` | Protected | Update a user |
-| DELETE | `/users/:id` | Protected | Delete a user |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/` | Home page |
+| GET | `/login` | Login page |
+| GET | `/users` | Get all users (from `users.json`) |
+| POST | `/user` | Add a new user (to `users.json`) |
