@@ -2,7 +2,8 @@ import fs from 'fs';
 
 const getUsers = (req, res) => {
     const users = JSON.parse(fs.readFileSync("./src/data/users.json", 'utf8'));
-    res.json(users.users);
+    res.render('users', { pageName: 'Users', users: users.users });
+
 };
 
 const addUser = (req, res) => {

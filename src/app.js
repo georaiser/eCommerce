@@ -1,7 +1,9 @@
 import express from 'express';
 // Importing the routes
 import appRoutes from './routes/appRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import productRoutes from './routes/productRoutes.js';
 
 // Importing the express-handlebars package for view rendering
 import exphbs from 'express-handlebars'
@@ -29,6 +31,8 @@ app.engine('hbs', exphbs.engine({
 
 // Routes
 app.use('/', appRoutes);
+app.use('/', authRoutes);
 app.use('/', userRoutes);
+app.use('/', productRoutes);
 
 export default app;
