@@ -11,13 +11,13 @@ import path from 'path'
 
 const app = express();
 
+const __dirname = path.resolve();
+
 // Middleware — parse incoming JSON requests
 app.use(express.json());
 
-// Serve static files (CSS, images, etc.)
-app.use(express.static('public'));
-
-const __dirname =path.resolve();
+// Serve static files (CSS, images, etc.) using absolute path so it never breaks
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Set up Handlebars as the view engine
 app.set('view engine', 'hbs')
