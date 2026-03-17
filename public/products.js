@@ -30,12 +30,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // Prevent the browser from doing a native form POST (wrong encoding)
     event.preventDefault();
 
-    // Build the product object from the form inputs
+    // Build the product object from the form inputs    <------
     const product = {
       name: document.getElementById('name').value.trim(),
       category: document.getElementById('category').value.trim(),
       price: parseFloat(document.getElementById('price').value),
+      stock: parseInt(document.getElementById('stock').value),
+      isActive: true,
     };
+
+    // Client-side Validation: Check if any field is empty or invalid
+    if (!product.name || !product.category || isNaN(product.price) || isNaN(product.stock)) {
+      alert('Please fill in all fields (Name, Category, valid Price and Stock) before submitting.');
+      return; // Stop execution here
+    }
 
     try {
       // Send JSON to POST /products — handled by addProduct in productController.js

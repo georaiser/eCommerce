@@ -37,11 +37,11 @@ const getProducts = (req, res) => {
  * The client reloads the page on success, which triggers GET /products again.
  */
 const addProduct = (req, res) => {
-    const product = req.body;                                                      // JSON from the browser
-    const products = JSON.parse(fs.readFileSync("./src/data/products.json", 'utf8')); // load current list
-    products.products.push(product);                                               // append new product
-    fs.writeFileSync("./src/data/products.json", JSON.stringify(products));        // persist to disk
-    res.send(`Product ${product.name} added successfully!`);                       // signal success to fetch()
+    const product = req.body;                                                               // JSON from the browser
+    const products = JSON.parse(fs.readFileSync("./src/data/products.json", 'utf8'));       // load current list
+    products.products.push(product);                                                        // append new product
+    fs.writeFileSync("./src/data/products.json", JSON.stringify(products));                 // persist to disk
+    res.send(`Product ${product.name} added successfully!`);                                // signal success to fetch()
 };
 
 export { getProducts, addProduct };
