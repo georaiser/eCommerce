@@ -1,7 +1,72 @@
 <h1>Users</h1>
-{{#each users}}
-    <p>{{this.name}}</p>
-    <p>{{this.email}}</p>
-    <p>{{this.role}}</p>
-    <p>{{this.createdAt}}</p>
-{{/each}}
+<div class="container">
+  <div id="app" class="row mt-4">
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header">
+          <h4>Add User</h4>
+        </div>
+        <form id="user-form" class="card-body">
+          <div class="form-group mb-3">
+            <input
+              type="text"
+              id="name"
+              placeholder="User Name"
+              class="form-control"
+              required
+            />
+          </div>
+          <div class="form-group mb-3">
+            <input
+              type="email"
+              id="email"
+              placeholder="User Email"
+              class="form-control"
+              required
+            />
+          </div>
+          <div class="form-group mb-3">
+            <input
+              type="text"
+              id="role"
+              placeholder="User Role"
+              class="form-control"
+              required
+            />
+          </div>
+          <input
+            type="submit"
+            value="Add User"
+            class="btn btn-primary w-100 rounded-5"
+          />
+        </form>
+      </div>
+    </div>
+    <div class="col-md-8">
+      <table class="table table-ligth">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each users}}
+            <tr>
+              <td>{{this.name}}</td>
+              <td>{{this.email}}</td>
+              <td>{{this.role}}</td>
+              <td>
+                <button class="btn btn-secondary btn-sm">Edit</button>
+              </td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script src="/users.js"></script>
