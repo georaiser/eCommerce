@@ -12,51 +12,33 @@ commerceManager/
 ├── src/
 │   ├── controllers/
 │   │   ├── appController.js        ← home & page handlers
-│   │   ├── authController.js       (empty — planned for register, login with JWT)
+│   │   ├── authController.js       ← login, register, logout handlers
 │   │   ├── userController.js       ← getUsers, addUser (reads/writes users.json)
-│   │   ├── productController.js    (empty — planned for product CRUD)
-│   │   ├── orderController.js      (empty — planned for place & manage orders)
-│   │   ├── cartController.js       (empty — planned for cart operations)
-│   │   ├── inventoryController.js  (empty — planned for stock management)
-│   │   └── categoryController.js   (empty — planned for product categories)
-│   │
-│   ├── models/
-│   │   ├── userModel.js            (empty — planned for Sequelize users table)
-│   │   ├── productModel.js         (empty — planned for Sequelize products table)
-│   │   ├── orderModel.js           (empty — planned for Sequelize orders table)
-│   │   ├── orderItemModel.js       (empty — planned for order line items)
-│   │   ├── cartModel.js            (empty — planned for Sequelize carts table)
-│   │   ├── inventoryModel.js       (empty — planned for stock levels)
-│   │   └── categoryModel.js        (empty — planned for product categories)
+│   │   └── productController.js    ← getProducts, addProduct (reads/writes products.json)
 │   │
 │   ├── routes/
 │   │   ├── appRoutes.js            ← GET /, GET /login
-│   │   ├── authRoutes.js           (empty — planned for POST /auth/register, /auth/login)
+│   │   ├── authRoutes.js           ← POST /auth/register, /auth/login
 │   │   ├── userRoutes.js           ← GET /users, POST /user
-│   │   ├── productRoutes.js        (empty — planned for GET|POST|PATCH|DELETE /products)
-│   │   ├── orderRoutes.js          (empty — planned for GET|POST /orders)
-│   │   ├── cartRoutes.js           (empty — planned for GET|POST|DELETE /cart)
-│   │   ├── inventoryRoutes.js      (empty — planned for GET|PATCH /inventory)
-│   │   └── categoryRoutes.js       (empty — planned for GET|POST /categories)
+│   │   └── productRoutes.js        ← GET /products, POST /products
 │   │
-│   ├── services/
-│   │   ├── userService.js          (empty — planned for user business logic & DB queries)
-│   │   ├── orderService.js         (empty — planned for order processing logic)
-│   │   └── inventoryService.js     (empty — planned for stock tracking logic)
-│   │
-│   ├── middleware/
-│   │   └── authMiddleware.js       (empty — planned for JWT token verification)
 │   │
 │   ├── config/
 │   │   └── db.js                   (empty — planned for PostgreSQL connection via Sequelize)
 │   │
 │   ├── data/
-│   │   └── users.json              ← temp local data source (dev only)
+│   │   ├── users.json              ← temp local data source (dev only)
+│   │   └── products.json           ← temp local data source (dev only)
 │   │
 │   └── views/                      ← Handlebars (HBS) server-rendered templates
 │       ├── home.hbs                ← home page template
+│       ├── products.hbs            ← products list + add-product form
 │       └── layouts/
 │           └── main.hbs            ← base layout wrapper
+│
+├── public/                         ← static files served by Express
+│   ├── css/                        ← stylesheets
+│   └── products.js                 ← client-side JS for the products form
 │
 ├── src/app.js                      ← Express setup, middleware, routes
 ├── .env
@@ -78,6 +60,50 @@ commerceManager/
 | `middleware/` | JWT verification, error handling |
 | `views/` | HBS templates for server-rendered pages |
 | `config/` | DB connection and environment setup |
+
+---
+
+## 🔄 Client–Server Flow (Users)
+
+Similar to the products flow, user forms are handled by client-side JS:
+
+```
+Browser (e.g. users.js)                 Server (userController.js)
+──────────────────────                  ──────────────────────────────
+User submits form          ──POST──►    addUser(req, res)
+fetch('/user', {JSON})                  reads req.body
+                                        appends to users.json
+                           ◄────────    res.send('User X added!')
+response.ok → reload page  
+                           ──GET───►    getUsers(req, res)
+                                        reads users.json
+                           ◄────────    res.render('users', { users })
+Updated table displayed
+```
+
+---
+
+## 🔄 Client–Server Flow (Products)
+
+
+The product form in `products.hbs` is wired by `public/products.js`:
+
+```
+Browser (products.js)                   Server (productController.js)
+──────────────────────                  ──────────────────────────────
+User submits form          ──POST──►    addProduct(req, res)
+fetch('/products', {JSON})              reads req.body
+                                        appends to products.json
+                           ◄────────    res.send('Product X added!')
+response.ok → reload page  
+                           ──GET───►    getProducts(req, res)
+                                        reads products.json
+                           ◄────────    res.render('products', { products })
+Updated table displayed
+```
+
+> `public/products.js` runs in the **browser** and only communicates via HTTP.
+> `productController.js` runs on the **server** and has exclusive access to the file system.
 
 ---
 
@@ -141,22 +167,4 @@ JWT_EXPIRES_IN=7d
 
 ## 🚀 Dependencies
 
-```bash
-npm install express dotenv
-npm install sequelize pg pg-hstore
-npm install bcryptjs jsonwebtoken
-npm install express-handlebars
-npm install -D nodemon
 ```
-
----
-
-## ✅ Implementation Order
-
-1. `config/db.js` — PostgreSQL connection
-2. `models/userModel.js` — User table
-3. `authController.js` + `authRoutes.js` — register/login
-4. `authMiddleware.js` — protect routes
-5. `models/productModel.js` + `categoryModel.js` — product catalog
-6. `inventoryController.js` — stock management
-7. `orderController.js` + `cartController.js` — e-commerce flow
