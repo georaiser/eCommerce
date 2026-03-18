@@ -4,7 +4,7 @@
   "description": "A RESTful User Management API built with **Node.js** and **Express**.",
   "main": "server.js",
   "scripts": {
-    "dev": "nodemon --env-file=.env server.js",
+    "dev": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
@@ -13,8 +13,10 @@
   "license": "MIT",
   "type": "module",
   "dependencies": {
+    "dotenv": "^17.3.1",
     "express": "^5.2.1",
-    "express-handlebars": "^8.0.6"
+    "express-handlebars": "^8.0.6",
+    "pg": "^8.20.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
