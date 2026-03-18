@@ -1,7 +1,7 @@
 <h1>Users</h1>
 <div class="container">
   <div id="app" class="row mt-4">
-    <div class="col-md-4">
+    <div class="col-md-3">
       <div class="card">
         <div class="card-header">
           <h4>Add User</h4>
@@ -42,13 +42,14 @@
         </form>
       </div>
     </div>
-    <div class="col-md-8">
+    <div class="col-md-9">
       <table class="table table-ligth">
         <thead>
           <tr>
             <th>Name</th>
             <th>Email</th>
             <th>Role</th>
+            <th>Created (UTC)</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -58,8 +59,10 @@
               <td>{{this.name}}</td>
               <td>{{this.email}}</td>
               <td>{{this.role}}</td>
+              <td>{{this.createdAt}}</td>
               <td>
-                <button class="btn btn-secondary btn-sm">Edit</button>
+                <button data-id="{{this.id}}" class="btn btn-secondary btn-sm btn-edit">Edit</button>
+                <button data-id="{{this.id}}" class="btn btn-danger btn-sm btn-delete">Del</button>
               </td>
             </tr>
           {{/each}}

@@ -64,4 +64,30 @@ document.addEventListener('DOMContentLoaded', () => {
       alert('An error occurred. Check the console for details.');
     }
   });
+
+  // Add event listeners for delete buttons
+  document.addEventListener('click', async (event) => {
+    if (event.target.classList.contains('btn-delete')) {
+    // Read the ID from data-id "{{this.id}}"
+    const userId = event.target.getAttribute('data-id');
+
+    // Ask for confirmation before deleting
+    if (!confirm('Are you sure you want to delete this user?')) return;
+    try {
+      // Make a DELETE HTTP request to /user/:id
+      const response = await fetch(`/user/${userId}`, {
+        method: 'DELETE'
+      });
+      if (response.ok) {
+        //window.location.reload(); // Refresh to see the updated table
+        event.target.closest('tr').remove();
+      } else {
+        alert('Failed to delete user.');
+      }
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      alert('An error occurred.');
+    }
+  }    
 });
+})

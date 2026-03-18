@@ -24,7 +24,8 @@ import fs from 'fs';
  */
 const getUsers = (req, res) => {
     const users = JSON.parse(fs.readFileSync("./src/data/users.json", 'utf8'));
-    res.render('users', { pageName: 'Users', users: users.users });
+    //const users_filter = users.users.filter(user => user.id == 3);
+    res.render('users', { pageName: 'Users', users: users });
 };
 
 /**
@@ -32,20 +33,34 @@ const getUsers = (req, res) => {
  * Reads req.body (JSON payload), appends the new user to the file, and responds.
  */
 const addUser = (req, res) => {
-    const user = req.body;                                                       // JSON payload from the client
-    const users = JSON.parse(fs.readFileSync("./src/data/users.json", 'utf8'));  // load current list
-    users.users.push(user);                                                      // append new user
-    fs.writeFileSync("./src/data/users.json", JSON.stringify(users));            // persist to disk
-    res.send(`User ${user.name} added successfully!`);                           // send success response
+    const user = req.body;  
+    //Add a unique ID to the user
+    user.id =  Date.now();   
+    //Read the JSON file
+    const users = JSON.parse(fs.readFileSync("./src/data/users.json", 'utf8')); 
+    //Add the new user to the array
+    users.push(user); 
+    //Write the JSON file
+    fs.writeFileSync("./src/data/users.json", JSON.stringify(users));   
+    //Send success response
+    res.send(`User ${user.name} added successfully!`);                           
 };
 
 /**
  * DELETE /user/:id
- * (Planned functionality for deleting a user)
+ * Deletes a user by ID
  */
 const deleteUser = (req, res) => {
+    //Get the ID from the URL
     const { id } = req.params;
-    // TODO: Implement user deletion logic
+    //Read the JSON file
+    const users = JSON.parse(fs.readFileSync("./src/data/users.json", 'utf8'));  
+    //Filter out the user with the matching ID
+    const users_filter = users.filter(user => user.id != id);
+    //Write the JSON file
+    fs.writeFileSync("./src/data/users.json", JSON.stringify(users_filter));
+    //Send success response
+    res.send(`User ${id} deleted successfully!`);
 };
 
 /**
