@@ -1,6 +1,4 @@
-import { pool } from '../config/db.js';
-
-const createTables = async () => {
+const createTables = async (pool) => {
     try {
         await pool.query(`
             CREATE TABLE IF NOT EXISTS users (
@@ -18,4 +16,4 @@ const createTables = async () => {
     }
 };
 
-createTables();
+export default createTables;
