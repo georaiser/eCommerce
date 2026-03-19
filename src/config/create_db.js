@@ -26,12 +26,12 @@ const createDatabase = async () => {
             // 3. Create the database using raw SQL
             console.log(`Database "${DB_DATABASE}" not found. Creating it...`);
             await client.query(`CREATE DATABASE "${DB_DATABASE}"`);
-            console.log(`✅ Database "${DB_DATABASE}" created successfully!`);
+            console.log(`Database "${DB_DATABASE}" created successfully!`);
         } else {
             console.log(`Database "${DB_DATABASE}" already exists. Skipping creation.`);
         }
     } catch (error) {
-        console.error("❌ Error creating database:", error);
+        console.error("Error creating database:", error);
     } finally {
         // 4. Close the temporary connection
         await client.end();

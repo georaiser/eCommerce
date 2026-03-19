@@ -35,11 +35,12 @@ document.addEventListener('DOMContentLoaded', () => {
       name: document.getElementById('name').value.trim(),
       email: document.getElementById('email').value.trim(),
       role: document.getElementById('role').value.trim(),
+      password: document.getElementById('password').value.trim(),
       createdAt: new Date().toISOString()
     };
 
     // Client-side Validation
-    if (!user.name || !user.email || !user.role) {
+    if (!user.name || !user.email || !user.role || !user.password) {
       alert('Please fill in all fields (Name, Email, and Role) before submitting.');
       return; 
     }
