@@ -3,35 +3,22 @@
  *
  * ROLE IN THE ARCHITECTURE
  * ─────────────────────────
- * This file runs on the SERVER (Node.js/Express). Similar to the product controller,
- * it sits between the routes and the data layer. It receives requests for user
- * data, processes them, and sends a response.
- *
- * REQUEST CYCLE
- * ──────────────
- *  HTTP request
- *    → userRoutes.js         (maps URL to the controller)
- *    → userController.js     (reads/writes data, sends response)
- *    → users.json            (temporary file-based data store)
- */
+ * This file runs on the SERVER (Node.js/Express). 
+ * it sits between the routes and the data layer. 
+ * It receives requests for user data, processes them, and sends a response.
+ * It can read/write from a JSON file (as shown here) or interact with a database (see userController_db.js).
+*/
 
 import fs from 'fs';
 
-/**
- * GET /users
- * Reads all users from the JSON file and renders the users view.
- * The HBS template receives the `users` array to build the UI.
- */
+// Reads users from a JSON file and renders the users view
 const getUsers = (req, res) => {
     const users = JSON.parse(fs.readFileSync("./src/data/users.json", 'utf8'));
     //const users_filter = users.users.filter(user => user.id == 3);
     res.render('users', { pageName: 'Users', users: users });
 };
 
-/**
- * POST /user
- * Reads req.body (JSON payload), appends the new user to the file, and responds.
- */
+// Adds a new user to the JSON file and sends a success response
 const addUser = (req, res) => {
     const user = req.body;  
     //Add a unique ID to the user
@@ -46,10 +33,7 @@ const addUser = (req, res) => {
     res.send(`User ${user.name} added successfully!`);                           
 };
 
-/**
- * DELETE /user/:id
- * Deletes a user by ID
- */
+// Deletes a user by ID from the JSON file and sends a success response
 const deleteUser = (req, res) => {
     //Get the ID from the URL
     const { id } = req.params;
@@ -63,10 +47,7 @@ const deleteUser = (req, res) => {
     res.send(`User ${id} deleted successfully!`);
 };
 
-/**
- * PUT /user/:id
- * (Planned functionality for updating a user)
- */
+// Updates a user by ID in the JSON file (TODO: Implement logic)
 const updateUser = (req, res) => {
     const { id } = req.params;
     const user = req.body;

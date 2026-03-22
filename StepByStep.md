@@ -18,6 +18,7 @@ router.get('/users', (req, res) => {
 mkdir routes models views controllers config public sql 
 mkdir middleware services utils 
 
+server.js, app.js, routes, controllers, {data}, views,
 
-index, ruta, controlador, modelo, base datos, 
+server.js, app.js, routes, controllers, {models (db queries), config (db connections)}, views, 
 

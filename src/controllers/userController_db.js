@@ -1,4 +1,15 @@
-import { getAllUsers, createUser, updateUser, deleteUser, getUserById } from '../models/userModel.js';
+/**
+ * User Controller (Database Version)
+ *
+ * ROLE IN THE ARCHITECTURE
+ * ─────────────────────────
+ * This file runs on the SERVER (Node.js/Express).
+ * It sits between the routes and the data layer (database).
+ * It receives requests for user data, processes them, and sends a response.
+ * It interacts with a database through the userModel.js (see models/userModel.js).
+ */
+
+import { getAllUsers, createUser, deleteUser, updateUser, getUserById } from '../models/userModel.js';
 
 const getUsersDB = async (req, res) => {
     try {
@@ -19,16 +30,6 @@ const addUserDB = async (req, res) => {
     }
 };
 
-const updateUserDB = async (req, res) => {
-    try {
-        const { id, name, email, password, role } = req.body;
-        await updateUser(id, name, email, password, role); // Calls the model!
-        res.send(`User ${name} updated successfully!`);
-    } catch (error) {
-        res.status(500).send("Error updating user");
-    }
-};
-
 const deleteUserDB = async (req, res) => {
     try {
         //const { id } = req.body;
@@ -37,6 +38,16 @@ const deleteUserDB = async (req, res) => {
         res.send(`User ${id} deleted successfully!`);
     } catch (error) {
         res.status(500).send("Error deleting user");
+    }
+};
+
+const updateUserDB = async (req, res) => {
+    try {
+        const { id, name, email, password, role } = req.body;
+        await updateUser(id, name, email, password, role); // Calls the model!
+        res.send(`User ${name} updated successfully!`);
+    } catch (error) {
+        res.status(500).send("Error updating user");
     }
 };
 
@@ -51,4 +62,4 @@ const getUserByIdDB = async (req, res) => {
 };
 
 
-export { getUsersDB, addUserDB, updateUserDB, deleteUserDB, getUserByIdDB };
+export { getUsersDB, addUserDB, deleteUserDB, updateUserDB, getUserByIdDB };

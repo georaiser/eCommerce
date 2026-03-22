@@ -11,27 +11,22 @@
  */
 
 import express from 'express';
+
+// json file users
 import { getUsers, addUser, deleteUser, updateUser } from '../controllers/userController.js';
-// db users
+// db postgresql users
 import { getUsersDB, addUserDB, updateUserDB, deleteUserDB, getUserByIdDB } from '../controllers/userController_db.js';
 
 const router = express.Router();
 
-/**
- * ROUTES (CRUD operations)
- * ──────
- * GET    /users      -> Renders HTML page with a list of all users
- * POST   /user       -> Receives JSON data to create a new user
- * DELETE /user/:id   -> (Planned) Deletes a user by ID
- * PUT    /user/:id   -> (Planned) Updates a user by ID
- */
+//users CRUD operations with json file
 router.get('/users', getUsers);
 router.post('/user', addUser);
 router.delete('/user/:id', deleteUser);
 router.put('/user/:id', updateUser);
 
 
-//db users
+//users CRUD operations with db postgresql
 router.get('/db/users', getUsersDB);
 router.post('/db/users', addUserDB);
 router.put('/db/users/:id', updateUserDB);

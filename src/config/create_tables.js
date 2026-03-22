@@ -10,9 +10,9 @@ const createUserTables = async (pool) => {
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
         `);
-        console.log('Tables created successfully!');
+        console.log('User tables created successfully!');
     } catch (error) {
-        console.error('Error creating tables:', error);
+        console.error('Error creating user tables:', error);
     }
 };
 
@@ -22,7 +22,7 @@ const createProductTables = async (pool) => {
             CREATE TABLE IF NOT EXISTS products (
                 id SERIAL PRIMARY KEY,
                 name VARCHAR(255) NOT NULL,
-                category varchar(255) NOT NULL,
+                category VARCHAR (255) NOT NULL,
                 price DECIMAL(10, 2) NOT NULL,
                 stock INTEGER DEFAULT 0,
                 is_active BOOLEAN DEFAULT true
@@ -33,7 +33,5 @@ const createProductTables = async (pool) => {
         console.error('Error creating product tables:', error);
     }
 };
-
-
 
 export { createUserTables, createProductTables };
