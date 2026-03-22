@@ -27,7 +27,7 @@ import fs from 'fs';
  */
 const getProducts = (req, res) => {
     const products = JSON.parse(fs.readFileSync('./src/data/products.json', 'utf-8'));
-    res.render('products', { pageName: 'Products', products: products.products });
+    res.render('products', { pageName: 'Products', products });
 };
 
 /**
@@ -39,7 +39,7 @@ const getProducts = (req, res) => {
 const addProduct = (req, res) => {
     const product = req.body;                                                               // JSON from the browser
     const products = JSON.parse(fs.readFileSync("./src/data/products.json", 'utf8'));       // load current list
-    products.products.push(product);                                                        // append new product
+    products.push(product);                                                        // append new product
     fs.writeFileSync("./src/data/products.json", JSON.stringify(products));                 // persist to disk
     res.send(`Product ${product.name} added successfully!`);                                // signal success to fetch()
 };
