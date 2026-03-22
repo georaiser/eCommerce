@@ -15,5 +15,9 @@ router.get('/users', (req, res) => {
 ---->  router.get('/users', HERE-CONTROLLER);
 
 
+mkdir routes models views controllers config public sql 
+mkdir middleware services utils 
 
+
+index, ruta, controlador, modelo, base datos, 
 

@@ -12,6 +12,8 @@
 
 import express from 'express';
 import { getUsers, addUser, deleteUser, updateUser } from '../controllers/userController.js';
+// db users
+import { getUsersDB, addUserDB, updateUserDB, deleteUserDB, getUserByIdDB } from '../controllers/userController_db.js';
 
 const router = express.Router();
 
@@ -27,5 +29,14 @@ router.get('/users', getUsers);
 router.post('/user', addUser);
 router.delete('/user/:id', deleteUser);
 router.put('/user/:id', updateUser);
+
+
+//db users
+router.get('/db/users', getUsersDB);
+router.post('/db/users', addUserDB);
+router.put('/db/users/:id', updateUserDB);
+router.delete('/db/users/:id', deleteUserDB);
+router.get('/db/users/:id', getUserByIdDB);
+
 
 export default router;

@@ -1,6 +1,7 @@
 import { Client } from 'pg';
 
-export default async function createDatabase(config) {
+//async function createDatabase(config) {.. //
+const createDatabase = async (config) => {
     // Override the target database to 'postgres' just for the initial connection
     const client = new Client({ ...config, database: 'postgres', allowExitOnIdle: true });
 
@@ -19,4 +20,9 @@ export default async function createDatabase(config) {
     } finally {
         await client.end();
     }
-}
+};
+
+export default createDatabase;
+
+
+
