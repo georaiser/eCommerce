@@ -82,8 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
           method: "DELETE",
         });
         if (response.ok) {
-          //window.location.reload(); // Refresh to see the updated table
-          event.target.closest("tr").remove();
+          window.location.reload(); // Refresh to see the updated table
         } else {
           alert("Failed to delete user.");
         }
@@ -99,13 +98,13 @@ document.addEventListener("DOMContentLoaded", () => {
     if (event.target.classList.contains("btn-edit")) {
       const userId = event.target.getAttribute("data-id");
 
-      // 1. Get the current row to find existing data
+      // Get the current row to find existing data
       const row = event.target.closest("tr");
       const currentName = row.children[0].innerText;
       const currentEmail = row.children[1].innerText;
       const currentRole = row.children[2].innerText;
       
-      // 2. Ask the user for the new data (Simple implementation)
+      // Ask the user for the new data (Simple implementation)
       const newName = prompt("Enter new name:", currentName);
       if (newName === null) return; // User clicked Cancel
 
@@ -118,7 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const newPassword = prompt("Enter new password (leave blank to keep current):", "");
       if (newPassword === null) return;
 
-      // 3. Build the payload
+      // Build the payload
       const updatedUser = {
         name: newName.trim(),
         email: newEmail.trim(),
@@ -127,7 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
       };
 
       try {
-        // 4. Send PUT request WITH the body payload
+        // Send PUT request WITH the body payload
         const response = await fetch(`/user/${userId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -135,7 +134,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         if (response.ok) {
-          // 5. Reload to see the fresh data
+          // Reload to see the fresh data
           window.location.reload(); 
         } else {
           alert("Failed to edit user.");

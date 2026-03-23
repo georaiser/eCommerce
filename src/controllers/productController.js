@@ -38,8 +38,40 @@ const addProduct = (req, res) => {
     res.send(`Product ${product.name} added successfully!`);                               
 };
 
-// TODO: delete product from JSON file and send success response
+// DELETE product from JSON file
+const deleteProduct = (req, res) => {
+    const { id } = req.params;
+    let products = JSON.parse(fs.readFileSync("./src/data/products.json", 'utf8'));
+    
+    const filteredProducts = products.filter(product => product.id != id);
+    if (filteredProducts.length === products.length) {
+        return res.status(404).send('Product not found');
+    }
+    
+    fs.writeFileSync("./src/data/products.json", JSON.stringify(filteredProducts));
+    res.send(`Product ${id} deleted successfully!`);
+};
 
-// TODO: update product in JSON file and send success response
+// PUT product in JSON file
+const updateProduct = (req, res) => {
+    const { id } = req.params;
+    const updateData = req.body;
+    const products = JSON.parse(fs.readFileSync("./src/data/products.json", 'utf8'));
+    
+    const productTarget = products.find(product => product.id == id);
+    if (!productTarget) {
+        return res.status(404).send('Product not found');
+    }
 
-export { getProducts, addProduct };
+    productTarget.name = updateData.name || productTarget.name;
+    productTarget.category = updateData.category || productTarget.category;
+    productTarget.price = updateData.price || productTarget.price;
+    // stock could be 0, so we check for undefined
+    productTarget.stock = updateData.stock !== undefined ? updateData.stock : productTarget.stock; 
+    productTarget.isActive = updateData.isActive !== undefined ? updateData.isActive === 'true' : productTarget.isActive;
+
+    fs.writeFileSync("./src/data/products.json", JSON.stringify(products));
+    res.send(`Product ${id} updated successfully!`);
+};
+
+export { getProducts, addProduct, deleteProduct, updateProduct };

@@ -87,8 +87,8 @@ document.addEventListener("DOMContentLoaded", () => {
           method: "DELETE",
         });
         if (response.ok) {
-          //window.location.reload(); // Refresh to see the updated table
-          event.target.closest("tr").remove();
+          window.location.reload(); // Refresh to see the updated table
+          //event.target.closest("tr").remove();
         } else {
           alert("Failed to delete product.");
         }
@@ -102,24 +102,58 @@ document.addEventListener("DOMContentLoaded", () => {
   // Add event listeners for edit buttons
   document.addEventListener("click", async (event) => {
     if (event.target.classList.contains("btn-edit")) {
-      // Read the ID from data-id "{{this.id}}"
       const productId = event.target.getAttribute("data-id");
+      console.log(productId);
+      
+      // Get the current row to find existing data
+      const row = event.target.closest("tr");
+      const currentName = row.children[0].innerText;
+      const currentCategory = row.children[1].innerText;
+      const currentPrice = row.children[2].innerText;
+      const currentStock = row.children[3].innerText;
+      const currentIsActive = row.children[4].innerText;
 
-      // Ask for confirmation before editing
-      if (!confirm("Are you sure you want to edit this product?")) return;
-        try {
-        // Make a PUT HTTP request to /product/:id
+      // Ask the user for the new data (Simple implementation)
+      const newName = prompt("Enter new name:", currentName);
+      if (newName === null) return; // User clicked Cancel
+
+      const newCategory = prompt("Enter new category:", currentCategory);
+      if (newCategory === null) return;
+
+      const newPrice = prompt("Enter new price:", currentPrice);
+      if (newPrice === null) return;
+
+      const newStock = prompt("Enter new stock:", currentStock);
+      if (newStock === null) return;
+
+      const newIsActive = prompt("Enter new isActive:", currentIsActive);
+      if (newIsActive === null) return;
+
+      // Build the payload
+      const updatedProduct = {
+        name: newName.trim(),
+        category: newCategory.trim(),
+        price: parseFloat(newPrice),
+        stock: parseInt(newStock),
+        isActive: newIsActive.trim(),
+      };
+
+      try {
+        // Send PUT request WITH the body payload
         const response = await fetch(`/product/${productId}`, {
           method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updatedProduct),
         });
+
         if (response.ok) {
-          //window.location.reload(); // Refresh to see the updated table
-          event.target.closest("tr").remove();
+          // Reload to see the fresh data
+          window.location.reload();
         } else {
-          alert("Failed to edit product.");
+          alert("Failed to edit user.");
         }
       } catch (error) {
-        console.error("Error editing product:", error);
+        console.error("Error editing user:", error);
         alert("An error occurred.");
       }
     }
