@@ -10,12 +10,3 @@ router.get('/', home);
 router.get('/health', (req, res) => res.send('OK'));
 
 export default router;
-
-
-
-/**
- * GET /about-us
- * GET /contact
- * GET /privacy-policy
- * GET /faq
- */

@@ -79,7 +79,14 @@
               <td>{{this.stock}}</td>
               <td>{{this.isActive}}</td>
               <td>
-                <button class="btn btn-secondary btn-sm">Edit</button>
+                <button
+                  data-id="{{this.id}}"
+                  class="btn btn-secondary btn-sm btn-edit"
+                >Edit</button>
+                <button
+                  data-id="{{this.id}}"
+                  class="btn btn-danger btn-sm btn-delete"
+                >Del</button>
               </td>
             </tr>
           {{/each}}

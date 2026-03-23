@@ -3,8 +3,9 @@
  *
  * ROLE IN THE ARCHITECTURE
  * ─────────────────────────
- * This file runs on the SERVER (Node.js/Express). Controllers sit between the
- * routes and the data layer: they receive an HTTP request from a route, perform
+ * This file runs on the SERVER (Node.js/Express). 
+ * Controllers sit between the routes and the data layer: 
+ * they receive an HTTP request from a route, perform
  * the required operation (read/write), and send back an HTTP response.
  *
  * REQUEST CYCLE
@@ -20,28 +21,25 @@
 
 import fs from 'fs';
 
-/**
- * GET /products
- * Reads all products from the JSON file and renders the products view.
- * The HBS template receives the `products` array to build the table rows.
- */
+// read products from JSON file and render the products view
 const getProducts = (req, res) => {
     const products = JSON.parse(fs.readFileSync('./src/data/products.json', 'utf-8'));
     res.render('products', { pageName: 'Products', products });
 };
 
-/**
- * POST /products
- * Called when the client submits the Add Product form (via fetch in public/products.js).
- * Reads req.body (JSON payload), appends the new product to the file, and responds.
- * The client reloads the page on success, which triggers GET /products again.
- */
+// add product to JSON file and send success response
 const addProduct = (req, res) => {
-    const product = req.body;                                                               // JSON from the browser
-    const products = JSON.parse(fs.readFileSync("./src/data/products.json", 'utf8'));       // load current list
-    products.push(product);                                                        // append new product
-    fs.writeFileSync("./src/data/products.json", JSON.stringify(products));                 // persist to disk
-    res.send(`Product ${product.name} added successfully!`);                                // signal success to fetch()
+    const product = req.body;   
+    //Add a unique ID to the product
+    product.id =  Date.now();                                                               
+    const products = JSON.parse(fs.readFileSync("./src/data/products.json", 'utf8'));       
+    products.push(product);                                                       
+    fs.writeFileSync("./src/data/products.json", JSON.stringify(products));                 
+    res.send(`Product ${product.name} added successfully!`);                               
 };
+
+// TODO: delete product from JSON file and send success response
+
+// TODO: update product in JSON file and send success response
 
 export { getProducts, addProduct };

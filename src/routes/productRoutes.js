@@ -16,12 +16,7 @@ import { getProducts, addProduct } from '../controllers/productController.js';
 
 const router = express.Router();
 
-/**
- * ROUTES
- * ──────
- * GET  /products -> Renders the HTML page with the list of products
- * POST /products -> Receives JSON data from the browser's form to add a new product
- */
+// ROUTES
 router.get('/products', getProducts);
 router.post('/products', addProduct);
 

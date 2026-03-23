@@ -11,6 +11,7 @@
 
 import { getAllUsers, createUser, deleteUser, updateUser, getUserById } from '../models/userModel.js';
 
+// GET /users
 const getUsersDB = async (req, res) => {
     try {
         const users = await getAllUsers(); // Calls the model!
@@ -20,6 +21,7 @@ const getUsersDB = async (req, res) => {
     }
 };
 
+// POST /users
 const addUserDB = async (req, res) => {
     try {
         const { name, email, password, role } = req.body;
@@ -30,10 +32,10 @@ const addUserDB = async (req, res) => {
     }
 };
 
+// DELETE /users/:id
 const deleteUserDB = async (req, res) => {
     try {
-        //const { id } = req.body;
-        const id = req.params.id;
+        const { id } = req.body;
         await deleteUser(id); // Calls the model!
         res.send(`User ${id} deleted successfully!`);
     } catch (error) {
@@ -41,6 +43,7 @@ const deleteUserDB = async (req, res) => {
     }
 };
 
+// PUT /users/:id
 const updateUserDB = async (req, res) => {
     try {
         const { id, name, email, password, role } = req.body;
@@ -51,6 +54,7 @@ const updateUserDB = async (req, res) => {
     }
 };
 
+// GET /users/:id
 const getUserByIdDB = async (req, res) => {
     try {
         const { id } = req.body;

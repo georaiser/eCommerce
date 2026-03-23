@@ -39,5 +39,12 @@
     "stock": 120,
     "isActive": true
   },
-  { "name": "p2", "category": "s", "price": 33, "stock": 1, "isActive": true }
+  {
+    "name": "p2",
+    "category": "s",
+    "price": 10,
+    "stock": 33,
+    "isActive": true,
+    "id": 1774209592668
+  }
 ]
