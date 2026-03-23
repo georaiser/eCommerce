@@ -24,6 +24,7 @@ import fs from 'fs';
 // read products from JSON file and render the products view
 const getProducts = (req, res) => {
     const products = JSON.parse(fs.readFileSync('./src/data/products.json', 'utf-8'));
+    //console.log('Products from JSON file:', products); // Debug log
     res.render('products', { pageName: 'Products', products });
 };
 

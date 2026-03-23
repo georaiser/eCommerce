@@ -3,7 +3,7 @@ import { pool } from '../config/db.js';
 // get all products
 const getAllProducts = async () => {
     const {rows} = await pool.query('SELECT * FROM products');
-    return rows[0];
+    return rows;
 };
 
 //Add a new product
@@ -11,7 +11,7 @@ const addProduct = async (name, category, price, stock) => {
     const query = 'INSERT INTO products (name, category, price, stock) VALUES ($1, $2, $3, $4) RETURNING *'
     const data = [name, category, price, stock]
     const {rows} = await pool.query(query, data);
-    return rows[0];
+    return rows;
 };
 
 //Update a product by id
