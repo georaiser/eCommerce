@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const currentName = row.children[0].innerText;
       const currentEmail = row.children[1].innerText;
       const currentRole = row.children[2].innerText;
-      
+
       // Ask the user for the new data (Simple implementation)
       const newName = prompt("Enter new name:", currentName);
       if (newName === null) return; // User clicked Cancel
@@ -114,7 +114,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const newRole = prompt("Enter new role:", currentRole);
       if (newRole === null) return;
 
-      const newPassword = prompt("Enter new password (leave blank to keep current):", "");
+      const newPassword = prompt(
+        "Enter new password (leave blank to keep current):",
+        "",
+      );
       if (newPassword === null) return;
 
       // Build the payload
@@ -122,7 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
         name: newName.trim(),
         email: newEmail.trim(),
         role: newRole.trim(),
-        password: newPassword.trim()
+        password: newPassword.trim(),
       };
 
       try {
@@ -130,12 +133,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const response = await fetch(`/user/${userId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(updatedUser)
+          body: JSON.stringify(updatedUser),
         });
 
         if (response.ok) {
           // Reload to see the fresh data
-          window.location.reload(); 
+          window.location.reload();
         } else {
           alert("Failed to edit user.");
         }

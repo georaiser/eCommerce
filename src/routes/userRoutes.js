@@ -13,25 +13,24 @@
 import express from 'express';
 
 // json file users
-import { getUsers, addUser, deleteUser, updateUser } from '../controllers/userController.js';
+//import { getUsers, addUser, deleteUser, updateUser } from '../controllers/userController_json.js';
+
 // db postgresql users
-import { getUsersDB, addUserDB, updateUserDB, deleteUserDB, getUserByIdDB } from '../controllers/userController_db.js';
+import { getUsersDB, addUserDB, updateUserDB, deleteUserDB, getUserByIdDB } from '../controllers/userController.js';
 
 const router = express.Router();
 
-//users CRUD operations with json file
-router.get('/users', getUsers);
-router.post('/user', addUser);
-router.delete('/user/:id', deleteUser);
-router.put('/user/:id', updateUser);
+// CRUD operations with json file
+// router.get('/users', getUsers);
+// router.post('/user', addUser);
+// router.delete('/user/:id', deleteUser);
+// router.put('/user/:id', updateUser);
 
-
-//users CRUD operations with db postgresql
-router.get('/db/users', getUsersDB);
-router.post('/db/users', addUserDB);
-router.put('/db/users/:id', updateUserDB);
-router.delete('/db/users/:id', deleteUserDB);
-router.get('/db/users/:id', getUserByIdDB);
-
+// CRUD operations with db postgresql
+router.get('/users', getUsersDB);
+router.post('/users', addUserDB);
+router.put('/user/:id', updateUserDB);
+router.delete('/user/:id', deleteUserDB);
+router.get('/user/:id', getUserByIdDB);
 
 export default router;
