@@ -31,7 +31,7 @@ const getUsersDB = async (req, res) => {
     //console.log(users);
     res.render("users_page", { pageName: "Users", users });
   } catch (error) {
-    res.status(500).send("Database error");
+    res.status(500).send(`Error getting users: ${error}`);
   }
 };
 
@@ -42,7 +42,7 @@ const addUserDB = async (req, res) => {
     await createUser(name, email, password, role); // Calls the model!
     res.send(`User ${name} added successfully!`);
   } catch (error) {
-    res.status(500).send("Error saving user");
+    res.status(500).send(`Error saving user: ${error}`);
   }
 };
 
@@ -53,7 +53,7 @@ const deleteUserDB = async (req, res) => {
     await deleteUser(id); // Calls the model!
     res.send(`User ${id} deleted successfully!`);
   } catch (error) {
-    res.status(500).send("Error deleting user");
+    res.status(500).send(`Error deleting user: ${error}`);
   }
 };
 
@@ -67,15 +67,15 @@ const updateUserDB = async (req, res) => {
     const existingUsers = await getUserById(id); // Calls the model!
     const existingUser = existingUsers[0];
 
-    name = name || existingUser.name;
-    email = email || existingUser.email;
+    // name = name || existingUser.name;
+    // email = email || existingUser.email;
     password = password || existingUser.password;
-    role = role || existingUser.role;
+    // role = role || existingUser.role;
 
     await updateUser(id, name, email, password, role); // Calls the model!
     res.send(`User ${name} updated successfully!`);
   } catch (error) {
-    res.status(500).send("Error updating user", error);
+    res.status(500).send(`Error updating user: ${error}`);
   }
 };
 
@@ -86,7 +86,7 @@ const getUserByIdDB = async (req, res) => {
     const user = await getUserById(id); // Calls the model!
     res.render("users_page", { pageName: "Users", users: [user] });
   } catch (error) {
-    res.status(500).send("Error getting user");
+    res.status(500).send(`Error getting user: ${error}`);
   }
 };
 

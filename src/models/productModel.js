@@ -11,13 +11,14 @@ const addProduct = async (name, category, price, stock) => {
     const query = 'INSERT INTO products (name, category, price, stock) VALUES ($1, $2, $3, $4) RETURNING *'
     const data = [name, category, price, stock]
     const {rows} = await pool.query(query, data);
-    return rows;
+    //console.log(rows);
+    return rows[0];
 };
 
 //Update a product by id
-const updateProduct = async (id, name, category, price, stock) => {
-    const query = 'UPDATE products SET name = $1, category = $2, price = $3, stock = $4 WHERE id = $5 RETURNING *'
-    const data = [name, category, price, stock, id]
+const updateProduct = async (id, name, category, price, stock, is_active) => {
+    const query = 'UPDATE products SET name = $1, category = $2, price = $3, stock = $4, is_active = $5 WHERE id = $6 RETURNING *'
+    const data = [name, category, price, stock, is_active, id]
     const {rows} = await pool.query(query, data);
     return rows[0];
 };

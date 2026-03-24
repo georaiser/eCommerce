@@ -53,8 +53,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      // Send JSON to POST /products — handled by addProduct in productController.js
-      const response = await fetch("/products", {
+      // Send JSON to POST /product  (mapped to addProductDB in productController.js)
+      const response = await fetch("/product", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(product),

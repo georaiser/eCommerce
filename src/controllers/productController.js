@@ -48,7 +48,7 @@ const getProductsDB = async (req, res) => {
     //console.log("Products from DB:", products); // Debug log
     res.render("products_page", { pageName: "Products", products });
   } catch (error) {
-    res.status(500).send("Database error");
+    res.status(500).send(`Database error: ${error}`);
   }
 };
 
@@ -60,7 +60,7 @@ const addProductDB = async (req, res) => {
     console.log(`Product ${name} added successfully!`); // Debug log
     res.send(`Product ${name} added successfully!`);
   } catch (error) {
-    res.status(500).send("Error saving product");
+    res.status(500).send(`Error saving product: ${error}`);
   }
 };
 
@@ -71,7 +71,7 @@ const deleteProductDB = async (req, res) => {
     await deleteProduct(id); // Calls the model!
     res.send(`Product ${id} deleted successfully!`);
   } catch (error) {
-    res.status(500).send("Error deleting product");
+    res.status(500).send(`Error deleting product: ${error}`);
   }
 };
 
@@ -80,10 +80,21 @@ const updateProductDB = async (req, res) => {
   try {
     const { id } = req.params;
     const { name, category, price, stock, isActive } = req.body;
+    
+    // // Fetch the existing user first to protect blank fields like password
+    // const existingUsers = await getProductById(id); // Calls the model!
+    // const existingUser = existingUsers[0];
+
+    // name = name || existingUser.name;
+    // category = category || existingUser.category;
+    // price = price || existingUser.price;
+    // stock = stock || existingUser.stock;
+    // isActive = isActive || existingUser.is_active;
+    
     await updateProduct(id, name, category, price, stock, isActive); // Calls the model!
     res.send(`Product ${name} updated successfully!`);
   } catch (error) {
-    res.status(500).send("Error updating product");
+    res.status(500).send(`Error updating product: ${error}`);
   }
 };
 
@@ -94,7 +105,7 @@ const getProductByIdDB = async (req, res) => {
     const product = await getProductById(id); // Calls the model!
     res.render("products_page", { pageName: "Products", products: [product] });
   } catch (error) {
-    res.status(500).send("Error getting product");
+    res.status(500).send(`Error getting product: ${error}`);
   }
 };
 

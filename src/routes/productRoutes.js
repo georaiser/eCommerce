@@ -25,13 +25,13 @@ const router = express.Router();
 
 // CRUD operations with json file
 // router.get('/products', getProducts);
-// router.post('/products', addProduct);
+// router.post('/product', addProduct);
 // router.delete('/product/:id', deleteProduct);
 // router.put('/product/:id', updateProduct);
 
 //CRUD operations with db postgresql
 router.get('/products', getProductsDB);
-router.post('/products', addProductDB);
+router.post('/product', addProductDB);
 router.put('/product/:id', updateProductDB);
 router.delete('/product/:id', deleteProductDB);
 router.get('/product/:id', getProductByIdDB);
