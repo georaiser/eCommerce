@@ -2,7 +2,8 @@ import { pool } from '../config/db.js';
 
 //get all users
 const getAllUsers = async () => {
-    const {rows} = await pool.query('SELECT * FROM users');
+    //const {rows} = await pool.query('SELECT * FROM users');
+    const {rows} = await pool.query("SELECT id, name, email, role, TO_CHAR(created_at, 'MM/DD/YYYY HH:MI') as created_at FROM users");
     return rows;
 };
 
@@ -11,7 +12,8 @@ const createUser = async (name, email, password, role) => {
     const query = 'INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3, $4) RETURNING *'
     const data = [name, email, password, role]
     const {rows} = await pool.query(query, data);
-    return rows;
+    console.log(rows);
+    return rows[0];
 };
 
 //delete user by id

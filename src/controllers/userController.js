@@ -28,6 +28,7 @@ import {
 const getUsersDB = async (req, res) => {
   try {
     const users = await getAllUsers(); // Calls the model!
+    //console.log(users);
     res.render("users_page", { pageName: "Users", users });
   } catch (error) {
     res.status(500).send("Database error");
@@ -60,7 +61,17 @@ const deleteUserDB = async (req, res) => {
 const updateUserDB = async (req, res) => {
   try {
     const { id } = req.params; // ID comes from the URL
-    const { name, email, password, role } = req.body; // Data comes from the body
+    let { name, email, password, role } = req.body; // Data comes from the body
+
+    // Fetch the existing user first to protect blank fields like password
+    const existingUsers = await getUserById(id); // Calls the model!
+    const existingUser = existingUsers[0];
+
+    name = name || existingUser.name;
+    email = email || existingUser.email;
+    password = password || existingUser.password;
+    role = role || existingUser.role;
+
     await updateUser(id, name, email, password, role); // Calls the model!
     res.send(`User ${name} updated successfully!`);
   } catch (error) {

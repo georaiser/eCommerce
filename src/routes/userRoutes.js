@@ -28,7 +28,7 @@ const router = express.Router();
 
 // CRUD operations with db postgresql
 router.get('/users', getUsersDB);
-router.post('/users', addUserDB);
+router.post('/user', addUserDB);
 router.put('/user/:id', updateUserDB);
 router.delete('/user/:id', deleteUserDB);
 router.get('/user/:id', getUserByIdDB);
