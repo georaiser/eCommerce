@@ -11,6 +11,7 @@ const getProductsDB = async (req, res) => {
   try {
     const products = await getAllProducts(); // Calls the model!
     //console.log("Products from DB:", products); // Debug log
+    // page in "res.render('products' ....)" is the name of the view file in views folder, not the URL path
     res.render("products", { pageName: "Products", products });
   } catch (error) {
     res.status(500).send("Database error");

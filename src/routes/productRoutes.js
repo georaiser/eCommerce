@@ -31,9 +31,9 @@ router.put('/product/:id', updateProduct);
 //CRUD operations with db postgresql
 router.get('/db/products', getProductsDB);
 router.post('/db/products', addProductDB);
-router.put('/db/products/:id', updateProductDB);
-router.delete('/db/products/:id', deleteProductDB);
-router.get('/db/products/:id', getProductByIdDB);
+router.put('/db/product/:id', updateProductDB);
+router.delete('/db/product/:id', deleteProductDB);
+router.get('/db/product/:id', getProductByIdDB);
 
 
 export default router;
