@@ -76,7 +76,7 @@ const getCartTotal = async (userId) => {
 };
 
 // get cart item count
-const getCartItemCount = async (userId) => {
+const getCartCount = async (userId) => {
     const query = `
         SELECT COUNT(*) AS count
         FROM shopping_cart
@@ -94,5 +94,5 @@ export {
     removeFromCart,
     clearCart,
     getCartTotal,
-    getCartItemCount
+    getCartCount
 };
