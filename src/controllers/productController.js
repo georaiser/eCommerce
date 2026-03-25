@@ -41,7 +41,7 @@ import {
   getProductById,
 } from "../models/productModel.js";
 
-// GET /db/products
+// GET /products
 const getProductsDB = async (req, res) => {
   try {
     const products = await getAllProducts(); // Calls the model!
@@ -52,7 +52,7 @@ const getProductsDB = async (req, res) => {
   }
 };
 
-// POST /db/products
+// POST /products
 const addProductDB = async (req, res) => {
   try {
     const { name, category, price, stock, isActive } = req.body;
@@ -64,7 +64,7 @@ const addProductDB = async (req, res) => {
   }
 };
 
-// DELETE /db/products/:id
+// DELETE /products/:id
 const deleteProductDB = async (req, res) => {
   try {
     const { id } = req.params;
@@ -75,7 +75,7 @@ const deleteProductDB = async (req, res) => {
   }
 };
 
-// PUT /db/products/:id
+// PUT /products/:id
 const updateProductDB = async (req, res) => {
   try {
     const { id } = req.params;
@@ -98,7 +98,7 @@ const updateProductDB = async (req, res) => {
   }
 };
 
-// GET /db/products/:id
+// GET /products/:id
 const getProductByIdDB = async (req, res) => {
   try {
     const { id } = req.params;

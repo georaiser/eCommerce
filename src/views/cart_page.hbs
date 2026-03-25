@@ -1,35 +1,85 @@
 <h1>Shopping Cart</h1>
 
 <div class="container">
-    <div class="col-md-8">
-        <table class="table table-ligth">
-            <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
-                    <th>Total</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{#if cart}}
-                {{#each cart}}
-                <div class="cart-item">
-                    <tr>
-                        <td>{{this.name}}</td>
-                        <td>{{this.quantity}}</td>
-                        <td>{{this.price}}</td>
-                        <td>{{this.total}}</td>
-                        <td><button class="remove-btn" data-id="{{this.id}}">Remove</button></td>
-                    </tr>
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Add Product</h4>
                 </div>
-                {{/each}}
-                {{else}}
-                <p>Your cart is empty.</p>
-                {{/if}}
+                <table class="table table-ligth">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Amount</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each products}}
+                        <tr>
+                            <td>{{this.name}}</td>
+                            <td>{{this.category}}</td>
+                            <td>{{this.price}}</td>
+                            <td>
+                                <div class="form-group mb-3">
+                                    <input type="number" id="amount" class="form-control"
+                                        min="0" step="1" required />
+                                </div>
+                            </td>
+                            <td>
+                                <button data-id="{{this.id}}"
+                                    class="btn btn-secondary btn-sm btn-edit">AddProduct</button>
+                            </td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-            </tbody>
-        </table>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Shopping Cart</h4>
+                </div>
+            <table class="table table-ligth">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#if cart}}
+                    {{#each cart}}
+                    <div class="cart-item">
+                        <tr>
+                            <td>{{this.name}}</td>
+                            <td>{{this.quantity}}</td>
+                            <td>{{this.price}}</td>
+                            <td>{{this.total}}</td>
+                            <td>
+                                <button data-id="{{this.id}}" class="btn btn-secondary btn-sm btn-edit">Amount</button>
+                                <button data-id="{{this.id}}"
+                                    class="btn btn-secondary btn-sm btn-delete">Remove</button>
+                            </td>
+                        </tr>
+                    </div>
+                    {{/each}}
+                    {{else}}
+                    <p>Your cart is empty.</p>
+                    {{/if}}
+
+                </tbody>
+            </table>
+            </div>
+        </div>
     </div>
-    <script type="module" src="/cart.js"></script>
+</div>
+<script type="module" src="/cart.js"></script>
