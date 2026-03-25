@@ -28,6 +28,15 @@ const seedDatabase = async () => {
         `);
         console.log('Inserted products.');
 
+        // Insert Cart
+        await pool.query(`
+            INSERT INTO cart (user_id, product_id, quantity, created_at)
+            VALUES 
+                (1, 1, 2, '2026-03-25 09:45:00'),
+                (1, 2, 1, '2026-03-25 09:47:00'),
+                (1, 3, 3, '2026-03-25 09:50:00')
+        `);
+        console.log('Inserted cart.');
     } catch (error) {
         console.error('Error seeding database:', error.message);
     } finally {

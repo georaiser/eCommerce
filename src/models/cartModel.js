@@ -4,7 +4,7 @@ import { pool } from '../config/db.js';
 const getShoppingCart = async (userId) => {
     const query = `
         SELECT sc.id, sc.quantity, sc.created_at, p.id AS product_id, p.name, p.category, p.price
-        FROM shopping_cart sc
+        FROM cart sc
         JOIN products p ON sc.product_id = p.id
         WHERE sc.user_id = $1
     `;
@@ -16,7 +16,7 @@ const getShoppingCart = async (userId) => {
 // add product to cart
 const addToCart = async (userId, productId, quantity) => {
     const query = `
-        INSERT INTO shopping_cart (user_id, product_id, quantity)
+        INSERT INTO cart (user_id, product_id, quantity)
         VALUES ($1, $2, $3)
         RETURNING *;
     `;
@@ -28,7 +28,7 @@ const addToCart = async (userId, productId, quantity) => {
 // update product quantity in cart
 const updateCartQuantity = async (userId, productId, quantity) => {
     const query = `
-        UPDATE shopping_cart
+        UPDATE cart
         SET quantity = $3
         WHERE user_id = $1 AND product_id = $2
         RETURNING *;
@@ -41,7 +41,7 @@ const updateCartQuantity = async (userId, productId, quantity) => {
 // remove product from cart
 const removeFromCart = async (userId, productId) => {
     const query = `
-        DELETE FROM shopping_cart
+        DELETE FROM cart
         WHERE user_id = $1 AND product_id = $2
         RETURNING *;
     `;
@@ -53,7 +53,7 @@ const removeFromCart = async (userId, productId) => {
 // clear cart
 const clearCart = async (userId) => {
     const query = `
-        DELETE FROM shopping_cart
+        DELETE FROM cart
         WHERE user_id = $1
         RETURNING *;
     `;

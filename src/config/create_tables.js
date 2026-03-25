@@ -37,11 +37,11 @@ const createProductTables = async (pool) => {
 const createCartTables = async (pool) => {
   try {
     await pool.query(`
-        CREATE TABLE IF NOT EXISTS shopping_cart (
+        CREATE TABLE IF NOT EXISTS cart (
             id SERIAL PRIMARY KEY,
             user_id INTEGER,
             product_id INTEGER,
-            quantity INTEGER NOT NULL CHECK (quantity > 0),
+            quantity SMALLINT NOT NULL CHECK (quantity > 0 AND quantity <= 100),
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
         CONSTRAINT fk_cart_user

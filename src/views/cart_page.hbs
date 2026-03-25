@@ -13,7 +13,7 @@
                             <th>Name</th>
                             <th>Category</th>
                             <th>Price</th>
-                            <th>Amount</th>
+                            <th>Quantity</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -24,11 +24,12 @@
                             <td>{{this.category}}</td>
                             <td>{{this.price}}</td>
                             <td>
-                                <div class="form-group mb-3">
-                                    <input type="number" id="amount" class="form-control"
-                                        min="0" step="1" required />
+                                <div class="form-group mb-0">
+                                    <input type="number" class="form-control form-control-sm amount-input"
+                                        style="width: 80px" min="0" step="1" required />
                                 </div>
                             </td>
+
                             <td>
                                 <button data-id="{{this.id}}"
                                     class="btn btn-secondary btn-sm btn-edit">AddProduct</button>
@@ -45,39 +46,40 @@
                 <div class="card-header">
                     <h4>Shopping Cart</h4>
                 </div>
-            <table class="table table-ligth">
-                <thead>
-                    <tr>
-                        <th>Product</th>
-                        <th>Quantity</th>
-                        <th>Price</th>
-                        <th>Total</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{#if cart}}
-                    {{#each cart}}
-                    <div class="cart-item">
+                <table class="table table-ligth">
+                    <thead>
                         <tr>
-                            <td>{{this.name}}</td>
-                            <td>{{this.quantity}}</td>
-                            <td>{{this.price}}</td>
-                            <td>{{this.total}}</td>
-                            <td>
-                                <button data-id="{{this.id}}" class="btn btn-secondary btn-sm btn-edit">Amount</button>
-                                <button data-id="{{this.id}}"
-                                    class="btn btn-secondary btn-sm btn-delete">Remove</button>
-                            </td>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                            <th>Actions</th>
                         </tr>
-                    </div>
-                    {{/each}}
-                    {{else}}
-                    <p>Your cart is empty.</p>
-                    {{/if}}
+                    </thead>
+                    <tbody>
+                        {{#if cart}}
+                        {{#each cart}}
+                        <div class="cart-item">
+                            <tr>
+                                <td>{{this.name}}</td>
+                                <td>{{this.quantity}}</td>
+                                <td>{{this.price}}</td>
+                                <td>{{this.total}}</td>
+                                <td>
+                                    <button data-id="{{this.id}}"
+                                        class="btn btn-secondary btn-sm btn-edit">Amount</button>
+                                    <button data-id="{{this.id}}"
+                                        class="btn btn-secondary btn-sm btn-delete">Remove</button>
+                                </td>
+                            </tr>
+                        </div>
+                        {{/each}}
+                        {{else}}
+                        <p>Your cart is empty.</p>
+                        {{/if}}
 
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
