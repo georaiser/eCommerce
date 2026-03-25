@@ -4,6 +4,8 @@ import appRoutes from './routes/appRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import productRoutes from './routes/productRoutes.js';
+import cartRoutes from './routes/cartRoutes.js';
+
 
 // Importing the express-handlebars package for view rendering
 import exphbs from 'express-handlebars'
@@ -34,5 +36,6 @@ app.use('/', appRoutes);
 app.use('/', authRoutes);
 app.use('/', userRoutes);
 app.use('/', productRoutes);
+app.use('/', cartRoutes);
 
 export default app;

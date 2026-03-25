@@ -1,7 +1,7 @@
 import pg from 'pg';
 import dotenv from 'dotenv';
 import createDatabase from './create_db.js';
-import {createUserTables, createProductTables} from './create_tables.js';
+import {createUserTables, createProductTables, createCartTables} from './create_tables.js';
 dotenv.config();
 
 const { Pool } = pg;
@@ -11,7 +11,6 @@ const { DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE, DB_PORT } = process.env;
 // URI Alternative way to connect to the database
 // const connectionString = `postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_DATABASE}`;
 // console.log(connectionString)
-
 
 const config = {
     user: DB_USER,
@@ -40,6 +39,7 @@ try {
     // Create tables right after a successful connection
     await createUserTables(pool);
     await createProductTables(pool);
+    await createCartTables(pool);
 
 } catch (error) {
     console.error('Database connection error:', error);
