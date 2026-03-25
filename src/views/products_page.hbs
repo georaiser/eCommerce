@@ -9,51 +9,21 @@
         </div>
         <form id="product-form" class="card-body">
           <div class="form-group mb-3">
-            <input
-              type="text"
-              id="name"
-              placeholder="Product Name"
-              class="form-control"
-              required
-            />
+            <input type="text" id="name" placeholder="Product Name" class="form-control" required />
           </div>
           <div class="form-group mb-3">
-            <input
-              type="text"
-              id="category"
-              placeholder="Product Category"
-              class="form-control"
-              required
-            />
+            <input type="text" id="category" placeholder="Product Category" class="form-control" required />
           </div>
           <div class="form-group mb-3">
-            <input
-              type="number"
-              id="price"
-              placeholder="Product Price"
-              class="form-control"
-              min="0"
-              step="1"
-              required
-            />
+            <input type="number" id="price" placeholder="Product Price" class="form-control" min="0" step="1"
+              required />
           </div>
           <div class="form-group mb-3">
-            <input
-              type="number"
-              id="stock"
-              placeholder="Product Stock"
-              class="form-control"
-              min="0"
-              step="1"
-              required
-            />
+            <input type="number" id="stock" placeholder="Product Stock" class="form-control" min="0" step="1"
+              required />
           </div>
 
-          <input
-            type="submit"
-            value="Add Product"
-            class="btn btn-primary w-100 rounded-5"
-          />
+          <input type="submit" value="Add Product" class="btn btn-primary w-100 rounded-5" />
         </form>
       </div>
     </div>
@@ -72,23 +42,17 @@
         </thead>
         <tbody>
           {{#each products}}
-            <tr>
-              <td>{{this.name}}</td>
-              <td>{{this.category}}</td>
-              <td>{{this.price}}</td>
-              <td>{{this.stock}}</td>
-              <td>{{this.is_active}}</td>
-              <td>
-                <button
-                  data-id="{{this.id}}"
-                  class="btn btn-secondary btn-sm btn-edit"
-                >Edit</button>
-                <button
-                  data-id="{{this.id}}"
-                  class="btn btn-danger btn-sm btn-delete"
-                >Del</button>
-              </td>
-            </tr>
+          <tr>
+            <td>{{this.name}}</td>
+            <td>{{this.category}}</td>
+            <td>{{this.price}}</td>
+            <td>{{this.stock}}</td>
+            <td>{{this.is_active}}</td>
+            <td>
+              <button data-id="{{this.id}}" class="btn btn-secondary btn-sm btn-edit">Edit</button>
+              <button data-id="{{this.id}}" class="btn btn-danger btn-sm btn-delete">Del</button>
+            </td>
+          </tr>
           {{/each}}
         </tbody>
       </table>
@@ -96,4 +60,4 @@
   </div>
 </div>
 
-<script type="module" src="/products.js" ></script>
+<script type="module" src="/products.js"></script>

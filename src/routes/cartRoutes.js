@@ -8,7 +8,7 @@ const router = express.Router();
 
 // Routes
 
-router.get('/shoppingcart', shoppingCart);
+router.get('/cart', shoppingCart);
 // router.post('/productcart', addProductCart);
 // router.put('/productcart/:id', updateProductCart); //Amount
 // router.delete('/productcart/:id', deleteProductCart);
