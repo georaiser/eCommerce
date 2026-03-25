@@ -31,8 +31,9 @@
                             </td>
 
                             <td>
+                                <!-- Changed class to btn-add-cart so it doesn't conflict! -->
                                 <button data-id="{{this.id}}"
-                                    class="btn btn-secondary btn-sm btn-edit">AddProduct</button>
+                                    class="btn btn-success btn-sm btn-add-cart">AddProduct</button>
                             </td>
                         </tr>
                         {{/each}}
@@ -66,10 +67,10 @@
                                 <td>{{this.price}}</td>
                                 <td>{{this.total}}</td>
                                 <td>
+                                <button data-id="{{this.id}}"
+                                        class="btn btn-warning btn-sm btn-update-cart">Quantity</button>
                                     <button data-id="{{this.id}}"
-                                        class="btn btn-secondary btn-sm btn-edit">Amount</button>
-                                    <button data-id="{{this.id}}"
-                                        class="btn btn-secondary btn-sm btn-delete">Remove</button>
+                                        class="btn btn-danger btn-sm btn-remove-cart">Remove</button>
                                 </td>
                             </tr>
                         </div>

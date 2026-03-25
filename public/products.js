@@ -24,8 +24,8 @@
  */
 
 document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("product-form");
 
+  const form = document.getElementById("product-form");
   form.addEventListener("submit", async (event) => {
     // Prevent the browser from doing a native form POST (wrong encoding)
     event.preventDefault();
