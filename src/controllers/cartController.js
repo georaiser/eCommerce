@@ -13,8 +13,12 @@ const shoppingCart = async (req, res) => {
         // 2. Fetch all products available to add to the cart
         const products = await getAllProducts();
         
-        // 3. Render the page passing BOTH arrays to Handlebars!
-        res.render("cart_page", { pageName: "Cart", cart, products });
+        // 3. Fetch the Grand Total of the entire cart!
+        const totalResult = await getCartTotal(userId);
+        const cartTotal = totalResult[0]?.total || 0;
+
+        // 4. Render the page passing all data to Handlebars!
+        res.render("cart_page", { pageName: "Cart", cart, products, cartTotal });
     } catch (error) {
         res.status(500).send(`Error loading cart page: ${error}`);
     }
@@ -30,7 +34,13 @@ const addProductToCart = async (req, res) => {
         const cartItem = await addToCart(userId, productId, quantity); // from cartModel.js
         res.send(`Product ${productId} Quantity ${quantity} added successfully!`);
     } catch (error) {
-        res.status(500).send(`Error adding product to cart: ${error}`);
+        // '23505' is the official PostgreSQL error code for unique_violation
+        if (error.code === '23505') {
+            res.status(409).send("Product is already in your cart!");
+        } else {
+            console.error("Cart Add Error:", error);
+            res.status(500).send(`Error adding product to cart`);
+        }
     }
 };
 

@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Reload so the HBS template re-renders the updated product list
         window.location.reload();
       } else {
-        alert("Failed to add product. Please try again.");
+        alert(await response.text());
       }
     } catch (error) {
       console.error("Error adding product:", error);
@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
           window.location.reload(); // Refresh to see the updated table
           //event.target.closest("tr").remove();
         } else {
-          alert("Failed to delete product.");
+          alert(await response.text());
         }
       } catch (error) {
         console.error("Error deleting product:", error);
@@ -150,7 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
           // Reload to see the fresh data
           window.location.reload();
         } else {
-          alert("Failed to edit user.");
+          alert(await response.text());
         }
       } catch (error) {
         console.error("Error editing user:", error);

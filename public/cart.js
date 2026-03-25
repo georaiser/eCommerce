@@ -22,7 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log(`Add product ${productId} with quantity ${quantity} to cart!`);
         window.location.reload();
       } else {
-        alert("Failed to add product to cart.");
+        const errorMsg = await response.text();
+        alert(errorMsg); // This will now correctly say "Product is already in your cart!"
       }
     }
   });

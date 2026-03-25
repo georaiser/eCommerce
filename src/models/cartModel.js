@@ -3,7 +3,7 @@ import { pool } from '../config/db.js';
 // get all products in the cart
 const getShoppingCart = async (userId) => {
     const query = `
-        SELECT sc.id, sc.quantity, sc.created_at, p.id AS product_id, p.name, p.category, p.price
+        SELECT sc.id, sc.quantity, sc.created_at, p.id AS product_id, p.name, p.category, p.price, (sc.quantity * p.price) AS total
         FROM cart sc
         JOIN products p ON sc.product_id = p.id
         WHERE sc.user_id = $1
@@ -21,6 +21,7 @@ const addToCart = async (userId, productId, quantity) => {
         RETURNING *;
     `;
     const data = [userId, productId, quantity];
+    //console.log(data);
     const {rows} = await pool.query(query, data);
     return rows;
 };
@@ -66,7 +67,7 @@ const clearCart = async (userId) => {
 const getCartTotal = async (userId) => {
     const query = `
         SELECT SUM(sc.quantity * p.price) AS total
-        FROM shopping_cart sc
+        FROM cart sc
         JOIN products p ON sc.product_id = p.id
         WHERE sc.user_id = $1;
     `;
@@ -79,7 +80,7 @@ const getCartTotal = async (userId) => {
 const getCartCount = async (userId) => {
     const query = `
         SELECT COUNT(*) AS count
-        FROM shopping_cart
+        FROM cart
         WHERE user_id = $1;
     `;
     const data = [userId];

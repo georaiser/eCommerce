@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Reload so the HBS template re-renders the updated users list
         window.location.reload();
       } else {
-        alert("Failed to add user. Please try again.");
+        alert(await response.text());
       }
     } catch (error) {
       console.error("Error adding user:", error);
@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (response.ok) {
           window.location.reload(); // Refresh to see the updated table
         } else {
-          alert("Failed to delete user.");
+          alert(await response.text());
         }
       } catch (error) {
         console.error("Error deleting user:", error);
@@ -140,7 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
           // Reload to see the fresh data
           window.location.reload();
         } else {
-          alert("Failed to edit user.");
+          alert(await response.text());
         }
       } catch (error) {
         console.error("Error editing user:", error);

@@ -1,7 +1,6 @@
 import express from 'express';
 
-//db shopping cart by each user
-//import {getShoppingCart, addProductCart, updateProductCart, deleteProductCart } from '../controllers/cartController.js'
+// import cart controller functions
 import { shoppingCart, addProductToCart, updateCartItemQuantity, removeCartItem, clearCartItems, getCartItemsTotal, getCartItemCount } from '../controllers/cartController.js';
 
 const router = express.Router();

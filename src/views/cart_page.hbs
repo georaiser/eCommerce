@@ -45,7 +45,10 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
-                    <h4>Shopping Cart</h4>
+                    <h4 class="d-flex justify-content-between align-items-center">
+                        <span>Shopping Cart</span>
+                        <span class="badge bg-success rounded-pill">Total: ${{cartTotal}}</span>
+                    </h4>
                 </div>
                 <table class="table table-ligth">
                     <thead>
@@ -67,10 +70,10 @@
                                 <td>{{this.price}}</td>
                                 <td>{{this.total}}</td>
                                 <td>
-                                <button data-id="{{this.id}}"
-                                        class="btn btn-warning btn-sm btn-update-cart">Quantity</button>
-                                    <button data-id="{{this.id}}"
-                                        class="btn btn-danger btn-sm btn-remove-cart">Remove</button>
+                                    <button data-id="{{this.product_id}}"
+                                        class="btn btn-warning btn-sm btn-update-cart">Edit</button>
+                                    <button data-id="{{this.product_id}}"
+                                        class="btn btn-danger btn-sm btn-remove-cart">Del</button>
                                 </td>
                             </tr>
                         </div>
