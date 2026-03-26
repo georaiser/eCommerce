@@ -1,4 +1,4 @@
-import { getShoppingCart, addToCart, updateCartQuantity, removeFromCart, clearCart, getCartTotal, getCartCount } from '../models/cartModel.js';
+import { getShoppingCart, addToCart, updateCartQuantity, removeFromCart, clearCart, getCartTotal, getCartCount, processCheckout } from '../models/cartModel.js';
 import { getAllProducts, getProductById, updateProductStock } from "../models/productModel.js";
 import { getUserById } from "../models/userModel.js";
 import { pool } from '../config/db.js';
@@ -171,46 +171,37 @@ const getCartItemCount = async (req, res) => {
 // POST /cart/checkout - execute an atomic transaction
 const checkoutCart = async (req, res) => {
     try {
-        const userId = 1; 
-        
+        const userId = 1;
+
         // 1. Fetch total cart price
         const totalResult = await getCartTotal(userId);
         const cartTotal = totalResult[0]?.total || 0;
-        
         if (cartTotal <= 0) return res.status(400).send("Your cart is empty!");
 
         // 2. Fetch user to check credit
         const userResp = await getUserById(userId);
         const user = userResp[0];
         if (!user) return res.status(404).send("User not found!");
-        
+
         const currentCredit = parseFloat(user.credit);
         const totalFloat = parseFloat(cartTotal);
-        
-        // 3. Setup PostgreSQL Transaction Client
+
+        // 3. Business logic: validate sufficient funds
+        if (currentCredit < totalFloat) {
+            return res.status(400).send(`Insufficient funds! You have $${currentCredit.toFixed(2)} but your cart total is $${totalFloat.toFixed(2)}.`);
+        }
+
+        const newCredit = currentCredit - totalFloat;
+
+        // 4. Execute atomic writes via model (client transaction)
         const client = await pool.connect();
-        
         try {
-            await client.query('BEGIN'); // Start transaction
-            
-            // 4. Check if they have enough money!
-            if (currentCredit < totalFloat) {
-                await client.query('ROLLBACK'); // Abort!
-                return res.status(400).send(`Insufficient funds! You have $${currentCredit.toFixed(2)} but your cart total is $${totalFloat.toFixed(2)}.`);
-            }
-            
-            // 5. Deduct money securely
-            const newCredit = currentCredit - totalFloat;
-            await client.query('UPDATE users SET credit = $1 WHERE id = $2', [newCredit, userId]);
-            
-            // 6. Clear their cart permanently (without restoring physical stock, because they bought it!)
-            await client.query('DELETE FROM cart WHERE user_id = $1', [userId]);
-            
-            await client.query('COMMIT'); // Finalize Transaction
+            await client.query('BEGIN');
+            await processCheckout(client, userId, newCredit);
+            await client.query('COMMIT');
             res.send(`Purchase successful! You have $${newCredit.toFixed(2)} remaining credit.`);
-            
         } catch (dbError) {
-            await client.query('ROLLBACK'); // In case of arbitrary failure midway, rollback!
+            await client.query('ROLLBACK');
             throw dbError;
         } finally {
             client.release();

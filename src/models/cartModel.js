@@ -63,6 +63,13 @@ const clearCart = async (userId) => {
     return rows;
 };
 
+// checkout: deduct user credit and clear cart 
+// (runs inside a transaction client, not using a pool connection)
+const processCheckout = async (client, userId, newCredit) => {
+    await client.query('UPDATE users SET credit = $1 WHERE id = $2', [newCredit, userId]);
+    await client.query('DELETE FROM cart WHERE user_id = $1', [userId]);
+};
+
 // get cart total
 const getCartTotal = async (userId) => {
     const query = `
@@ -95,5 +102,6 @@ export {
     removeFromCart,
     clearCart,
     getCartTotal,
-    getCartCount
+    getCartCount,
+    processCheckout
 };
