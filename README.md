@@ -14,18 +14,18 @@ commerceManager/
 │   │   ├── appController.js        ← home & page handlers
 │   │   ├── userController.js       ← user CRUD handlers
 │   │   ├── productController.js    ← product CRUD handlers
-│   │   └── cartController.js       ← shopping cart & inventory handlers
+│   │   └── cartController.js       ← shopping cart, inventory & checkout handlers
 │   │
 │   ├── routes/
 │   │   ├── appRoutes.js            ← GET /
 │   │   ├── userRoutes.js           ← GET /users, POST /user, PUT /user/:id, DELETE /user/:id
 │   │   ├── productRoutes.js        ← GET /products, POST /product, PUT /product/:id, DELETE /product/:id
-│   │   └── cartRoutes.js           ← GET /cart, POST /cart, PUT /cart/:id, DELETE /cart/:id
+│   │   └── cartRoutes.js           ← GET /cart, POST /cart, PUT /cart/:id, DELETE /cart/:id, POST /cart/checkout
 │   │
 │   ├── models/
-│   │   ├── userModel.js            ← PostgreSQL queries for Users
-│   │   ├── productModel.js         ← PostgreSQL queries for Products
-│   │   └── cartModel.js            ← PostgreSQL queries for Cart
+│   │   ├── userModel.js            ← PostgreSQL queries for Users (accepts optional dbClient)
+│   │   ├── productModel.js         ← PostgreSQL queries for Products (accepts optional dbClient)
+│   │   └── cartModel.js            ← PostgreSQL queries for Cart (accepts optional dbClient)
 │   │
 │   ├── config/
 │   │   ├── db.js                   ← PostgreSQL pool connection setup
@@ -40,20 +40,20 @@ commerceManager/
 │   └── views/                      ← Handlebars (HBS) server-rendered templates
 │       ├── home.hbs                ← home page template
 │       ├── products_page.hbs       ← products list + add-product form
-│       ├── users_page.hbs          ← users list + add-user form
-│       ├── cart_page.hbs           ← interactive shopping cart display
+│       ├── users_page.hbs          ← users list + add-user form (incl. credit balance)
+│       ├── cart_page.hbs           ← interactive shopping cart + checkout button
 │       └── layouts/
 │           └── main.hbs            ← base layout wrapper
 │
 ├── public/                         ← static files served by Express
-│   ├── css/                        ← stylesheets
+│   ├── css/                        ← stylesheets (incl. global watermark background)
 │   ├── products.js                 ← client-side JS for the products form
 │   ├── users.js                    ← client-side JS for the users form
-│   └── cart.js                     ← client-side JS for shopping cart actions
+│   └── cart.js                     ← client-side JS for cart actions & checkout
 │
 ├── src/app.js                      ← Express setup, middleware, routes
 ├── .env                            ← Environment variables
-├── package.json                    ← Depedency list
+├── package.json                    ← Dependency list
 └── server.js                       ← Entry point, starts server
 ```
 
@@ -61,67 +61,109 @@ commerceManager/
 
 ## 🔄 Client–Server Architecture
 
-The application uses standard Model-View-Controller (MVC) paradigms heavily tied to client-side Fetch API interactions.
+The application uses standard Model-View-Controller (MVC) paradigms tied to client-side Fetch API interactions.
 
 ```
-Browser (e.g. cart.js)                  Server (cartController.js & cartModel.js)
-──────────────────────                  ────────────────────────────────────────
-User clicks "Quantity"     ──PUT──►     updateCartItemQuantity(req, res)
-fetch('/cart/1', {JSON})                1. Checks PostgreSQL for remaining stock
-                                        2. Determines difference vs existing quantity
-                                        3. Updates 'products' table (Shelf Stock)
-                           ◄────────    4. Updates 'cart' table and responds HTTP 200
-response.ok → reload page  
-                           ──GET───►    shoppingCart(req, res)
-                                        queries DB for total and cart composition
-                           ◄────────    res.render('cart_page', { cart, products, total })
-Updated cart table & total rendered dynamically
+Browser (e.g. cart.js)                  Server (cartController.js → cartModel.js)
+──────────────────────                  ──────────────────────────────────────────
+User clicks "Checkout"     ─POST──►     checkoutCart(req, res)
+fetch('/cart/checkout')                 1. BEGIN transaction (dedicated client)
+                                        2. Reads cart total  (model)
+                                        3. Reads user credit (model)
+                                        4. Validates: credit >= total
+                                        5. Deducts credit    (model)
+                                        6. Clears cart       (model)
+                                        7. COMMIT (or ROLLBACK on any error)
+                           ◄────────    HTTP 200 "Purchase successful!"
+response.ok → reload page
 ```
 
-> **Client Scripts** run in the **browser** (`public/*.js`) and communicate strictly via HTTP Requests.
-> **Controllers** run on the **server** (`src/controllers/*.js`), execute business logic, call **Models**, and return HTTP Responses.
-> **Models** interact safely with the **PostgreSQL Database** (`src/models/*.js`).
+> **Client Scripts** run in the **browser** (`public/*.js`) and communicate strictly via HTTP Requests.  
+> **Controllers** run on the **server** (`src/controllers/*.js`), manage business logic and **transaction lifecycle**.  
+> **Models** execute **SQL queries** (`src/models/*.js`) and accept an optional `dbClient` to participate in a transaction.
+
+---
+
+## 🔐 Transaction Pattern
+
+All multi-step cart mutations (Add, Edit, Remove, Clear, Checkout) are wrapped in atomic PostgreSQL transactions. The pattern is:
+
+1. **Controller** checks out a dedicated connection: `const client = await pool.connect()`
+2. **Controller** opens the transaction: `await client.query('BEGIN')`
+3. **Controller** calls model functions, passing `client` instead of the default `pool`
+4. **Models** use `dbClient = pool` as default — so they work for single queries without any changes
+5. **Controller** commits or rolls back: `COMMIT` on success, `ROLLBACK` on any thrown error
+6. **Controller** always releases the connection: `client.release()` in `finally`
+
+```js
+// Model — ORM-ready, works with pool or client
+const getCartItem = async (userId, productId, dbClient = pool) => { ... };
+
+// Controller — manages transaction, delegates SQL to models
+const client = await pool.connect();
+try {
+    await client.query('BEGIN');
+    const item = await getCartItem(userId, productId, client); // passes client
+    await updateProductStock(productId, newStock, client);     // passes client
+    await client.query('COMMIT');
+} catch (err) {
+    await client.query('ROLLBACK');
+} finally {
+    client.release();
+}
+```
 
 ---
 
 ## 📌 API Endpoints
 
-### Models & Endpoints
+### Users
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/users` | Get all users |
-| POST | `/user` | Create a user |
-| PUT | `/user/:id` | Update a user |
+| GET | `/users` | Get all users (incl. credit balance) |
+| POST | `/user` | Create a user (with starting credit) |
+| PUT | `/user/:id` | Update a user (incl. credit amount) |
 | DELETE | `/user/:id` | Delete a user |
-|
+
+### Products
+| Method | Endpoint | Description |
+|--------|----------|-------------|
 | GET | `/products` | List all products |
 | POST | `/product` | Create a product |
 | PUT | `/product/:id` | Update a product |
 | DELETE | `/product/:id` | Delete a product |
-|
-| GET | `/cart` | View current user cart |
-| POST | `/cart` | Add product to cart (Upsert) |
-| PUT | `/cart/:id` | Edit item quantity in cart |
-| DELETE | `/cart/:id` | Remove a product from cart |
-| DELETE | `/cart` | Clear entire cart |
+
+### Cart
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/cart` | View current user cart + credit balance |
+| POST | `/cart` | Add product to cart — atomic: deducts shelf stock |
+| PUT | `/cart/:id` | Edit item quantity — atomic: syncs shelf stock delta |
+| DELETE | `/cart/:id` | Remove product — atomic: restores shelf stock |
+| DELETE | `/cart` | Clear entire cart — atomic: restores all shelf stock |
+| POST | `/cart/checkout` | Purchase cart — atomic: deducts user credit, clears cart |
 
 ---
 
 ## ✅ Completed Features
-- **PostgreSQL Database Integration**
-- **User Management** (CRUD operations)
-- **Product Management** (CRUD operations)
-- **Handlebars UI Engine** (Layouts + Views)
-- **Shopping Cart System**
-- **Dynamic Inventory Management** (Real-time logical shelf stock allocations)
-- **Stock Validation Guardrails** (Server-side 400 Bad Request prevention + Client-side HTML protections)
+
+- **PostgreSQL Database Integration** — pool-based connections with automated initialization on boot
+- **User Management** — CRUD with per-user `credit` balance (display & edit)
+- **Product Management** — CRUD with real-time `stock` tracking
+- **Handlebars UI Engine** — Layouts, partials and server-rendered views
+- **Shopping Cart System** — Upsert logic, quantity updates, item removal, full clear
+- **Dynamic Inventory Management** — Real-time logical shelf stock allocations on every cart action
+- **Stock Validation** — Server-side 400 guardrails + client-side HTML max attribute
+- **ACID Transaction Management** — All cart mutations wrapped in `BEGIN/COMMIT/ROLLBACK`
+- **Checkout System** — Credit balance deduction with insufficient-funds rollback
+- **ORM-Ready Model Layer** — Every model function accepts `dbClient = pool` for easy migration
 
 ## ⏳ What remains to be implemented?
-- Transaction management with sql queries
-- Object-Relational Mapping (ORM)
+
+- Object-Relational Mapping (ORM) — e.g. Sequelize or Prisma
 - User authentication
-- Session management
-- Role management
+- Session management (replace hardcoded `userId = 1`)
+- Role-based access control (RBAC)
 
 ---
 
