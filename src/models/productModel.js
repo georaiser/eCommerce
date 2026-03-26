@@ -39,4 +39,12 @@ const getProductById = async (id) => {
     return rows[0];
 };
 
-export { getAllProducts, addProduct, updateProduct, deleteProduct, getProductById };    
+//Update product stock by id
+const updateProductStock = async (id, newStock) => {
+    const query = 'UPDATE products SET stock = $1 WHERE id = $2 RETURNING *'
+    const data = [newStock, id]
+    const {rows} = await pool.query(query, data);
+    return rows[0];
+};
+
+export { getAllProducts, addProduct, updateProduct, deleteProduct, getProductById, updateProductStock };    
