@@ -1,10 +1,10 @@
 import express from 'express';
 // Importing the routes
-import appRoutes from './routes/appRoutes.js';
-import authRoutes from './routes/authRoutes.js';
-import userRoutes from './routes/userRoutes.js';
-import productRoutes from './routes/productRoutes.js';
-import cartRoutes from './routes/cartRoutes.js';
+import appRoutes from './routes/SQL/appRoutes.js';
+import authRoutes from './routes/SQL/authRoutes.js';
+import userRoutes from './routes/SQL/userRoutes.js';
+import productRoutes from './routes/SQL/productRoutes.js';
+import cartRoutes from './routes/SQL/cartRoutes.js';
 
 
 // Importing the express-handlebars package for view rendering
