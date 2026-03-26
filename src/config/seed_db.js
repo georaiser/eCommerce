@@ -1,6 +1,4 @@
-import { pool } from './db.js';
-
-const seedDatabase = async () => {
+const seedDatabase = async (pool) => {
     try {
         // Clear tables before seeding to prevent duplicates
         await pool.query('TRUNCATE TABLE users, products RESTART IDENTITY CASCADE');
@@ -39,10 +37,7 @@ const seedDatabase = async () => {
         console.log('Inserted cart.');
     } catch (error) {
         console.error('Error seeding database:', error.message);
-    } finally {
-        // Exit process to close the manual script
-        process.exit(0); 
     }
 };
 
-seedDatabase();
+export {seedDatabase};

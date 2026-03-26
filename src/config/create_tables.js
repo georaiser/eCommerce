@@ -41,7 +41,7 @@ const createCartTables = async (pool) => {
             id SERIAL PRIMARY KEY,
             user_id INTEGER,
             product_id INTEGER,
-            quantity SMALLINT NOT NULL CHECK (quantity > 0 AND quantity <= 100),
+            quantity SMALLINT NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
         CONSTRAINT fk_cart_user
@@ -55,7 +55,10 @@ const createCartTables = async (pool) => {
             ON DELETE CASCADE,
 
         CONSTRAINT uq_cart_user_product
-            UNIQUE (user_id, product_id)
+            UNIQUE (user_id, product_id),
+            
+        CONSTRAINT cart_quantity_check
+            CHECK (quantity > 0)
     );
         `);
     console.log("Cart tables created successfully!");

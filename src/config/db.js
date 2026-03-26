@@ -2,6 +2,7 @@ import pg from 'pg';
 import dotenv from 'dotenv';
 import createDatabase from './create_db.js';
 import {createUserTables, createProductTables, createCartTables} from './create_tables.js';
+import {seedDatabase} from './seed_db.js';
 dotenv.config();
 
 const { Pool } = pg;
@@ -40,6 +41,7 @@ try {
     await createUserTables(pool);
     await createProductTables(pool);
     await createCartTables(pool);
+    await seedDatabase(pool);
 
 } catch (error) {
     console.error('Database connection error:', error);
