@@ -1,28 +1,18 @@
-import { getShoppingCart, addToCart, updateCartQuantity, removeFromCart, clearCart, getCartTotal, getCartCount, processCheckout } from '../models/cartModel.js';
+import { getShoppingCart, getCartItem, addToCart, updateCartQuantity, removeFromCart, clearCart, getCartTotal, getCartCount } from '../models/cartModel.js';
 import { getAllProducts, getProductById, updateProductStock } from "../models/productModel.js";
-import { getUserById } from "../models/userModel.js";
+import { getUserById, updateUserCredit } from "../models/userModel.js";
 import { pool } from '../config/db.js';
 
-// GET products list and shopping cart
+// GET /cart - render cart page
 const shoppingCart = async (req, res) => {
     try {
-        const userId = 1; // hardcoded for now
-        
-        // 0. Fetch the user's credit
+        const userId = 1;
         const userResult = await getUserById(userId);
         const userCredit = userResult[0]?.credit || "0.00";
-
-        // 1. Fetch the user's cart
         const cart = await getShoppingCart(userId);
-        
-        // 2. Fetch all products available to add to the cart
         const products = await getAllProducts();
-        
-        // 3. Fetch the Grand Total of the entire cart!
         const totalResult = await getCartTotal(userId);
         const cartTotal = totalResult[0]?.total || 0;
-
-        // 4. Render the page passing all data to Handlebars!
         res.render("cart_page", { pageName: "Cart", cart, products, cartTotal, userCredit });
     } catch (error) {
         res.status(500).send(`Error loading cart page: ${error}`);
@@ -31,185 +21,166 @@ const shoppingCart = async (req, res) => {
 
 // POST /cart - add product to cart
 const addProductToCart = async (req, res) => {
+    const userId = 1;
+    const { productId, quantity } = req.body;
+    const requestedQty = parseInt(quantity);
+
+    const client = await pool.connect();
     try {
-        const userId = 1; // hardcoded for now
-        const { productId, quantity } = req.body;
-        const requestedQuantity = parseInt(quantity);
-        
-        // 1. Check shelf stock
-        const product = await getProductById(productId);
-        if (!product) return res.status(404).send("Product not found");
-        
-        if (requestedQuantity > product.stock) {
-            return res.status(400).send(`Cannot add ${requestedQuantity}. There are only ${product.stock} units left on the shelf!`);
-        }
-        
-        // 2. See if we already have it in the cart, so we can sum the new total internally
-        const cartItems = await getShoppingCart(userId);
-        const existingCartItem = cartItems.find(item => item.product_id == productId);
-        const currentCartQuantity = existingCartItem ? parseInt(existingCartItem.quantity) : 0;
-        const newTotalQuantity = currentCartQuantity + requestedQuantity;
-        
-        // 3. Deduct from shelf stock dynamically (Product Table)
-        await updateProductStock(productId, product.stock - requestedQuantity);
-        
-        // 4. Upsert (Update if exists, Insert if new) into Cart Table
-        if (existingCartItem) {
-            await updateCartQuantity(userId, productId, newTotalQuantity); 
+        await client.query('BEGIN');
+
+        const product = await getProductById(productId, client);
+        if (!product) throw new Error('Product not found');
+        if (requestedQty > product.stock) throw new Error(`Only ${product.stock} units available in stock!`);
+
+        const existing = await getCartItem(userId, productId, client);
+        if (existing) {
+            await updateCartQuantity(userId, productId, existing.quantity + requestedQty, client);
         } else {
-            await addToCart(userId, productId, requestedQuantity); 
+            await addToCart(userId, productId, requestedQty, client);
         }
-        
-        res.send(`Successfully added ${requestedQuantity}!`);
-    } catch (error) {
-        console.error("Cart Add Error:", error);
-        res.status(500).send(`Error adding product to cart`);
+        await updateProductStock(productId, product.stock - requestedQty, client);
+
+        await client.query('COMMIT');
+        res.send(`Successfully added ${requestedQty}!`);
+    } catch (err) {
+        await client.query('ROLLBACK');
+        res.status(400).send(err.message);
+    } finally {
+        client.release();
     }
 };
 
-// PUT /cart/:id - update product quantity in cart
+// PUT /cart/:id - update item quantity
 const updateCartItemQuantity = async (req, res) => {
+    const userId = 1;
+    const { id } = req.params;
+    const newQty = parseInt(req.body.quantity);
+
+    const client = await pool.connect();
     try {
-        const userId = 1; // hardcoded for now
-        const { id } = req.params;
-        const newRequestedQuantity = parseInt(req.body.quantity);
-        
-        // 1. Get shelf and cart sync
-        const product = await getProductById(id);
-        const cartItems = await getShoppingCart(userId);
-        const existingCartItem = cartItems.find(item => item.product_id == id);
-        
-        if (!existingCartItem) return res.status(404).send("Item not in cart!");
-        
-        const currentCartQuantity = parseInt(existingCartItem.quantity);
-        
-        // Positive difference means they are ADDING more. Negative means returning to shelf.
-        const difference = newRequestedQuantity - currentCartQuantity; 
-        
-        // 2. Check if we have enough shelf stock to fulfill the difference
-        if (difference > product.stock) {
-            return res.status(400).send(`Cannot add ${difference} more. There are only ${product.stock} units left on the shelf!`);
-        }
+        await client.query('BEGIN');
 
-        // 3. Update shelf stock
-        await updateProductStock(id, product.stock - difference);
+        const product = await getProductById(id, client);
+        const cartItem = await getCartItem(userId, id, client);
+        if (!cartItem) throw new Error('Item not in cart!');
 
-        // 4. Update product quantity in cart
-        await updateCartQuantity(userId, id, newRequestedQuantity); 
-        res.send(`Cart quantity updated successfully!`);
-    } catch (error) {
-        res.status(500).send(`Error updating product quantity in cart: ${error}`);
+        const difference = newQty - cartItem.quantity; // positive = adding more, negative = returning
+        if (difference > product.stock) throw new Error(`Only ${product.stock} more units available!`);
+
+        await updateProductStock(id, product.stock - difference, client);
+        await updateCartQuantity(userId, id, newQty, client);
+
+        await client.query('COMMIT');
+        res.send(`Cart quantity updated!`);
+    } catch (err) {
+        await client.query('ROLLBACK');
+        res.status(400).send(err.message);
+    } finally {
+        client.release();
     }
 };
 
-// DELETE /cart/:id - remove product from cart
+// DELETE /cart/:id - remove one item
 const removeCartItem = async (req, res) => {
+    const userId = 1;
+    const { id } = req.params;
+
+    const client = await pool.connect();
     try {
-        const userId = 1; // hardcoded for now
-        const { id } = req.params;
-        
-        // 1. Find cart item to know exactly how much to return to shelf
-        const cartItems = await getShoppingCart(userId);
-        const existingCartItem = cartItems.find(item => item.product_id == id);
-        if(!existingCartItem) return res.status(404).send("Item not in cart");
+        await client.query('BEGIN');
 
-        const product = await getProductById(id);
+        const cartItem = await getCartItem(userId, id, client);
+        if (!cartItem) throw new Error('Item not in cart!');
 
-        // 2. Return to shelf (Product Table)
-        await updateProductStock(id, product.stock + parseInt(existingCartItem.quantity));
-        
-        // 3. Remove product from cart (Cart Table)
-        await removeFromCart(userId, id);
+        const product = await getProductById(id, client);
+        await updateProductStock(id, product.stock + cartItem.quantity, client);
+        await removeFromCart(userId, id, client);
+
+        await client.query('COMMIT');
         res.send(`Product removed and returned to shelf!`);
-    } catch (error) {
-        res.status(500).send(`Error removing product from cart: ${error}`);
+    } catch (err) {
+        await client.query('ROLLBACK');
+        res.status(400).send(err.message);
+    } finally {
+        client.release();
     }
 };
 
-// DELETE /cart - clear cart
+// DELETE /cart - clear entire cart
 const clearCartItems = async (req, res) => {
+    const userId = 1;
+
+    const client = await pool.connect();
     try {
-        const userId = 1; // hardcoded for now
-        
-        // 1. Return all active cart items back to the shelf 
-        const cartItems = await getShoppingCart(userId);
-        for(let item of cartItems) {
-             const product = await getProductById(item.product_id);
-             await updateProductStock(product.id, product.stock + parseInt(item.quantity));
+        await client.query('BEGIN');
+
+        const cartItems = await getShoppingCart(userId, client);
+        if (cartItems.length === 0) throw new Error('Cart is already empty!');
+
+        for (let item of cartItems) {
+            const product = await getProductById(item.product_id, client);
+            await updateProductStock(item.product_id, product.stock + item.quantity, client);
         }
-        
-        // 2. Clear cart
-        await clearCart(userId); 
+        await clearCart(userId, client);
+
+        await client.query('COMMIT');
         res.send(`Cart cleared and all items returned to shelf!`);
-    } catch (error) {
-        res.status(500).send(`Error clearing cart: ${error}`);
+    } catch (err) {
+        await client.query('ROLLBACK');
+        res.status(400).send(err.message);
+    } finally {
+        client.release();
     }
 };
 
-// GET /cart/total - get cart total
+// POST /cart/checkout - buy everything in cart
+const checkoutCart = async (req, res) => {
+    const userId = 1;
+
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN');
+
+        const totalResult = await getCartTotal(userId, client);
+        const total = parseFloat(totalResult[0]?.total || 0);
+        if (total <= 0) throw new Error('Your cart is empty!');
+
+        const userResult = await getUserById(userId, client);
+        const user = userResult[0];
+        const credit = parseFloat(user.credit);
+        if (credit < total) throw new Error(`Insufficient funds! You have $${credit.toFixed(2)} but need $${total.toFixed(2)}.`);
+
+        await updateUserCredit(userId, credit - total, client);
+        await clearCart(userId, client);
+
+        await client.query('COMMIT');
+        res.send(`Purchase successful! You have $${(credit - total).toFixed(2)} remaining credit.`);
+    } catch (err) {
+        await client.query('ROLLBACK');
+        res.status(400).send(err.message);
+    } finally {
+        client.release();
+    }
+};
+
+// GET /cart/total
 const getCartItemsTotal = async (req, res) => {
     try {
-        const userId = 1; // hardcoded for now
-        const total = await getCartTotal(userId); 
-        res.send(`Cart total: ${total}`);
+        const result = await getCartTotal(1);
+        res.send(`Cart total: ${result[0]?.total || 0}`);
     } catch (error) {
         res.status(500).send(`Error getting cart total: ${error}`);
     }
 };
 
-// GET /cart/count - get cart item count
+// GET /cart/count
 const getCartItemCount = async (req, res) => {
     try {
-        const userId = 1; // hardcoded for now
-        const count = await getCartCount(userId); 
+        const count = await getCartCount(1);
         res.send(`Cart item count: ${count}`);
     } catch (error) {
         res.status(500).send(`Error getting cart item count: ${error}`);
-    }
-};
-
-// POST /cart/checkout - execute an atomic transaction
-const checkoutCart = async (req, res) => {
-    try {
-        const userId = 1;
-
-        // 1. Fetch total cart price
-        const totalResult = await getCartTotal(userId);
-        const cartTotal = totalResult[0]?.total || 0;
-        if (cartTotal <= 0) return res.status(400).send("Your cart is empty!");
-
-        // 2. Fetch user to check credit
-        const userResp = await getUserById(userId);
-        const user = userResp[0];
-        if (!user) return res.status(404).send("User not found!");
-
-        const currentCredit = parseFloat(user.credit);
-        const totalFloat = parseFloat(cartTotal);
-
-        // 3. Business logic: validate sufficient funds
-        if (currentCredit < totalFloat) {
-            return res.status(400).send(`Insufficient funds! You have $${currentCredit.toFixed(2)} but your cart total is $${totalFloat.toFixed(2)}.`);
-        }
-
-        const newCredit = currentCredit - totalFloat;
-
-        // 4. Execute atomic writes via model (client transaction)
-        const client = await pool.connect();
-        try {
-            await client.query('BEGIN');
-            await processCheckout(client, userId, newCredit);
-            await client.query('COMMIT');
-            res.send(`Purchase successful! You have $${newCredit.toFixed(2)} remaining credit.`);
-        } catch (dbError) {
-            await client.query('ROLLBACK');
-            throw dbError;
-        } finally {
-            client.release();
-        }
-
-    } catch (error) {
-        console.error("Checkout Error:", error);
-        res.status(500).send("Error processing checkout transaction");
     }
 };
 

@@ -32,18 +32,18 @@ const deleteProduct = async (id) => {
 };
 
 //Get a product by id
-const getProductById = async (id) => {
+const getProductById = async (id, dbClient = pool) => {
     const query = 'SELECT * FROM products WHERE id = $1'
     const data = [id]
-    const {rows} = await pool.query(query, data);
+    const { rows } = await dbClient.query(query, data);
     return rows[0];
 };
 
 //Update product stock by id
-const updateProductStock = async (id, newStock) => {
+const updateProductStock = async (id, newStock, dbClient = pool) => {
     const query = 'UPDATE products SET stock = $1 WHERE id = $2 RETURNING *'
     const data = [newStock, id]
-    const {rows} = await pool.query(query, data);
+    const { rows } = await dbClient.query(query, data);
     return rows[0];
 };
 
