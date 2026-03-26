@@ -6,11 +6,11 @@ const seedDatabase = async (pool) => {
 
         // Insert Users
         await pool.query(`
-            INSERT INTO users (name, email, password, role, created_at)
+            INSERT INTO users (name, email, password, role, credit, created_at)
             VALUES 
-                ('Bob Johnson', 'bob.johnson@example.com', '1234', 'user', '2024-01-17 09:45:00'),
-                ('jorge antonio', 'jorge@example.com', '1234', 'user', '2026-03-12 09:45:00'),
-                ('jorge', 'jorge1@example.com', '1234', 'user', '2026-03-12 09:45:00')
+                ('Bob Johnson', 'bob.johnson@example.com', '1234', 'user', 1000.00, '2024-01-17 09:45:00'),
+                ('jorge antonio', 'jorge@example.com', '1234', 'user', 500.00, '2026-03-12 09:45:00'),
+                ('jorge', 'jorge1@example.com', '1234', 'user', 25.00, '2026-03-26 19:45:00')
         `);
         console.log('Inserted users.');
 

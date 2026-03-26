@@ -1,11 +1,17 @@
 import { getShoppingCart, addToCart, updateCartQuantity, removeFromCart, clearCart, getCartTotal, getCartCount } from '../models/cartModel.js';
 import { getAllProducts, getProductById, updateProductStock } from "../models/productModel.js";
+import { getUserById } from "../models/userModel.js";
+import { pool } from '../config/db.js';
 
 // GET products list and shopping cart
 const shoppingCart = async (req, res) => {
     try {
         const userId = 1; // hardcoded for now
         
+        // 0. Fetch the user's credit
+        const userResult = await getUserById(userId);
+        const userCredit = userResult[0]?.credit || "0.00";
+
         // 1. Fetch the user's cart
         const cart = await getShoppingCart(userId);
         
@@ -17,7 +23,7 @@ const shoppingCart = async (req, res) => {
         const cartTotal = totalResult[0]?.total || 0;
 
         // 4. Render the page passing all data to Handlebars!
-        res.render("cart_page", { pageName: "Cart", cart, products, cartTotal });
+        res.render("cart_page", { pageName: "Cart", cart, products, cartTotal, userCredit });
     } catch (error) {
         res.status(500).send(`Error loading cart page: ${error}`);
     }
@@ -162,4 +168,58 @@ const getCartItemCount = async (req, res) => {
     }
 };
 
-export { shoppingCart, addProductToCart, updateCartItemQuantity, removeCartItem, clearCartItems, getCartItemsTotal, getCartItemCount };
+// POST /cart/checkout - execute an atomic transaction
+const checkoutCart = async (req, res) => {
+    try {
+        const userId = 1; 
+        
+        // 1. Fetch total cart price
+        const totalResult = await getCartTotal(userId);
+        const cartTotal = totalResult[0]?.total || 0;
+        
+        if (cartTotal <= 0) return res.status(400).send("Your cart is empty!");
+
+        // 2. Fetch user to check credit
+        const userResp = await getUserById(userId);
+        const user = userResp[0];
+        if (!user) return res.status(404).send("User not found!");
+        
+        const currentCredit = parseFloat(user.credit);
+        const totalFloat = parseFloat(cartTotal);
+        
+        // 3. Setup PostgreSQL Transaction Client
+        const client = await pool.connect();
+        
+        try {
+            await client.query('BEGIN'); // Start transaction
+            
+            // 4. Check if they have enough money!
+            if (currentCredit < totalFloat) {
+                await client.query('ROLLBACK'); // Abort!
+                return res.status(400).send(`Insufficient funds! You have $${currentCredit.toFixed(2)} but your cart total is $${totalFloat.toFixed(2)}.`);
+            }
+            
+            // 5. Deduct money securely
+            const newCredit = currentCredit - totalFloat;
+            await client.query('UPDATE users SET credit = $1 WHERE id = $2', [newCredit, userId]);
+            
+            // 6. Clear their cart permanently (without restoring physical stock, because they bought it!)
+            await client.query('DELETE FROM cart WHERE user_id = $1', [userId]);
+            
+            await client.query('COMMIT'); // Finalize Transaction
+            res.send(`Purchase successful! You have $${newCredit.toFixed(2)} remaining credit.`);
+            
+        } catch (dbError) {
+            await client.query('ROLLBACK'); // In case of arbitrary failure midway, rollback!
+            throw dbError;
+        } finally {
+            client.release();
+        }
+
+    } catch (error) {
+        console.error("Checkout Error:", error);
+        res.status(500).send("Error processing checkout transaction");
+    }
+};
+
+export { shoppingCart, addProductToCart, updateCartItemQuantity, removeCartItem, clearCartItems, getCartItemsTotal, getCartItemCount, checkoutCart };

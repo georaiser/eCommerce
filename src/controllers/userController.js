@@ -38,8 +38,8 @@ const getUsersDB = async (req, res) => {
 // POST /users
 const addUserDB = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
-    await createUser(name, email, password, role); // Calls the model!
+    const { name, email, password, role, credit } = req.body;
+    await createUser(name, email, password, role, credit || 0.00); // Calls the model!
     res.send(`User ${name} added successfully!`);
   } catch (error) {
     res.status(500).send(`Error saving user: ${error}`);
@@ -61,7 +61,7 @@ const deleteUserDB = async (req, res) => {
 const updateUserDB = async (req, res) => {
   try {
     const { id } = req.params; // ID comes from the URL
-    let { name, email, password, role } = req.body; // Data comes from the body
+    let { name, email, password, role, credit } = req.body; // Data comes from the body
 
     // Fetch the existing user first to protect blank fields like password
     const existingUsers = await getUserById(id); // Calls the model!
@@ -71,8 +71,9 @@ const updateUserDB = async (req, res) => {
     // email = email || existingUser.email;
     password = password || existingUser.password;
     // role = role || existingUser.role;
+    credit = credit || existingUser.credit;
 
-    await updateUser(id, name, email, password, role); // Calls the model!
+    await updateUser(id, name, email, password, role, credit); // Calls the model!
     res.send(`User ${name} updated successfully!`);
   } catch (error) {
     res.status(500).send(`Error updating user: ${error}`);

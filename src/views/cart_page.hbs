@@ -49,7 +49,10 @@
                 <div class="card-header">
                     <h4 class="d-flex justify-content-between align-items-center">
                         <span>Shopping Cart</span>
-                        <span class="badge bg-success rounded-pill">Total: ${{cartTotal}}</span>
+                        <div>
+                            <span class="badge bg-primary text-light me-2">Credit: ${{userCredit}}</span>
+                            <span class="badge bg-success rounded-pill">Total: ${{cartTotal}}</span>
+                        </div>
                     </h4>
                 </div>
                 <table class="table table-ligth">
@@ -86,6 +89,11 @@
 
                     </tbody>
                 </table>
+                <div class="card-footer text-end mt-3">
+                    <button class="btn btn-success fw-bold px-4 btn-checkout">
+                        <i class="bi bi-credit-card me-2"></i> Checkout / Buy
+                    </button>
+                </div>
             </div>
         </div>
     </div>

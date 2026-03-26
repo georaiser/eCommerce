@@ -7,6 +7,7 @@ const createUserTables = async (pool) => {
                 email VARCHAR(255) UNIQUE NOT NULL,
                 password VARCHAR(255) NOT NULL,
                 role VARCHAR(255) NOT NULL,
+                credit DECIMAL(10, 2) DEFAULT 0.00,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
         `);

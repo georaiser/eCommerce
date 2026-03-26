@@ -36,6 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
       email: document.getElementById("email").value.trim(),
       role: document.getElementById("role").value.trim(),
       password: document.getElementById("password").value.trim(),
+      credit: document.getElementById("credit").value.trim() || 0,
       createdAt: new Date().toISOString(),
     };
 
@@ -103,6 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const currentName = row.children[0].innerText;
       const currentEmail = row.children[1].innerText;
       const currentRole = row.children[2].innerText;
+      const currentCreditStr = row.children[3].innerText.replace('$', '');
 
       // Ask the user for the new data (Simple implementation)
       const newName = prompt("Enter new name:", currentName);
@@ -113,6 +115,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const newRole = prompt("Enter new role:", currentRole);
       if (newRole === null) return;
+      
+      const newCredit = prompt("Enter new credit amount:", currentCreditStr);
+      if (newCredit === null) return;
 
       const newPassword = prompt(
         "Enter new password (leave blank to keep current):",
@@ -125,6 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
         name: newName.trim(),
         email: newEmail.trim(),
         role: newRole.trim(),
+        credit: newCredit.trim(),
         password: newPassword.trim(),
       };
 

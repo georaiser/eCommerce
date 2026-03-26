@@ -3,14 +3,14 @@ import { pool } from '../config/db.js';
 //get all users
 const getAllUsers = async () => {
     //const {rows} = await pool.query('SELECT * FROM users');
-    const {rows} = await pool.query("SELECT id, name, email, role, TO_CHAR(created_at, 'MM/DD/YYYY HH:MI') as created_at FROM users");
+    const {rows} = await pool.query("SELECT id, name, email, role, credit, TO_CHAR(created_at, 'MM/DD/YYYY HH:MI') as created_at FROM users");
     return rows;
 };
 
 //create user
-const createUser = async (name, email, password, role) => {
-    const query = 'INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3, $4) RETURNING *'
-    const data = [name, email, password, role]
+const createUser = async (name, email, password, role, credit) => {
+    const query = 'INSERT INTO users (name, email, password, role, credit) VALUES ($1, $2, $3, $4, $5) RETURNING *'
+    const data = [name, email, password, role, credit]
     const {rows} = await pool.query(query, data);
     console.log(rows);
     return rows[0];
@@ -25,9 +25,9 @@ const deleteUser = async (id) => {
 };
 
 //update user by id
-const updateUser = async (id, name, email, password, role) => {
-    const query = 'UPDATE users SET name = $1, email = $2, password = $3, role = $4 WHERE id = $5 RETURNING *'
-    const data = [name, email, password, role, id]
+const updateUser = async (id, name, email, password, role, credit) => {
+    const query = 'UPDATE users SET name = $1, email = $2, password = $3, role = $4, credit = $5 WHERE id = $6 RETURNING *'
+    const data = [name, email, password, role, credit, id]
     const {rows} = await pool.query(query, data);
     return rows[0];
 };

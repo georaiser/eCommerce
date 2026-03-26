@@ -73,4 +73,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // CHECKOUT CART (Transaction)
+  document.addEventListener("click", async (event) => {
+    if (event.target.closest(".btn-checkout")) {
+      if (!confirm("Are you sure you want to purchase these items?")) return;
+
+      const response = await fetch('/cart/checkout', { method: 'POST' });
+
+      if (response.ok) {
+        const successMsg = await response.text();
+        alert(successMsg);
+        window.location.reload();
+      } else {
+        const errorMsg = await response.text();
+        alert(errorMsg); // E.g., "Insufficient funds!"
+      }
+    }
+  });
+
 });
