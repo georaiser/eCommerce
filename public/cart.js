@@ -91,4 +91,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // CLEAR CART
+  document.addEventListener("click", async (event) => {
+    if (event.target.closest(".btn-clear-cart")) {
+      if (!confirm("Are you sure you want to empty your entire cart? These items will be returned to the shelf.")) return;
+
+      const response = await fetch('/cart', { method: 'DELETE' });
+
+      if (response.ok) {
+        const successMsg = await response.text();
+        alert(successMsg);
+        window.location.reload();
+      } else {
+        const errorMsg = await response.text();
+        alert("Failed to clear cart: " + errorMsg);
+      }
+    }
+  });
+
 });

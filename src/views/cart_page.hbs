@@ -50,7 +50,7 @@
                     <h4 class="d-flex justify-content-between align-items-center">
                         <span>Shopping Cart</span>
                         <div>
-                            <span class="badge bg-primary text-light me-2">Credit: ${{userCredit}}</span>
+                            <!--<span class="badge bg-primary text-light me-2">Credit: ${{userCredit}}</span>-->
                             <span class="badge bg-success rounded-pill">Total: ${{cartTotal}}</span>
                         </div>
                     </h4>
@@ -66,7 +66,6 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {{#if cart}}
                         {{#each cart}}
                         <div class="cart-item">
                             <tr>
@@ -83,13 +82,12 @@
                             </tr>
                         </div>
                         {{/each}}
-                        {{else}}
-                        <p>Your cart is empty.</p>
-                        {{/if}}
-
                     </tbody>
                 </table>
-                <div class="card-footer text-end mt-3">
+                <div class="card-footer text-end mt-6 d-flex justify-content-between gap-2">
+                    <button class="btn btn-danger fw-bold px-4 btn-clear-cart">
+                        <i class="bi bi-trash me-2"></i> Clear Cart
+                    </button>
                     <button class="btn btn-success fw-bold px-4 btn-checkout">
                         <i class="bi bi-credit-card me-2"></i> Checkout / Buy
                     </button>
