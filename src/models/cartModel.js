@@ -53,7 +53,7 @@ const clearCart = async (userId, dbClient = pool) => {
     return rows;
 };
 
-// get cart total
+// get cart total — returns plain numeric value (0 if empty)
 const getCartTotal = async (userId, dbClient = pool) => {
     const query = `
         SELECT SUM(sc.quantity * p.price) AS total
@@ -63,15 +63,15 @@ const getCartTotal = async (userId, dbClient = pool) => {
     `;
     const data = [userId];
     const { rows } = await dbClient.query(query, data);
-    return rows;
+    return parseFloat(rows[0]?.total || 0);
 };
 
-// get cart item count
+// get cart item count — returns plain integer
 const getCartCount = async (userId, dbClient = pool) => {
     const query = 'SELECT COUNT(*) AS count FROM cart WHERE user_id = $1';
     const data = [userId];
     const { rows } = await dbClient.query(query, data);
-    return rows;
+    return parseInt(rows[0]?.count || 0);
 };
 
 export { getShoppingCart, getCartItem, addToCart, updateCartQuantity, removeFromCart, clearCart, getCartTotal, getCartCount };

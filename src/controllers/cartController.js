@@ -11,8 +11,7 @@ const shoppingCart = async (req, res) => {
         const userCredit = userResult[0]?.credit || "0.00";
         const cart = await getShoppingCart(userId);
         const products = await getAllProducts();
-        const totalResult = await getCartTotal(userId);
-        const cartTotal = totalResult[0]?.total || 0;
+        const cartTotal = await getCartTotal(userId);
         res.render("cart_page", { pageName: "Cart", cart, products, cartTotal, userCredit });
     } catch (error) {
         res.status(500).send(`Error loading cart page: ${error}`);
@@ -142,20 +141,19 @@ const checkoutCart = async (req, res) => {
     try {
         await client.query('BEGIN');
 
-        const totalResult = await getCartTotal(userId, client);
-        const total = parseFloat(totalResult[0]?.total || 0);
+        const total = await getCartTotal(userId, client);
         if (total <= 0) throw new Error('Your cart is empty!');
 
         const userResult = await getUserById(userId, client);
-        const user = userResult[0];
-        const credit = parseFloat(user.credit);
+        const credit = parseFloat(userResult[0].credit);
         if (credit < total) throw new Error(`Insufficient funds! You have $${credit.toFixed(2)} but need $${total.toFixed(2)}.`);
 
-        await updateUserCredit(userId, credit - total, client);
+        const newCredit = parseFloat((credit - total).toFixed(2)); // round to avoid float drift
+        await updateUserCredit(userId, newCredit, client);
         await clearCart(userId, client);
 
         await client.query('COMMIT');
-        res.send(`Purchase successful! You have $${(credit - total).toFixed(2)} remaining credit.`);
+        res.send(`Purchase successful! You have $${newCredit.toFixed(2)} remaining credit.`);
     } catch (err) {
         await client.query('ROLLBACK');
         res.status(400).send(err.message);
@@ -167,8 +165,8 @@ const checkoutCart = async (req, res) => {
 // GET /cart/total
 const getCartItemsTotal = async (req, res) => {
     try {
-        const result = await getCartTotal(1);
-        res.send(`Cart total: ${result[0]?.total || 0}`);
+        const total = await getCartTotal(1);
+        res.send(`Cart total: ${total}`);
     } catch (error) {
         res.status(500).send(`Error getting cart total: ${error}`);
     }
