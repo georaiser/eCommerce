@@ -1,6 +1,6 @@
-# CommerceManager API
+# CommerceManager
 
-A RESTful platform API covering **User Administration**, **E-Commerce**, and **Inventory Management**, built with **Node.js**, **Express**, **PostgreSQL** and **ES6** (import/export).
+A RESTful platform covering **User Administration**, **E-Commerce**, and **Inventory Management**, built with **Node.js**, **Express**, **PostgreSQL** and **ES6** (import/export).
 
 ---
 
@@ -12,138 +12,116 @@ commerceManager/
 ├── src/
 │   ├── controllers/
 │   │   ├── appController.js        ← home & page handlers
-│   │   ├── authController.js       ← login, register, logout handlers
-│   │   ├── userController.js       ← getUsers, addUser (reads/writes users.json)
-│   │   └── productController.js    ← getProducts, addProduct (reads/writes products.json)
+│   │   ├── userController.js       ← user CRUD handlers
+│   │   ├── productController.js    ← product CRUD handlers
+│   │   └── cartController.js       ← shopping cart & inventory handlers
 │   │
 │   ├── routes/
-│   │   ├── appRoutes.js            ← GET /, GET /login
-│   │   ├── authRoutes.js           ← POST /auth/register, /auth/login
-│   │   ├── userRoutes.js           ← GET /users, POST /user
-│   │   └── productRoutes.js        ← GET /products, POST /products
+│   │   ├── appRoutes.js            ← GET /
+│   │   ├── userRoutes.js           ← GET /users, POST /user, PUT /user/:id, DELETE /user/:id
+│   │   ├── productRoutes.js        ← GET /products, POST /product, PUT /product/:id, DELETE /product/:id
+│   │   └── cartRoutes.js           ← GET /cart, POST /cart, PUT /cart/:id, DELETE /cart/:id
 │   │
+│   ├── models/
+│   │   ├── userModel.js            ← PostgreSQL queries for Users
+│   │   ├── productModel.js         ← PostgreSQL queries for Products
+│   │   └── cartModel.js            ← PostgreSQL queries for Cart
 │   │
 │   ├── config/
-│   │   └── db.js                   (empty — planned for PostgreSQL connection via Sequelize)
+│   │   ├── db.js                   ← PostgreSQL pool connection setup
+│   │   ├── create_db.js            ← Initialization script to create database
+│   │   ├── create_tables.js        ← Initialization script to build tables
+│   │   └── seed_db.js              ← Initialization script to INSERT default data
 │   │
 │   ├── data/
-│   │   ├── users.json              ← temp local data source (dev only)
-│   │   └── products.json           ← temp local data source (dev only)
+│   │   ├── users.json              ← (Deprecated) historical local data source
+│   │   └── products.json           ← (Deprecated) historical local data source
 │   │
 │   └── views/                      ← Handlebars (HBS) server-rendered templates
 │       ├── home.hbs                ← home page template
-│       ├── products.hbs            ← products list + add-product form
+│       ├── products_page.hbs       ← products list + add-product form
+│       ├── users_page.hbs          ← users list + add-user form
+│       ├── cart_page.hbs           ← interactive shopping cart display
 │       └── layouts/
 │           └── main.hbs            ← base layout wrapper
 │
 ├── public/                         ← static files served by Express
 │   ├── css/                        ← stylesheets
-│   └── products.js                 ← client-side JS for the products form
+│   ├── products.js                 ← client-side JS for the products form
+│   ├── users.js                    ← client-side JS for the users form
+│   └── cart.js                     ← client-side JS for shopping cart actions
 │
 ├── src/app.js                      ← Express setup, middleware, routes
-├── .env
-├── .gitignore
-├── package.json
-└── server.js                       ← entry point, starts server
+├── .env                            ← Environment variables
+├── package.json                    ← Depedency list
+└── server.js                       ← Entry point, starts server
 ```
 
 ---
 
-## 📂 Layers
+## 🔄 Client–Server Architecture
 
-| Layer | Responsibility |
-|-------|---------------|
-| `routes/` | Maps HTTP endpoints to controllers |
-| `controllers/` | Handles request/response, calls services |
-| `services/` | Business logic, DB queries via models |
-| `models/` | Sequelize table definitions |
-| `middleware/` | JWT verification, error handling |
-| `views/` | HBS templates for server-rendered pages |
-| `config/` | DB connection and environment setup |
-
----
-
-## 🔄 Client–Server Flow (Users)
-
-Similar to the products flow, user forms are handled by client-side JS:
+The application uses standard Model-View-Controller (MVC) paradigms heavily tied to client-side Fetch API interactions.
 
 ```
-Browser (e.g. users.js)                 Server (userController.js)
-──────────────────────                  ──────────────────────────────
-User submits form          ──POST──►    addUser(req, res)
-fetch('/user', {JSON})                  reads req.body
-                                        appends to users.json
-                           ◄────────    res.send('User X added!')
+Browser (e.g. cart.js)                  Server (cartController.js & cartModel.js)
+──────────────────────                  ────────────────────────────────────────
+User clicks "Quantity"     ──PUT──►     updateCartItemQuantity(req, res)
+fetch('/cart/1', {JSON})                1. Checks PostgreSQL for remaining stock
+                                        2. Determines difference vs existing quantity
+                                        3. Updates 'products' table (Shelf Stock)
+                           ◄────────    4. Updates 'cart' table and responds HTTP 200
 response.ok → reload page  
-                           ──GET───►    getUsers(req, res)
-                                        reads users.json
-                           ◄────────    res.render('users', { users })
-Updated table displayed
+                           ──GET───►    shoppingCart(req, res)
+                                        queries DB for total and cart composition
+                           ◄────────    res.render('cart_page', { cart, products, total })
+Updated cart table & total rendered dynamically
 ```
 
----
-
-## 🔄 Client–Server Flow (Products)
-
-
-The product form in `products.hbs` is wired by `public/products.js`:
-
-```
-Browser (products.js)                   Server (productController.js)
-──────────────────────                  ──────────────────────────────
-User submits form          ──POST──►    addProduct(req, res)
-fetch('/products', {JSON})              reads req.body
-                                        appends to products.json
-                           ◄────────    res.send('Product X added!')
-response.ok → reload page  
-                           ──GET───►    getProducts(req, res)
-                                        reads products.json
-                           ◄────────    res.render('products', { products })
-Updated table displayed
-```
-
-> `public/products.js` runs in the **browser** and only communicates via HTTP.
-> `productController.js` runs on the **server** and has exclusive access to the file system.
+> **Client Scripts** run in the **browser** (`public/*.js`) and communicate strictly via HTTP Requests.
+> **Controllers** run on the **server** (`src/controllers/*.js`), execute business logic, call **Models**, and return HTTP Responses.
+> **Models** interact safely with the **PostgreSQL Database** (`src/models/*.js`).
 
 ---
 
 ## 📌 API Endpoints
 
-### Auth (public)
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/auth/register` | Register a new user |
-| POST | `/auth/login` | Login, receive JWT |
-
-### Users (protected)
+### Models & Endpoints
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/users` | Get all users |
-| GET | `/users/:id` | Get a user |
-| PATCH | `/users/:id` | Update a user |
-| DELETE | `/users/:id` | Delete a user |
-
-### Products (protected)
-| Method | Endpoint | Description |
-|--------|----------|-------------|
+| POST | `/user` | Create a user |
+| PUT | `/user/:id` | Update a user |
+| DELETE | `/user/:id` | Delete a user |
+|
 | GET | `/products` | List all products |
-| POST | `/products` | Create a product |
-| PATCH | `/products/:id` | Update a product |
-| DELETE | `/products/:id` | Delete a product |
+| POST | `/product` | Create a product |
+| PUT | `/product/:id` | Update a product |
+| DELETE | `/product/:id` | Delete a product |
+|
+| GET | `/cart` | View current user cart |
+| POST | `/cart` | Add product to cart (Upsert) |
+| PUT | `/cart/:id` | Edit item quantity in cart |
+| DELETE | `/cart/:id` | Remove a product from cart |
+| DELETE | `/cart` | Clear entire cart |
 
-### Orders (protected)
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/orders` | List orders |
-| POST | `/orders` | Place an order |
-| GET | `/orders/:id` | Order detail |
+---
 
-### Inventory (protected)
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/inventory` | View stock levels |
-| PATCH | `/inventory/:productId` | Update stock |
-| GET | `/inventory/low-stock` | Items below threshold |
+## ✅ Completed Features
+- **PostgreSQL Database Integration**
+- **User Management** (CRUD operations)
+- **Product Management** (CRUD operations)
+- **Handlebars UI Engine** (Layouts + Views)
+- **Shopping Cart System**
+- **Dynamic Inventory Management** (Real-time logical shelf stock allocations)
+- **Stock Validation Guardrails** (Server-side 400 Bad Request prevention + Client-side HTML protections)
+
+## ⏳ What remains to be implemented?
+- Transaction management with sql queries
+- Object-Relational Mapping (ORM)
+- User authentication
+- Session management
+- Role management
 
 ---
 
@@ -151,20 +129,10 @@ Updated table displayed
 
 ```env
 PORT=3000
-NODE_ENV=development
 
 DB_HOST=localhost
 DB_PORT=5432
-DB_NAME=nexuscore
+DB_NAME=db_jre
 DB_USER=postgres
 DB_PASSWORD=your_password
-
-JWT_SECRET=your_secret_key
-JWT_EXPIRES_IN=7d
-```
-
----
-
-## 🚀 Dependencies
-
 ```
