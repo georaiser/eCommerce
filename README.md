@@ -3,9 +3,12 @@
 A RESTful platform covering **User Administration**, **E-Commerce**, and **Inventory Management**, built with **Node.js**, **Express**, **PostgreSQL** and **ES6** (import/export).
 
 <p align="center">
-  <img src="./Home.png" width="49%" style="height: 350px; object-fit: cover;" alt="Home Dashboard">
+  <img src="./Home.png" width="32%" style="height: 250px; object-fit: cover;" alt="Home Dashboard">
   &nbsp;
-  <img src="./ShoppingCart.png" width="49%" style="height: 350px; object-fit: cover;" alt="Shopping Cart">
+  <img src="./ShoppingCart.png" width="32%" style="height: 250px; object-fit: cover;" alt="Shopping Cart">
+  &nbsp;
+  <img src="./OrderHistory.png" width="32%" style="height: 250px; object-fit: cover;" alt="Order History">
+  
 </p>
 
 ---
