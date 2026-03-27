@@ -2,6 +2,8 @@
 
 A RESTful platform covering **User Administration**, **E-Commerce**, and **Inventory Management**, built with **Node.js**, **Express**, **PostgreSQL** and **ES6** (import/export).
 
+![Shopping Cart Module](./ShoppingCart.png)
+
 ---
 
 ## 📁 Dual Architecture Project Structure
