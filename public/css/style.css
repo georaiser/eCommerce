@@ -3,7 +3,8 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    background-color: #475e7538;
+    background-color: #1a1e23; /* Deep slate, not pitch black */
+    color: #cbd5e1;
 }
 
 body::before {
@@ -29,8 +30,8 @@ main {
 
 /* ── Footer ── */
 footer {
-    background-color: #212529;
-    color: #adb5bd;
+    background-color: #121519; /* Slightly darker than body for structure */
+    color: #94a3b8;
     font-size: 0.875rem;
 }
 
