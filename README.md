@@ -4,56 +4,71 @@ A RESTful platform covering **User Administration**, **E-Commerce**, and **Inven
 
 ---
 
-## 📁 Project Structure
+## 📁 Dual Architecture Project Structure
+
+This project acts as a dual-mode learning platform. It implements identical feature sets across two parallel backend layers: **Raw PostgreSQL (`/SQL/`)** and **Sequelize (`/ORM/`)**. Both modes are completely isolated and render the SAME Handlebars UI.
 
 ```
 commerceManager/
 │
 ├── src/
-│   ├── controllers/
-│   │   ├── appController.js        ← home & page handlers
-│   │   ├── userController.js       ← user CRUD handlers
-│   │   ├── productController.js    ← product CRUD handlers
-│   │   └── cartController.js       ← shopping cart, inventory & checkout handlers
-│   │
-│   ├── routes/
-│   │   ├── appRoutes.js            ← GET /
-│   │   ├── userRoutes.js           ← GET /users, POST /user, PUT /user/:id, DELETE /user/:id
-│   │   ├── productRoutes.js        ← GET /products, POST /product, PUT /product/:id, DELETE /product/:id
-│   │   └── cartRoutes.js           ← GET /cart, POST /cart, PUT /cart/:id, DELETE /cart/:id, POST /cart/checkout
-│   │
-│   ├── models/
-│   │   ├── userModel.js            ← PostgreSQL queries for Users (accepts optional dbClient)
-│   │   ├── productModel.js         ← PostgreSQL queries for Products (accepts optional dbClient)
-│   │   └── cartModel.js            ← PostgreSQL queries for Cart (accepts optional dbClient)
+│   ├── app.js                      ← Global Express setup, middleware, and route dual-mounting
 │   │
 │   ├── config/
-│   │   ├── db.js                   ← PostgreSQL pool connection setup
-│   │   ├── create_db.js            ← Initialization script to create database
-│   │   ├── create_tables.js        ← Initialization script to build tables
-│   │   └── seed_db.js              ← Initialization script to INSERT default data
+│   │   ├── SQL/                    
+│   │   │   ├── db.js               ← Raw PostgreSQL connection pool
+│   │   │   ├── create_db.js        ← Initialization script to create db_jre
+│   │   │   ├── create_tables.js    ← Initialization script to build tables
+│   │   │   └── seed_db.js          ← Initialization script to INSERT default data
+│   │   │
+│   │   └── ORM/                    ← (Pending) Sequelize configuration (new Sequelize())
+│   │
+│   ├── models/
+│   │   ├── SQL/                    
+│   │   │   ├── userModel.js        ← Raw `pg` queries for Users (accepts dbClient)
+│   │   │   ├── productModel.js     ← Raw `pg` queries for Products (accepts dbClient)
+│   │   │   └── cartModel.js        ← Raw `pg` queries for Cart & Inventory
+│   │   │
+│   │   └── ORM/                    ← (Pending) Sequelize class models
+│   │
+│   ├── controllers/
+│   │   ├── SQL/                    
+│   │   │   ├── appController.js    ← Home page handler
+│   │   │   ├── userController.js   ← User CRUD handlers
+│   │   │   ├── productController.js← Product CRUD handlers
+│   │   │   └── cartController.js   ← Atomic transaction manager for Cart / Checkout
+│   │   │
+│   │   └── ORM/                    ← (Pending) Handlers delegating to Sequelize features
+│   │
+│   ├── routes/
+│   │   ├── SQL/                    ← Mounted with prefix `/sql/*`
+│   │   │   ├── appRoutes.js        
+│   │   │   ├── userRoutes.js       
+│   │   │   ├── productRoutes.js    
+│   │   │   └── cartRoutes.js       
+│   │   │
+│   │   └── ORM/                    ← Mounted with prefix `/orm/*`
 │   │
 │   ├── data/
 │   │   ├── users.json              ← (Deprecated) historical local data source
 │   │   └── products.json           ← (Deprecated) historical local data source
 │   │
-│   └── views/                      ← Handlebars (HBS) server-rendered templates
-│       ├── home.hbs                ← home page template
-│       ├── products_page.hbs       ← products list + add-product form
-│       ├── users_page.hbs          ← users list + add-user form (incl. credit balance)
-│       ├── cart_page.hbs           ← interactive shopping cart + checkout button
+│   └── views/                      ← SHARED Handlebars templates across both modes
+│       ├── home.hbs                ← Home page: Select Mode (SQL vs ORM)
+│       ├── products_page.hbs       ← Rendered using context variable window.API_PREFIX
+│       ├── users_page.hbs          
+│       ├── cart_page.hbs           
 │       └── layouts/
-│           └── main.hbs            ← base layout wrapper
+│           └── main.hbs            ← Base layout wrapper — dynamically routes navbar links via {{prefix}}
 │
-├── public/                         ← static files served by Express
-│   ├── css/                        ← stylesheets (incl. global watermark background)
-│   ├── products.js                 ← client-side JS for the products form
-│   ├── users.js                    ← client-side JS for the users form
-│   └── cart.js                     ← client-side JS for cart actions & checkout
+├── public/                         ← Dynamic client-side scripts (adapts fetch calls via window.API_PREFIX)
+│   ├── css/style.css               
+│   ├── products.js                 
+│   ├── users.js                    
+│   └── cart.js                     
 │
-├── src/app.js                      ← Express setup, middleware, routes
 ├── .env                            ← Environment variables
-├── package.json                    ← Dependency list
+├── package.json                    
 └── server.js                       ← Entry point, starts server
 ```
 
@@ -61,7 +76,7 @@ commerceManager/
 
 ## 🔄 Client–Server Architecture
 
-The application uses standard Model-View-Controller (MVC) paradigms tied to client-side Fetch API interactions.
+The application uses standard Model-View-Controller (MVC) paradigms tied to client-side Fetch API interactions. Forms do not submit HTTP natively; instead `public/*.js` scripts intercept inputs, dynamically prepend `API_PREFIX` logic (allowing side-by-side mode comparisons), and interface directly with the backend.
 
 ```
 Browser (e.g. cart.js)                  Server (cartController.js → cartModel.js)
@@ -78,15 +93,11 @@ fetch('/cart/checkout')                 1. BEGIN transaction (dedicated client)
 response.ok → reload page
 ```
 
-> **Client Scripts** run in the **browser** (`public/*.js`) and communicate strictly via HTTP Requests.  
-> **Controllers** run on the **server** (`src/controllers/*.js`), manage business logic and **transaction lifecycle**.  
-> **Models** execute **SQL queries** (`src/models/*.js`) and accept an optional `dbClient` to participate in a transaction.
-
 ---
 
 ## 🔐 Transaction Pattern
 
-All multi-step cart mutations (Add, Edit, Remove, Clear, Checkout) are wrapped in atomic PostgreSQL transactions. The pattern is:
+All multi-step cart mutations (Add, Edit, Remove, Clear, Checkout) are wrapped in atomic PostgreSQL transactions. The SQL codebase pattern is:
 
 1. **Controller** checks out a dedicated connection: `const client = await pool.connect()`
 2. **Controller** opens the transaction: `await client.query('BEGIN')`
@@ -117,53 +128,54 @@ try {
 
 ## 📌 API Endpoints
 
+The endpoints are cleanly namespaced. The `public/` JS scripts automatically prepend the active mode suffix (`/sql` or `/orm`). 
+
 ### Users
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/users` | Get all users (incl. credit balance) |
-| POST | `/user` | Create a user (with starting credit) |
-| PUT | `/user/:id` | Update a user (incl. credit amount) |
-| DELETE | `/user/:id` | Delete a user |
+| GET | `/sql/users` | Get all users (incl. credit balance) |
+| POST | `/sql/user` | Create a user (with starting credit) |
+| PUT | `/sql/user/:id` | Update a user (incl. credit amount) |
+| DELETE | `/sql/user/:id` | Delete a user |
 
 ### Products
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/products` | List all products |
-| POST | `/product` | Create a product |
-| PUT | `/product/:id` | Update a product |
-| DELETE | `/product/:id` | Delete a product |
+| GET | `/sql/products` | List all products |
+| POST | `/sql/product` | Create a product |
+| PUT | `/sql/product/:id` | Update a product |
+| DELETE | `/sql/product/:id` | Delete a product |
 
 ### Cart
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/cart` | View current user cart + credit balance |
-| POST | `/cart` | Add product to cart — atomic: deducts shelf stock |
-| PUT | `/cart/:id` | Edit item quantity — atomic: syncs shelf stock delta |
-| DELETE | `/cart/:id` | Remove product — atomic: restores shelf stock |
-| DELETE | `/cart` | Clear entire cart — atomic: restores all shelf stock |
-| POST | `/cart/checkout` | Purchase cart — atomic: deducts user credit, clears cart |
+| GET | `/sql/cart` | View current user cart + credit balance |
+| POST | `/sql/cart` | Add product to cart — atomic: deducts shelf stock |
+| PUT | `/sql/cart/:id` | Edit item quantity — atomic: syncs shelf stock delta |
+| DELETE | `/sql/cart/:id` | Remove product — atomic: restores shelf stock |
+| DELETE | `/sql/cart` | Clear entire cart — atomic: restores all shelf stock |
+| POST | `/sql/cart/checkout` | Purchase cart — atomic: deducts user credit, clears cart |
+
+*(Note: Swap `/sql` for `/orm` to test the Sequelize implementations once built!)*
 
 ---
 
 ## ✅ Completed Features
 
-- **PostgreSQL Database Integration** — pool-based connections with automated initialization on boot
-- **User Management** — CRUD with per-user `credit` balance (display & edit)
-- **Product Management** — CRUD with real-time `stock` tracking
-- **Handlebars UI Engine** — Layouts, partials and server-rendered views
-- **Shopping Cart System** — Upsert logic, quantity updates, item removal, full clear
-- **Dynamic Inventory Management** — Real-time logical shelf stock allocations on every cart action
-- **Stock Validation** — Server-side 400 guardrails + client-side HTML max attribute
-- **ACID Transaction Management** — All cart mutations wrapped in `BEGIN/COMMIT/ROLLBACK`
-- **Checkout System** — Credit balance deduction with insufficient-funds rollback
-- **ORM-Ready Model Layer** — Every model function accepts `dbClient = pool` for easy migration
+- **Dual-Stack Scaffolding** — Entire project compartmentalized into matching `SQL` and `ORM` namespaces.
+- **Dynamic Handlebars UI Engine** — Shared UI seamlessly shifts REST calls based on `res.locals.prefix`.
+- **PostgreSQL Database Integration** — Global pool with automated initialization on boot.
+- **User Management** — CRUD with per-user `credit` balance logic.
+- **Product Management** — CRUD with real-time `stock` tracking.
+- **Dynamic Inventory Management** — Real-time logical shelf stock allocations on every cart action with quantity upserting.
+- **ACID Transaction Management** — All cart mutations wrapped in database-isolated `BEGIN/COMMIT/ROLLBACK` protection constraints.
+- **Checkout System** — Deducts credit + verifies real-world funds natively preventing floating drift bugs.
 
 ## ⏳ What remains to be implemented?
 
-- Object-Relational Mapping (ORM) — e.g. Sequelize or Prisma
-- User authentication
-- Session management (replace hardcoded `userId = 1`)
-- Role-based access control (RBAC)
+- Configure Object-Relational Mapping (ORM) setup using Sequelize logic.
+- User authentication & Role-based Access Control (RBAC).
+- Session management (replace the hardcoded `userId = 1` logic).
 
 ---
 

@@ -43,25 +43,55 @@
 
     </div>
 
-    <hr>
-    <h2>What is working?</h2>
-    <hr>
-    <h4>PostgreSQL database</h4>
-    <p>Database creation/connection</p>
-    <p>Table creation/connection</p>
-    <p>User and Product tables</p>
-    <p>CRUD operations with PostgreSQL</p>
-    <p>Handlebars template engine (hbs)</p>
-    <p>Shopping Cart</p>
-    <p>Shopping Cart stock validations</p>
-    <p>Transaction management with SQL queries</p>
+    <!-- Status Section -->
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-5">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-success text-white fw-bold">
+                    <i class="bi bi-check-circle-fill me-2"></i>What is working?
+                </div>
+                <div class="card-body bg-light">
+                    <h6 class="text-success fw-bold mb-3">PostgreSQL Database Layer</h6>
+                    <ul class="list-group list-group-flush border rounded shadow-sm">
+                        <li class="list-group-item"><i class="bi bi-hdd-network text-secondary me-2"></i>Database & Table creation</li>
+                        <li class="list-group-item"><i class="bi bi-table text-secondary me-2"></i>User, Product & Cart tables</li>
+                        <li class="list-group-item"><i class="bi bi-code-square text-secondary me-2"></i>SQL CRUD Operations</li>
+                        <li class="list-group-item"><i class="bi bi-layout-text-window text-secondary me-2"></i>Handlebars (hbs) UI views</li>
+                        <li class="list-group-item"><i class="bi bi-cart-check text-secondary me-2"></i>Dynamic Shopping Cart</li>
+                        <li class="list-group-item"><i class="bi bi-shield-check text-secondary me-2"></i>Inventory Stock validations</li>
+                        <li class="list-group-item"><i class="bi bi-lock text-secondary me-2"></i>ACID Transaction isolation</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
 
-    <hr>
-    <h2>What remains to be implemented?</h2>
-    <hr>
-    <p>Object-Relational Mapping (ORM) — Sequelize layer</p>
-    <p>User authentication</p>
-    <p>Session management</p>
-    <p>Role management</p>
+        <div class="col-md-5 mt-4 mt-md-0">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-warning text-dark fw-bold">
+                    <i class="bi bi-hourglass-split me-2"></i>What remains to be implemented?
+                </div>
+                <div class="card-body bg-light">
+                    <ul class="list-group list-group-flush border rounded shadow-sm">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-diagram-3 text-secondary me-2"></i>Sequelize ORM layer</span>
+                            <span class="badge bg-primary rounded-pill">Next</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-person-badge text-secondary me-2"></i>User Authentication</span>
+                            <span class="badge bg-secondary rounded-pill">Pending</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-fingerprint text-secondary me-2"></i>Session Management</span>
+                            <span class="badge bg-secondary rounded-pill">Pending</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-shield-lock text-secondary me-2"></i>Role Management (RBAC)</span>
+                            <span class="badge bg-secondary rounded-pill">Pending</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </div>
