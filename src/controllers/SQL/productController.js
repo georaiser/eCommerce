@@ -39,7 +39,7 @@ import {
   updateProduct,
   deleteProduct,
   getProductById,
-} from "../models/productModel.js";
+} from "../../models/SQL/productModel.js";
 
 // GET /products
 const getProductsDB = async (req, res) => {

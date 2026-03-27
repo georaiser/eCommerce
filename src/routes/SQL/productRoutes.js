@@ -17,7 +17,7 @@ import express from 'express';
 //import { getProducts, addProduct, deleteProduct, updateProduct } from '../controllers/productController_json.js';
 
 // db postgresql products
-import { getProductsDB, addProductDB, updateProductDB, deleteProductDB, getProductByIdDB } from '../controllers/productController.js';
+import { getProductsDB, addProductDB, updateProductDB, deleteProductDB, getProductByIdDB } from '../../controllers/SQL/productController.js';
 
 const router = express.Router();
 

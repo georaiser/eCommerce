@@ -23,7 +23,7 @@ import fs from 'fs';
 
 // read products from JSON file and render the products view
 const getProducts = (req, res) => {
-    const products = JSON.parse(fs.readFileSync('./src/data/products.json', 'utf-8'));
+    const products = JSON.parse(fs.readFileSync('../../src/data/products.json', 'utf-8'));
     //console.log('Products from JSON file:', products); // Debug log
     res.render('products_page', { pageName: 'Products', products });
 };
@@ -33,23 +33,23 @@ const addProduct = (req, res) => {
     const product = req.body;   
     //Add a unique ID to the product
     product.id =  Date.now();                                                               
-    const products = JSON.parse(fs.readFileSync("./src/data/products.json", 'utf8'));       
+    const products = JSON.parse(fs.readFileSync("../../src/data/products.json", 'utf8'));       
     products.push(product);                                                       
-    fs.writeFileSync("./src/data/products.json", JSON.stringify(products));                 
+    fs.writeFileSync("../../src/data/products.json", JSON.stringify(products));                 
     res.send(`Product ${product.name} added successfully!`);                               
 };
 
 // DELETE product from JSON file
 const deleteProduct = (req, res) => {
     const { id } = req.params;
-    let products = JSON.parse(fs.readFileSync("./src/data/products.json", 'utf8'));
+    let products = JSON.parse(fs.readFileSync("../../src/data/products.json", 'utf8'));
     
     const filteredProducts = products.filter(product => product.id != id);
     if (filteredProducts.length === products.length) {
         return res.status(404).send('Product not found');
     }
     
-    fs.writeFileSync("./src/data/products.json", JSON.stringify(filteredProducts));
+    fs.writeFileSync("../../src/data/products.json", JSON.stringify(filteredProducts));
     res.send(`Product ${id} deleted successfully!`);
 };
 
@@ -57,7 +57,7 @@ const deleteProduct = (req, res) => {
 const updateProduct = (req, res) => {
     const { id } = req.params;
     const updateData = req.body;
-    const products = JSON.parse(fs.readFileSync("./src/data/products.json", 'utf8'));
+    const products = JSON.parse(fs.readFileSync("../../src/data/products.json", 'utf8'));
     
     const productTarget = products.find(product => product.id == id);
     if (!productTarget) {
@@ -72,7 +72,7 @@ const updateProduct = (req, res) => {
     productTarget.stock = updateData.stock !== undefined ? updateData.stock : productTarget.stock; 
     productTarget.isActive = updateData.isActive !== undefined ? updateData.isActive === 'true' : productTarget.isActive;
 
-    fs.writeFileSync("./src/data/products.json", JSON.stringify(products));
+    fs.writeFileSync("../../src/data/products.json", JSON.stringify(products));
     res.send(`Product ${id} updated successfully!`);
 };
 

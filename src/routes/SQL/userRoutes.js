@@ -16,7 +16,7 @@ import express from 'express';
 //import { getUsers, addUser, deleteUser, updateUser } from '../controllers/userController_json.js';
 
 // db postgresql users
-import { getUsersDB, addUserDB, updateUserDB, deleteUserDB, getUserByIdDB } from '../controllers/userController.js';
+import { getUsersDB, addUserDB, updateUserDB, deleteUserDB, getUserByIdDB } from '../../controllers/SQL/userController.js';
 
 const router = express.Router();
 

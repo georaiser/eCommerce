@@ -1,4 +1,4 @@
-import { pool } from '../config/db.js';
+import { pool } from '../../config/SQL/db.js';
 
 //get all users
 const getAllUsers = async () => {

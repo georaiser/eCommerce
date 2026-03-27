@@ -1,7 +1,7 @@
-import { getShoppingCart, getCartItem, addToCart, updateCartQuantity, removeFromCart, clearCart, getCartTotal, getCartCount } from '../models/cartModel.js';
-import { getAllProducts, getProductById, updateProductStock } from "../models/productModel.js";
-import { getUserById, updateUserCredit } from "../models/userModel.js";
-import { pool } from '../config/db.js';
+import { getShoppingCart, getCartItem, addToCart, updateCartQuantity, removeFromCart, clearCart, getCartTotal, getCartCount } from '../../models/SQL/cartModel.js';
+import { getAllProducts, getProductById, updateProductStock } from "../../models/SQL/productModel.js";
+import { getUserById, updateUserCredit } from "../../models/SQL/userModel.js";
+import { pool } from '../../config/SQL/db.js';
 
 // GET /cart - render cart page
 const shoppingCart = async (req, res) => {

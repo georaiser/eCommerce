@@ -1,7 +1,7 @@
 import express from 'express';
 
 // import cart controller functions
-import { shoppingCart, addProductToCart, updateCartItemQuantity, removeCartItem, clearCartItems, getCartItemsTotal, getCartItemCount, checkoutCart } from '../controllers/cartController.js';
+import { shoppingCart, addProductToCart, updateCartItemQuantity, removeCartItem, clearCartItems, getCartItemsTotal, getCartItemCount, checkoutCart } from '../../controllers/SQL/cartController.js';
 
 const router = express.Router();
 

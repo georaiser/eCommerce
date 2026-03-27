@@ -22,7 +22,7 @@ import {
   deleteUser,
   updateUser,
   getUserById,
-} from "../models/userModel.js";
+} from "../../models/SQL/userModel.js";
 
 // GET /users
 const getUsersDB = async (req, res) => {

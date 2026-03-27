@@ -23,7 +23,7 @@ import fs from 'fs';
 
 // Reads users from a JSON file and renders the users view
 const getUsers = (req, res) => {
-    const users = JSON.parse(fs.readFileSync("./src/data/users.json", 'utf8'));
+    const users = JSON.parse(fs.readFileSync("../../src/data/users.json", 'utf8'));
     //const users_filter = users.users.filter(user => user.id == 3);
     res.render('users_page', { pageName: 'Users', users: users });
 };
@@ -34,11 +34,11 @@ const addUser = (req, res) => {
     //Add a unique ID to the user
     user.id =  Date.now();   
     //Read the JSON file
-    const users = JSON.parse(fs.readFileSync("./src/data/users.json", 'utf8')); 
+    const users = JSON.parse(fs.readFileSync("../../src/data/users.json", 'utf8')); 
     //Add the new user to the array
     users.push(user); 
     //Write the JSON file
-    fs.writeFileSync("./src/data/users.json", JSON.stringify(users));   
+    fs.writeFileSync("../../src/data/users.json", JSON.stringify(users));   
     //Send success response
     res.send(`User ${user.name} added successfully!`);                           
 };
@@ -48,11 +48,11 @@ const deleteUser = (req, res) => {
     //Get the ID from the URL
     const { id } = req.params;
     //Read the JSON file
-    const users = JSON.parse(fs.readFileSync("./src/data/users.json", 'utf8'));  
+    const users = JSON.parse(fs.readFileSync("../../src/data/users.json", 'utf8'));  
     //Filter out the user with the matching ID
     const users_filter = users.filter(user => user.id != id);
     //Write the JSON file
-    fs.writeFileSync("./src/data/users.json", JSON.stringify(users_filter));
+    fs.writeFileSync("../../src/data/users.json", JSON.stringify(users_filter));
     //Send success response
     res.send(`User ${id} deleted successfully!`);
 };
@@ -63,7 +63,7 @@ const updateUser = (req, res) => {
     const user = req.body;
     console.log(`Updating user ${id} with data:`, user);
     //Read the JSON file
-    const users = JSON.parse(fs.readFileSync("./src/data/users.json", 'utf8'));
+    const users = JSON.parse(fs.readFileSync("../../src/data/users.json", 'utf8'));
     //Find the user with the matching ID
     const user_filter = users.find(user => user.id == id);
     //Update the user (only overwrite if a new value was provided)
@@ -72,7 +72,7 @@ const updateUser = (req, res) => {
     user_filter.role = user.role || user_filter.role;
     user_filter.password = user.password || user_filter.password;
     //Write the JSON file
-    fs.writeFileSync("./src/data/users.json", JSON.stringify(users));
+    fs.writeFileSync("../../src/data/users.json", JSON.stringify(users));
     //Send success response
     res.send(`User ${id} updated successfully!`);   
 };

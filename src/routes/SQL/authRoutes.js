@@ -8,7 +8,7 @@
  */
 
 import express from 'express';
-import { login, register, logout } from '../controllers/authController.js';
+import { login, register, logout } from '../../controllers/SQL/authController.js';
 
 const router = express.Router();
 
