@@ -25,8 +25,7 @@ const createProductTables = async (pool) => {
                 name VARCHAR(255) NOT NULL,
                 category VARCHAR (255) NOT NULL,
                 price DECIMAL(10, 2) NOT NULL,
-                stock INTEGER DEFAULT 0,
-                is_active BOOLEAN DEFAULT true
+                stock INTEGER DEFAULT 0
             );
         `);
     console.log("Product tables created successfully!");

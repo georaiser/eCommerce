@@ -55,8 +55,8 @@ const getProductsDB = async (req, res) => {
 // POST /products
 const addProductDB = async (req, res) => {
   try {
-    const { name, category, price, stock, isActive } = req.body;
-    await addProduct(name, category, price, stock, isActive); // Calls the model!
+    const { name, category, price, stock } = req.body;
+    await addProduct(name, category, price, stock); // Calls the model!
     console.log(`Product ${name} added successfully!`); // Debug log
     res.send(`Product ${name} added successfully!`);
   } catch (error) {
@@ -79,8 +79,8 @@ const deleteProductDB = async (req, res) => {
 const updateProductDB = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, category, price, stock, isActive } = req.body;
-    
+    const { name, category, price, stock } = req.body;
+
     // // Fetch the existing user first to protect blank fields like password
     // const existingUsers = await getProductById(id); // Calls the model!
     // const existingUser = existingUsers[0];
@@ -89,9 +89,7 @@ const updateProductDB = async (req, res) => {
     // category = category || existingUser.category;
     // price = price || existingUser.price;
     // stock = stock || existingUser.stock;
-    // isActive = isActive || existingUser.is_active;
-    
-    await updateProduct(id, name, category, price, stock, isActive); // Calls the model!
+    await updateProduct(id, name, category, price, stock); // Calls the model!
     res.send(`Product ${name} updated successfully!`);
   } catch (error) {
     res.status(500).send(`Error updating product: ${error}`);

@@ -24,7 +24,6 @@
  */
 
 document.addEventListener("DOMContentLoaded", () => {
-
   const form = document.getElementById("product-form");
   form.addEventListener("submit", async (event) => {
     // Prevent the browser from doing a native form POST (wrong encoding)
@@ -35,8 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
       name: document.getElementById("name").value.trim(),
       category: document.getElementById("category").value.trim(),
       price: parseFloat(document.getElementById("price").value),
-      stock: parseInt(document.getElementById("stock").value),
-      isActive: true,
+      stock: parseInt(document.getElementById("stock").value)
     };
 
     // Client-side Validation: Check if any field is empty or invalid
@@ -83,9 +81,12 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!confirm("Are you sure you want to delete this product?")) return;
       try {
         // Make a DELETE HTTP request to /user/:id
-        const response = await fetch(`${window.API_PREFIX}/product/${productId}`, {
-          method: "DELETE",
-        });
+        const response = await fetch(
+          `${window.API_PREFIX}/product/${productId}`,
+          {
+            method: "DELETE",
+          },
+        );
         if (response.ok) {
           window.location.reload(); // Refresh to see the updated table
           //event.target.closest("tr").remove();
@@ -104,14 +105,13 @@ document.addEventListener("DOMContentLoaded", () => {
     if (event.target.classList.contains("btn-edit")) {
       const productId = event.target.getAttribute("data-id");
       console.log(productId);
-      
+
       // Get the current row to find existing data
       const row = event.target.closest("tr");
       const currentName = row.children[0].innerText;
       const currentCategory = row.children[1].innerText;
       const currentPrice = row.children[2].innerText;
       const currentStock = row.children[3].innerText;
-      const currentIsActive = row.children[4].innerText;
 
       // Ask the user for the new data (Simple implementation)
       const newName = prompt("Enter new name:", currentName);
@@ -126,25 +126,24 @@ document.addEventListener("DOMContentLoaded", () => {
       const newStock = prompt("Enter new stock:", currentStock);
       if (newStock === null) return;
 
-      const newIsActive = prompt("Enter new isActive:", currentIsActive);
-      if (newIsActive === null) return;
-
       // Build the payload
       const updatedProduct = {
         name: newName.trim(),
         category: newCategory.trim(),
         price: parseFloat(newPrice),
-        stock: parseInt(newStock),
-        isActive: newIsActive.trim(),
+        stock: parseInt(newStock)
       };
 
       try {
         // Send PUT request WITH the body payload
-        const response = await fetch(`${window.API_PREFIX}/product/${productId}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(updatedProduct),
-        });
+        const response = await fetch(
+          `${window.API_PREFIX}/product/${productId}`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(updatedProduct),
+          },
+        );
 
         if (response.ok) {
           // Reload to see the fresh data
