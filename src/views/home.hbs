@@ -1,22 +1,67 @@
-<h1>Welcome to ecommerce home page</h1>
+<div class="container py-5">
 
-<hr>
-<h2>what is working?</h2>
-<hr>
-<h4>Postgresql database</h3>
-<p>Database creation/connection</p>
-<p>Table creation/connection</p>
-<p>User and Product tables</p>
-<p>CRUD operations with PostgreSQL</p>
-<p>Handlebars template engine (hbs)</p>
-<p>Shopping Cart</p>
-<p>Shopping Cart stock validations</p>
-<p>Transaction management with sql queries</p>
+    <h1 class="text-center fw-bold mb-4">Welcome to CommerceManager</h1>
 
-<hr>
-<h2>What remains to be implemented?</h2>
-<hr>
-<p>Object-Relational Mapping (ORM)</p>
-<p>User authentication</p>
-<p>Session management</p>
-<p>Role management</p>
+    <!-- Mode Selector -->
+    <div class="row justify-content-center g-4 mb-5">
+
+        <div class="col-md-4">
+            <div class="card h-100 border-primary shadow-sm">
+                <div class="card-body text-center py-4">
+                    <div class="mb-3 fs-1">🗄️</div>
+                    <h4 class="fw-bold text-primary">SQL Mode</h4>
+                    <p class="text-muted small">Raw PostgreSQL — <code>pg</code> pool<br><code>BEGIN / COMMIT / ROLLBACK</code></p>
+                    <div class="d-grid gap-2 mt-3">
+                        <a href="/sql/users"    class="btn btn-outline-primary">👤 Users</a>
+                        <a href="/sql/products" class="btn btn-outline-primary">📦 Products</a>
+                        <a href="/sql/cart"     class="btn btn-primary fw-bold">🛒 Cart &amp; Checkout</a>
+                    </div>
+                </div>
+                <div class="card-footer text-center text-muted small">
+                    <code>routes/SQL/</code> → <code>controllers/SQL/</code> → <code>models/SQL/</code>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 border-secondary shadow-sm">
+                <div class="card-body text-center py-4">
+                    <div class="mb-3 fs-1">🔷</div>
+                    <h4 class="fw-bold text-secondary">ORM Mode</h4>
+                    <p class="text-muted small">Sequelize ORM — model classes<br><code>sequelize.transaction()</code></p>
+                    <div class="d-grid gap-2 mt-3">
+                        <a href="/orm/users"    class="btn btn-outline-secondary">👤 Users</a>
+                        <a href="/orm/products" class="btn btn-outline-secondary">📦 Products</a>
+                        <a href="/orm/cart"     class="btn btn-secondary fw-bold">🛒 Cart &amp; Checkout</a>
+                    </div>
+                </div>
+                <div class="card-footer text-center text-muted small">
+                    <code>routes/ORM/</code> → <code>controllers/ORM/</code> → <code>models/ORM/</code>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <hr>
+    <h2>What is working?</h2>
+    <hr>
+    <h4>PostgreSQL database</h4>
+    <p>Database creation/connection</p>
+    <p>Table creation/connection</p>
+    <p>User and Product tables</p>
+    <p>CRUD operations with PostgreSQL</p>
+    <p>Handlebars template engine (hbs)</p>
+    <p>Shopping Cart</p>
+    <p>Shopping Cart stock validations</p>
+    <p>Transaction management with SQL queries</p>
+
+    <hr>
+    <h2>What remains to be implemented?</h2>
+    <hr>
+    <p>Object-Relational Mapping (ORM) — Sequelize layer</p>
+    <p>User authentication</p>
+    <p>Session management</p>
+    <p>Role management</p>
+
+</div>

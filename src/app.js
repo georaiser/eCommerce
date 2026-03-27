@@ -1,41 +1,49 @@
 import express from 'express';
-// Importing the routes
-import appRoutes from './routes/SQL/appRoutes.js';
+import exphbs from 'express-handlebars';
+import path from 'path';
+
+// General routes (no prefix)
+import appRoutes  from './routes/SQL/appRoutes.js';
 import authRoutes from './routes/SQL/authRoutes.js';
-import userRoutes from './routes/SQL/userRoutes.js';
-import productRoutes from './routes/SQL/productRoutes.js';
-import cartRoutes from './routes/SQL/cartRoutes.js';
 
+// SQL mode routes  →  /sql/*
+import sqlUserRoutes    from './routes/SQL/userRoutes.js';
+import sqlProductRoutes from './routes/SQL/productRoutes.js';
+import sqlCartRoutes    from './routes/SQL/cartRoutes.js';
 
-// Importing the express-handlebars package for view rendering
-import exphbs from 'express-handlebars'
-import path from 'path'
+// ORM mode routes  →  /orm/*
+import ormUserRoutes    from './routes/ORM/userRoutes.js';
+import ormProductRoutes from './routes/ORM/productRoutes.js';
+import ormCartRoutes    from './routes/ORM/cartRoutes.js';
 
 const app = express();
-
 const __dirname = path.resolve();
 
-// Middleware — parse incoming JSON requests
+// Middleware
 app.use(express.json());
-
-// Serve static files (CSS, images, etc.) using absolute path so it never breaks
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Set up Handlebars as the view engine
-app.set('view engine', 'hbs')
-app.set('views', path.join(__dirname, 'src/views'))
-
+// Handlebars view engine
+app.set('view engine', 'hbs');
+app.set('views', path.join(__dirname, 'src/views'));
 app.engine('hbs', exphbs.engine({
     defaultLayout: 'main',
     layoutsDir: path.join(__dirname, 'src/views/layouts'),
     extname: '.hbs'
-}))
+}));
 
-// Routes
+// Routes — general
 app.use('/', appRoutes);
 app.use('/', authRoutes);
-app.use('/', userRoutes);
-app.use('/', productRoutes);
-app.use('/', cartRoutes);
+
+// Routes — SQL mode  (/sql/users, /sql/cart, etc.)
+app.use('/sql', sqlUserRoutes);
+app.use('/sql', sqlProductRoutes);
+app.use('/sql', sqlCartRoutes);
+
+// Routes — ORM mode  (/orm/users, /orm/cart, etc.)
+app.use('/orm', ormUserRoutes);
+app.use('/orm', ormProductRoutes);
+app.use('/orm', ormCartRoutes);
 
 export default app;
