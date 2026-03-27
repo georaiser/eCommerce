@@ -2,7 +2,11 @@
 
 A RESTful platform covering **User Administration**, **E-Commerce**, and **Inventory Management**, built with **Node.js**, **Express**, **PostgreSQL** and **ES6** (import/export).
 
-![Shopping Cart Module](./ShoppingCart.png)
+<p align="center">
+  <img src="./Home.png" width="49%" style="height: 350px; object-fit: cover;" alt="Home Dashboard">
+  &nbsp;
+  <img src="./ShoppingCart.png" width="49%" style="height: 350px; object-fit: cover;" alt="Shopping Cart">
+</p>
 
 ---
 
