@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!quantity || quantity <= 0) return alert("Enter a valid quantity!");
 
       // Use fetch() to POST /cart with { productId, quantity }
-      const response = await fetch("/cart", {
+      const response = await fetch(`${window.API_PREFIX}/cart`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ productId, quantity }),
@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (newQuantity === null || newQuantity <= 0) return;
 
       // Use fetch() to PUT /cart/:id with { quantity: newQuantity }
-      const response = await fetch(`/cart/${cartItemId}`, {
+      const response = await fetch(`${window.API_PREFIX}/cart/${cartItemId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ quantity: newQuantity }),
@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!confirm("Remove this item from your cart?")) return;
 
       // Use fetch() to DELETE /cart/:id
-      const response = await fetch(`/cart/${cartItemId}`, {
+      const response = await fetch(`${window.API_PREFIX}/cart/${cartItemId}`, {
         method: "DELETE",
       });
 
@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (event.target.closest(".btn-checkout")) {
       if (!confirm("Are you sure you want to purchase these items?")) return;
 
-      const response = await fetch('/cart/checkout', { method: 'POST' });
+      const response = await fetch(`${window.API_PREFIX}/cart/checkout`, { method: 'POST' });
 
       if (response.ok) {
         const successMsg = await response.text();
@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (event.target.closest(".btn-clear-cart")) {
       if (!confirm("Are you sure you want to empty your entire cart? These items will be returned to the shelf.")) return;
 
-      const response = await fetch('/cart', { method: 'DELETE' });
+      const response = await fetch(`${window.API_PREFIX}/cart`, { method: 'DELETE' });
 
       if (response.ok) {
         const successMsg = await response.text();

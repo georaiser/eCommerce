@@ -32,6 +32,12 @@ app.engine('hbs', exphbs.engine({
     extname: '.hbs'
 }));
 
+// Global middleware to set the active mode prefix for all Handlebars templates
+app.use((req, res, next) => {
+    res.locals.prefix = req.originalUrl.startsWith('/orm') ? '/orm' : '/sql';
+    next();
+});
+
 // Routes — general
 app.use('/', appRoutes);
 app.use('/', authRoutes);

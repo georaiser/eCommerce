@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       // Send JSON to POST /user  (mapped to addUser in userController)
-      const response = await fetch("/user", {
+      const response = await fetch(`${window.API_PREFIX}/user`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(user),
@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!confirm("Are you sure you want to delete this user?")) return;
       try {
         // Make a DELETE HTTP request to /user/:id
-        const response = await fetch(`/user/${userId}`, {
+        const response = await fetch(`${window.API_PREFIX}/user/${userId}`, {
           method: "DELETE",
         });
         if (response.ok) {
@@ -136,7 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       try {
         // Send PUT request WITH the body payload
-        const response = await fetch(`/user/${userId}`, {
+        const response = await fetch(`${window.API_PREFIX}/user/${userId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(updatedUser),

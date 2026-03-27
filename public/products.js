@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       // Send JSON to POST /product  (mapped to addProductDB in productController.js)
-      const response = await fetch("/product", {
+      const response = await fetch(`${window.API_PREFIX}/product`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(product),
@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!confirm("Are you sure you want to delete this product?")) return;
       try {
         // Make a DELETE HTTP request to /user/:id
-        const response = await fetch(`/product/${productId}`, {
+        const response = await fetch(`${window.API_PREFIX}/product/${productId}`, {
           method: "DELETE",
         });
         if (response.ok) {
@@ -140,7 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       try {
         // Send PUT request WITH the body payload
-        const response = await fetch(`/product/${productId}`, {
+        const response = await fetch(`${window.API_PREFIX}/product/${productId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(updatedProduct),
