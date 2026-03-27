@@ -1,12 +1,13 @@
 import express from 'express';
 
 // import cart controller functions
-import { shoppingCart, addProductToCart, updateCartItemQuantity, removeCartItem, clearCartItems, getCartItemsTotal, getCartItemCount, checkoutCart } from '../../controllers/SQL/cartController.js';
+import { shoppingCart, addProductToCart, updateCartItemQuantity, removeCartItem, clearCartItems, getCartItemsTotal, getCartItemCount, checkoutCart, orderHistoryPage } from '../../controllers/SQL/cartController.js';
 
 const router = express.Router();
 
 // Routes
 router.get('/cart', shoppingCart);
+router.get('/cart/history', orderHistoryPage);
 router.post('/cart', addProductToCart);
 router.post('/cart/checkout', checkoutCart);
 router.put('/cart/:id', updateCartItemQuantity);

@@ -1,4 +1,4 @@
-import { getShoppingCart, getCartItem, addToCart, updateCartQuantity, removeFromCart, clearCart, getCartTotal, getCartCount } from '../../models/SQL/cartModel.js';
+import { getShoppingCart, getCartItem, addToCart, updateCartQuantity, removeFromCart, clearCart, getCartTotal, getCartCount, createOrder, insertOrderItems, getOrderHistory } from '../../models/SQL/cartModel.js';
 import { getAllProducts, getProductById, updateProductStock } from "../../models/SQL/productModel.js";
 import { getUserById, updateUserCredit } from "../../models/SQL/userModel.js";
 import { pool } from '../../config/SQL/db.js';
@@ -150,6 +150,10 @@ const checkoutCart = async (req, res) => {
 
         const newCredit = parseFloat((credit - total).toFixed(2)); // round to avoid float drift
         await updateUserCredit(userId, newCredit, client);
+
+        const orderId = await createOrder(userId, total, client);
+        await insertOrderItems(userId, orderId, client);
+        
         await clearCart(userId, client);
 
         await client.query('COMMIT');
@@ -182,4 +186,31 @@ const getCartItemCount = async (req, res) => {
     }
 };
 
-export { shoppingCart, addProductToCart, updateCartItemQuantity, removeCartItem, clearCartItems, getCartItemsTotal, getCartItemCount, checkoutCart };
+// GET /cart/history - render order history
+const orderHistoryPage = async (req, res) => {
+    try {
+        const userId = 1;
+        const userResult = await getUserById(userId);
+        const userCredit = userResult[0]?.credit || "0.00";
+        const orders = await getOrderHistory(userId);
+        
+        // Format the grouped JSON directly from PostgreSQL for Handlebars
+        const groupedOrders = orders.map(order => ({
+            order_id: order.order_id,
+            total_paid: order.total_paid,
+            created_at: new Date(order.created_at).toLocaleString(),
+            items: order.items.map(item => ({
+                product_name: item.product_name,
+                quantity: item.quantity,
+                price_at_purchase: parseFloat(item.price_at_purchase).toFixed(2),
+                item_total: parseFloat(item.item_total).toFixed(2)
+            }))
+        }));
+
+        res.render("order_history_page", { pageName: "Order History", groupedOrders, userCredit });
+    } catch (error) {
+        res.status(500).send(`Error loading order history: ${error}`);
+    }
+};
+
+export { shoppingCart, addProductToCart, updateCartItemQuantity, removeCartItem, clearCartItems, getCartItemsTotal, getCartItemCount, checkoutCart, orderHistoryPage };

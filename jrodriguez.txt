@@ -1,1 +1,1 @@
-https://github.com/georaiser/eCommerce
+https://github.com/georaiser/CommerceManager

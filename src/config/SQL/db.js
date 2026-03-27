@@ -1,7 +1,7 @@
 import pg from 'pg';
 import dotenv from 'dotenv';
 import createDatabase from './create_db.js';
-import {createUserTables, createProductTables, createCartTables} from './create_tables.js';
+import {createUsersTable, createProductsTable, createCartTable, createOrdersTable, createOrderItemsTable} from './create_tables.js';
 import {seedDatabase} from './seed_db.js';
 dotenv.config();
 
@@ -38,9 +38,11 @@ try {
     console.log('Database connection successful at:', rows[0].now);
     
     // Create tables right after a successful connection
-    await createUserTables(pool);
-    await createProductTables(pool);
-    await createCartTables(pool);
+    await createUsersTable(pool);
+    await createProductsTable(pool);
+    await createCartTable(pool);
+    await createOrdersTable(pool);
+    await createOrderItemsTable(pool);
     await seedDatabase(pool);
 
 } catch (error) {
