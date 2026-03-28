@@ -88,6 +88,8 @@ const createOrdersTable = async (pool) => {
   }
 };
 
+// composite primary key: PRIMARY KEY (order_id, product_id)
+// the table has ONE primary key, but that key is made up out of a combination of two columns.
 const createOrderItemsTable = async (pool) => {
   try {
     await pool.query(`
