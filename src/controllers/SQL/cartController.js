@@ -1,4 +1,5 @@
-import { getShoppingCart, getCartItem, addToCart, updateCartQuantity, removeFromCart, clearCart, getCartTotal, getCartCount, createOrder, insertOrderItems, getOrderHistory } from '../../models/SQL/cartModel.js';
+import { getShoppingCart, getCartItem, addToCart, updateCartQuantity, removeFromCart, clearCart, getCartTotal, getCartCount } from '../../models/SQL/cartModel.js';
+import { createOrder, insertOrderItems, getOrderHistory } from '../../models/SQL/orderModel.js';
 import { getAllProducts, getProductById, updateProductStock } from "../../models/SQL/productModel.js";
 import { getUserById, updateUserCredit } from "../../models/SQL/userModel.js";
 import { pool } from '../../config/SQL/db.js';
