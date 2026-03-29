@@ -8,7 +8,7 @@ import { pool } from '../../config/SQL/db.js';
 const shoppingCart = async (req, res) => {
     try {
         const userId = 1;
-        const userResult = await getUserById(userId);
+        const userResult = await getUserById(userId); // user info
         const userCredit = userResult[0]?.credit || "0.00";
         const cart = await getShoppingCart(userId);
         const products = await getAllProducts();

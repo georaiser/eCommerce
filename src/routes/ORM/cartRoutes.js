@@ -1,12 +1,16 @@
 import express from 'express';
+import { shoppingCart, addProductToCart, updateCartItemQuantity, removeCartItem, clearCartItems, getCartItemsTotal, getCartItemCount, checkoutCart, orderHistoryPage } from '../../controllers/ORM/cartController.js';
+
 const router = express.Router();
 
-// TODO: import from ../../controllers/ORM/cartController.js (Sequelize)
-router.get('/cart',             (req, res) => res.send('ORM: GET /orm/cart — not yet implemented'));
-router.post('/cart',            (req, res) => res.send('ORM: POST /orm/cart — not yet implemented'));
-router.post('/cart/checkout',   (req, res) => res.send('ORM: POST /orm/cart/checkout — not yet implemented'));
-router.put('/cart/:id',         (req, res) => res.send('ORM: PUT /orm/cart/:id — not yet implemented'));
-router.delete('/cart/:id',      (req, res) => res.send('ORM: DELETE /orm/cart/:id — not yet implemented'));
-router.delete('/cart',          (req, res) => res.send('ORM: DELETE /orm/cart — not yet implemented'));
+router.get('/cart', shoppingCart);
+router.post('/cart', addProductToCart);
+router.put('/cart/:id', updateCartItemQuantity);
+router.delete('/cart/:id', removeCartItem);
+router.delete('/cart', clearCartItems);
+router.post('/cart/checkout', checkoutCart);
+router.get('/cart/total', getCartItemsTotal);
+router.get('/cart/count', getCartItemCount);
+router.get('/cart/history', orderHistoryPage);
 
 export default router;
