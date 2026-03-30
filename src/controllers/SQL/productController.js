@@ -79,16 +79,15 @@ const deleteProductDB = async (req, res) => {
 const updateProductDB = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, category, price, stock } = req.body;
+    let { name, category, price, stock } = req.body;
 
-    // Fetch the existing user first to protect blank fields like password
-    const existingUsers = await getProductById(id); // Calls the model!
-    const existingUser = existingUsers[0];
+    // Fetch the existing product first to protect blank fields like password
+    const existingProduct = await getProductById(id); // Calls the model!
 
-    name = name || existingUser.name;
-    category = category || existingUser.category;
-    price = price || existingUser.price;
-    stock = stock || existingUser.stock;
+    name = name || existingProduct.name;
+    category = category || existingProduct.category;
+    price = price || existingProduct.price;
+    stock = stock || existingProduct.stock;
 
     await updateProduct(id, name, category, price, stock); // Calls the model!
     

@@ -30,27 +30,49 @@ const addProduct = async (req, res) => {
 };
 
 // DELETE /products/:id
+const deleteProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Product.destroy({ where: { id: id }})
+    res.send(`Product ${id} deleted successfully!`);
+  } catch (error) {
+    res.status(500).send(`Error deleting product: ${error}`);
+  }
+};
 
 // PUT /products/:id
 const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, category, price, stock } = req.body;
+    let { name, category, price, stock } = req.body;
 
-    // Fetch the existing user first to protect blank fields like password
-    const existingUser = await Product.findByPk(id); // Calls the model ORM!
+    // Fetch the existing product
+    const existingProduct = await Product.findByPk(id); // Calls the model ORM!
 
-    name = name || existingUser.name;
-    category = category || existingUser.category;
-    price = price || existingUser.price;
-    stock = stock || existingUser.stock;
+    name = name || existingProduct.name;
+    category = category || existingProduct.category;
+    price = price || existingProduct.price;
+    stock = stock || existingProduct.stock;
 
-    await Product.update(id, name, category, price, stock); // Calls the model ORM!
+    // Save changes using Sequelize ORM syntax!
+    await existingProduct.update({ name, category, price, stock });
     res.send(`Product ${name} updated successfully!`);
   } catch (error) {
     res.status(500).send(`Error updating product: ${error}`);
   }
 };
 
+// GET /products/:id
+const getProductById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const product = await Product.findByPk(id); // Calls the ORM model!
+    res.render("products_page", { pageName: "Products", products: [product] });
+  } catch (error) {
+    res.status(500).send(`Error getting product: ${error}`);
+  }
+};
 
-export { getProducts, addProduct, updateProduct };
+
+
+export { getProducts, addProduct, deleteProduct, updateProduct, getProductById };
