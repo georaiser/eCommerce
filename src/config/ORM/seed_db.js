@@ -1,0 +1,47 @@
+import { User, Product, Cart } from '../../models/ORM/index.js';
+
+const seedDatabase = async () => {
+    await User.truncate({ cascade: true, restartIdentity: true }); // clean table
+    await Product.truncate({ cascade: true, restartIdentity: true }); // clean table
+    await Cart.truncate({ cascade: true, restartIdentity: true }); // clean table
+    try {
+        // Wait, checking if the tables are completely empty before seeding
+        // so we don't accidentally insert duplicates if the server restarts
+        const userCount = await User.count();
+        if (userCount > 0) {
+            console.log("ORM Database already seeded. Skipping seed.");
+            return;
+        }
+
+        // Insert Users using bulkCreate (the ORM equivalent of INSERT INTO ... VALUES)
+        await User.bulkCreate([
+            { name: 'Bob Johnson', email: 'bob.johnson@example.com', password: '1234', role: 'user', credit: 1000.00, created_at: '2024-01-17 09:45:00' },
+            { name: 'jorge antonio', email: 'jorge@example.com', password: '1234', role: 'user', credit: 500.00, created_at: '2026-03-12 09:45:00' },
+            { name: 'jorge', email: 'jorge1@example.com', password: '1234', role: 'user', credit: 25.00, created_at: '2026-03-26 19:45:00' }
+        ]);
+        console.log("ORM Seed: Inserted users.");
+
+        // Insert Products
+        await Product.bulkCreate([
+            { name: 'Wireless Headphones', category: 'Electronics', price: 149.99, stock: 85 },
+            { name: 'Ergonomic Office Chair', category: 'Furniture', price: 349.00, stock: 40 },
+            { name: 'Stainless Steel Water Bottle', category: 'Kitchen', price: 34.95, stock: 200 },
+            { name: 'Mechanical Gaming Keyboard', category: 'Electronics', price: 119.99, stock: 0 },
+            { name: 'Running Shoes', category: 'Footwear', price: 89.99, stock: 120 }
+        ]);
+        console.log("ORM Seed: Inserted products.");
+
+        // Insert Cart Items
+        await Cart.bulkCreate([
+            { user_id: 1, product_id: 1, quantity: 2, created_at: '2026-03-25 09:45:00' },
+            { user_id: 1, product_id: 2, quantity: 1, created_at: '2026-03-25 09:47:00' },
+            { user_id: 1, product_id: 3, quantity: 3, created_at: '2026-03-25 09:50:00' }
+        ]);
+        console.log("ORM Seed: Inserted cart.");
+
+    } catch (error) {
+        console.error("Error seeding ORM database:", error.message);
+    }
+};
+
+export { seedDatabase };

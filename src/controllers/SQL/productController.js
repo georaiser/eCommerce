@@ -81,15 +81,17 @@ const updateProductDB = async (req, res) => {
     const { id } = req.params;
     const { name, category, price, stock } = req.body;
 
-    // // Fetch the existing user first to protect blank fields like password
-    // const existingUsers = await getProductById(id); // Calls the model!
-    // const existingUser = existingUsers[0];
+    // Fetch the existing user first to protect blank fields like password
+    const existingUsers = await getProductById(id); // Calls the model!
+    const existingUser = existingUsers[0];
 
-    // name = name || existingUser.name;
-    // category = category || existingUser.category;
-    // price = price || existingUser.price;
-    // stock = stock || existingUser.stock;
+    name = name || existingUser.name;
+    category = category || existingUser.category;
+    price = price || existingUser.price;
+    stock = stock || existingUser.stock;
+
     await updateProduct(id, name, category, price, stock); // Calls the model!
+    
     res.send(`Product ${name} updated successfully!`);
   } catch (error) {
     res.status(500).send(`Error updating product: ${error}`);

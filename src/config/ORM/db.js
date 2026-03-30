@@ -2,14 +2,16 @@ import { Sequelize } from 'sequelize';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const { DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE, DB_PORT } = process.env;
+const { DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE, DB_PORT, DB_DIALECT } = process.env;
 
 const sequelize = new Sequelize(DB_DATABASE, DB_USER, DB_PASSWORD, {
     host: DB_HOST,
     port: DB_PORT,
-    dialect: 'postgres',
+    dialect: DB_DIALECT,
     logging: false // set to console.log to see the raw SQL Sequelize generates! // or false
 });
+
+import { seedDatabase } from './seed_db.js';
 
 // Mirrors the SQL boot sequence: verify connection + create/update tables
 const connectDB = async () => {
@@ -22,6 +24,9 @@ const connectDB = async () => {
     // force: true → DROPS and recreates tables every boot (wipes all data, use with caution!)
     await sequelize.sync({ alter: true });
     console.log('ORM models synced successfully!');
+
+    // Step 3: Seed the database purely using ORM!
+    await seedDatabase();
 };
 
 export { sequelize as default, connectDB };

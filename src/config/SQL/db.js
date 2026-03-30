@@ -38,12 +38,13 @@ try {
     console.log('Database connection successful at:', rows[0].now);
     
     // Create tables right after a successful connection
-    await createUsersTable(pool);
-    await createProductsTable(pool);
-    await createCartTable(pool);
-    await createOrdersTable(pool);
-    await createOrderItemsTable(pool);
-    await seedDatabase(pool);
+    // TEMPORARILY DISABLED: So Sequelize can build the tables instead!
+    // await createUsersTable(pool);
+    // await createProductsTable(pool);
+    // await createCartTable(pool);
+    // await createOrdersTable(pool);
+    // await createOrderItemsTable(pool);
+    // await seedDatabase(pool);
 
 } catch (error) {
     console.error('Database connection error:', error);
