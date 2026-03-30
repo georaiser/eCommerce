@@ -7,6 +7,6 @@ const Product = sequelize.define('product', {
     category: { type: DataTypes.STRING, allowNull: false },
     price: { type: DataTypes.DECIMAL(10, 2), allowNull: false },
     stock: { type: DataTypes.INTEGER, defaultValue: 0 }
-}, { timestamps: false });
+}, { timestamps: false, tableName: 'products' });
 
 export default Product;

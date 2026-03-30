@@ -6,7 +6,6 @@ const OrderItem = sequelize.define('orderItem', {
     product_id: { type: DataTypes.INTEGER, primaryKey: true, allowNull: false }, // Composite Primary Key
     quantity: { type: DataTypes.INTEGER, allowNull: false },
     price_at_purchase: { type: DataTypes.DECIMAL(10, 2), allowNull: false }
-}, { timestamps: false });
-
+}, { timestamps: false, tableName: 'order_items' });
 
 export default OrderItem;

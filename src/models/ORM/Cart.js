@@ -1,4 +1,4 @@
-import { DataTypes } from "sequelize";
+import { DataTypes, Sequelize } from "sequelize";
 import sequelize from "../../config/ORM/db.js";
 
 const Cart = sequelize.define('cart', {
@@ -6,7 +6,7 @@ const Cart = sequelize.define('cart', {
     user_id: { type: DataTypes.INTEGER, allowNull: false },
     product_id: { type: DataTypes.INTEGER, allowNull: false },
     quantity: { type: DataTypes.INTEGER, allowNull: false },
-    created_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW }
-}, { timestamps: false });
+    created_at: { type: DataTypes.DATE, defaultValue: Sequelize.literal('CURRENT_TIMESTAMP') }
+}, { timestamps: false, tableName: 'cart' });
 
 export default Cart;

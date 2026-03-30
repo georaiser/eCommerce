@@ -1,4 +1,4 @@
-import { DataTypes } from "sequelize";
+import { DataTypes, Sequelize } from "sequelize";
 import sequelize from "../../config/ORM/db.js";
 
 const User = sequelize.define('user', {
@@ -8,7 +8,7 @@ const User = sequelize.define('user', {
     password: { type: DataTypes.STRING, allowNull: false },
     role: { type: DataTypes.STRING, allowNull: false },
     credit: { type: DataTypes.DECIMAL(10, 2), defaultValue: 0.00 },
-    created_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW }
-}, { timestamps: false });
+    created_at: { type: DataTypes.DATE, defaultValue: Sequelize.literal('CURRENT_TIMESTAMP') }
+}, { timestamps: false, tableName: 'users' });
 
 export default User;
