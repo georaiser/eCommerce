@@ -30,7 +30,9 @@ commerceManager/
 │   │   │   ├── create_tables.js    ← Initialization script to build tables
 │   │   │   └── seed_db.js          ← Initialization script to INSERT default data
 │   │   │
-│   │   └── ORM/                    ← Sequelize configuration (new Sequelize()) and seed script
+│   │   └── ORM/                    
+│   │       ├── db.js               ← Sequelize connection & Model sync()
+│   │       └── seed_db.js          ← Seeding script using bulkCreate()
 │   │
 │   ├── models/
 │   │   ├── SQL/                    
@@ -38,7 +40,13 @@ commerceManager/
 │   │   │   ├── productModel.js     ← Raw `pg` queries for Products (accepts dbClient)
 │   │   │   └── cartModel.js        ← Raw `pg` queries for Cart & Inventory
 │   │   │
-│   │   └── ORM/                    ← Sequelize class models and relational associations
+│   │   └── ORM/                    
+│   │       ├── User.js             ← Sequelize User definition (tableName: 'users')
+│   │       ├── Product.js          ← Sequelize Product definition
+│   │       ├── Cart.js             ← Sequelize Cart definition
+│   │       ├── Order.js            ← Sequelize Order definition
+│   │       ├── OrderItem.js        ← Transitive Model for relationships
+│   │       └── index.js            ← Relational association mappings (e.g., belongsToMany)
 │   │
 │   ├── controllers/
 │   │   ├── SQL/                    
@@ -47,7 +55,10 @@ commerceManager/
 │   │   │   ├── productController.js← Product CRUD handlers
 │   │   │   └── cartController.js   ← Atomic transaction manager for Cart / Checkout
 │   │   │
-│   │   └── ORM/                    ← Handlers delegating to Sequelize methods & managed transactions
+│   │   └── ORM/                    
+│   │       ├── userController.js   ← Handlers mapping to User Model
+│   │       ├── productController.js← Handlers mapping to Product Model
+│   │       └── cartController.js   ← Managed Transaction execution context
 │   │
 │   ├── routes/
 │   │   ├── SQL/                    ← Mounted with prefix `/sql/*`
@@ -57,6 +68,9 @@ commerceManager/
 │   │   │   └── cartRoutes.js       
 │   │   │
 │   │   └── ORM/                    ← Mounted with prefix `/orm/*`
+│   │       ├── userRoutes.js       
+│   │       ├── productRoutes.js    
+│   │       └── cartRoutes.js
 │   │
 │   ├── data/
 │   │   ├── users.json              ← (Deprecated) historical local data source
@@ -131,6 +145,32 @@ try {
 } finally {
     client.release();
 }
+```
+
+---
+
+## 🔷 Sequelize ORM Implementation
+
+In parallel with the raw SQL architecture, the `/ORM/` layer provides a 100% equivalent runtime built entirely on **Sequelize**. This layer demonstrates modern Javascript database interaction techniques:
+
+1. **Declarative Models:** Schema definitions, strict table mappings (to stop implicit pluralization mismatching), and constraints are maintained within the `models/ORM/` classes.
+2. **Relational Associations:** Table connections (e.g. `User.hasMany(Cart)`, `Cart.belongsTo(Product)`) are defined in `index.js`, enabling deep *Eager Loading* via `.findAll({ include: [...] })` arrays without writing complicated `LEFT JOIN` queries.
+3. **Managed Transactions:** instead of checking out dedicated `pg` connection clients and manually emitting `BEGIN` / `COMMIT`, the ORM layer uses Managed Transactions context callbacks. If any exception is thrown inside the callback, Sequelize automatically traces it and issues a `ROLLBACK`.
+
+```javascript
+// Controller — Managed ORM Transaction
+await sequelize.transaction(async (t) => {
+    
+    // 1. Fetch item
+    const item = await Cart.findOne({ where: { user_id, product_id }, transaction: t });
+    
+    // 2. Perform business logic calculations
+    const updatedStock = existingProduct.stock - quantity;
+    
+    // 3. Execute updates explicitly passing the transaction context
+    await Product.update({ stock: updatedStock }, { where: { id }, transaction: t });
+
+}); // Automatically COMMITs on success, or catches errors and ROLLBACKs!
 ```
 
 ---
