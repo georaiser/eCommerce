@@ -30,7 +30,7 @@ commerceManager/
 │   │   │   ├── create_tables.js    ← Initialization script to build tables
 │   │   │   └── seed_db.js          ← Initialization script to INSERT default data
 │   │   │
-│   │   └── ORM/                    ← (Pending) Sequelize configuration (new Sequelize())
+│   │   └── ORM/                    ← Sequelize configuration (new Sequelize()) and seed script
 │   │
 │   ├── models/
 │   │   ├── SQL/                    
@@ -38,7 +38,7 @@ commerceManager/
 │   │   │   ├── productModel.js     ← Raw `pg` queries for Products (accepts dbClient)
 │   │   │   └── cartModel.js        ← Raw `pg` queries for Cart & Inventory
 │   │   │
-│   │   └── ORM/                    ← (Pending) Sequelize class models
+│   │   └── ORM/                    ← Sequelize class models and relational associations
 │   │
 │   ├── controllers/
 │   │   ├── SQL/                    
@@ -47,7 +47,7 @@ commerceManager/
 │   │   │   ├── productController.js← Product CRUD handlers
 │   │   │   └── cartController.js   ← Atomic transaction manager for Cart / Checkout
 │   │   │
-│   │   └── ORM/                    ← (Pending) Handlers delegating to Sequelize features
+│   │   └── ORM/                    ← Handlers delegating to Sequelize methods & managed transactions
 │   │
 │   ├── routes/
 │   │   ├── SQL/                    ← Mounted with prefix `/sql/*`
@@ -165,7 +165,7 @@ The endpoints are cleanly namespaced. The `public/` JS scripts automatically pre
 | DELETE | `/sql/cart` | Clear entire cart — atomic: restores all shelf stock |
 | POST | `/sql/cart/checkout` | Purchase cart — atomic: deducts user credit, clears cart |
 
-*(Note: Swap `/sql` for `/orm` to test the Sequelize implementations once built!)*
+*(Note: Both `/sql/*` and `/orm/*` endpoints are fully built and testable! Modify the URL in your browser to seamlessly switch between backend architectures.)*
 
 ---
 
@@ -179,10 +179,10 @@ The endpoints are cleanly namespaced. The `public/` JS scripts automatically pre
 - **Dynamic Inventory Management** — Real-time logical shelf stock allocations on every cart action with quantity upserting.
 - **ACID Transaction Management** — All cart mutations wrapped in database-isolated `BEGIN/COMMIT/ROLLBACK` protection constraints.
 - **Checkout System** — Deducts credit + verifies real-world funds natively preventing floating drift bugs.
+- **Full ORM Engine** — 100% feature-parity backend implementation running entirely on Sequelize Models, Eager Loading, and Managed Transactions.
 
 ## ⏳ What remains to be implemented?
 
-- Configure Object-Relational Mapping (ORM) setup using Sequelize logic.
 - User authentication & Role-based Access Control (RBAC).
 - Session management (replace the hardcoded `userId = 1` logic).
 
