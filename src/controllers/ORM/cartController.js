@@ -65,22 +65,24 @@ const addProductToCart = async (req, res) => {
 
     try {
         await sequelize.transaction(async (t) => {
-            const product = await Product.findByPk(productId, { transaction: t });
+            // Validate stock safely
+            const product = await Product.findByPk(productId, { attributes: ['stock'], transaction: t });
             if (!product) throw new Error('Product not found');
             if (requestedQty > product.stock) throw new Error(`Only ${product.stock} units available in stock!`);
 
-            const existingCartItem = await Cart.findOne({
+            // Find or strictly create to save an if/else block!
+            const [cartItem, created] = await Cart.findOrCreate({
                 where: { user_id: userId, product_id: productId },
+                defaults: { quantity: requestedQty },
                 transaction: t
             });
-
-            if (existingCartItem) {
-                await existingCartItem.update({ quantity: existingCartItem.quantity + requestedQty }, { transaction: t });
-            } else {
-                await Cart.create({ user_id: userId, product_id: productId, quantity: requestedQty }, { transaction: t });
+            // If already existed, increment it mathematically!
+            if (!created) {
+                await cartItem.increment('quantity', { by: requestedQty, transaction: t });
             }
 
-            await product.update({ stock: product.stock - requestedQty }, { transaction: t });
+            // Raw decrement the shelf stock directly bypassing memory saves!
+            await Product.decrement('stock', { by: requestedQty, where: { id: productId }, transaction: t });
         });
         
         res.send(`Successfully added ${requestedQty}!`);
@@ -97,15 +99,16 @@ const updateCartItemQuantity = async (req, res) => {
 
     try {
         await sequelize.transaction(async (t) => {
-            const product = await Product.findByPk(productId, { transaction: t });
             const cartItem = await Cart.findOne({ where: { user_id: userId, product_id: productId }, transaction: t });
-            
             if (!cartItem) throw new Error('Item not in cart!');
 
+            const product = await Product.findByPk(productId, { attributes: ['stock'], transaction: t });
+            
             const difference = newQty - cartItem.quantity; 
             if (difference > product.stock) throw new Error(`Only ${product.stock} more units available!`);
 
-            await product.update({ stock: product.stock - difference }, { transaction: t });
+            // Use decrement hook for negative or positive differences safely
+            await Product.decrement('stock', { by: difference, where: { id: productId }, transaction: t });
             await cartItem.update({ quantity: newQty }, { transaction: t });
         });
         res.send(`Cart quantity updated!`);
@@ -124,8 +127,8 @@ const removeCartItem = async (req, res) => {
             const cartItem = await Cart.findOne({ where: { user_id: userId, product_id: productId }, transaction: t });
             if (!cartItem) throw new Error('Item not in cart!');
 
-            const product = await Product.findByPk(productId, { transaction: t });
-            await product.update({ stock: product.stock + cartItem.quantity }, { transaction: t });
+            // Increment strictly via math
+            await Product.increment('stock', { by: cartItem.quantity, where: { id: productId }, transaction: t });
             
             await cartItem.destroy({ transaction: t });
         });
@@ -145,8 +148,8 @@ const clearCartItems = async (req, res) => {
             if (cartItems.length === 0) throw new Error('Cart is already empty!');
 
             for (let item of cartItems) {
-                const product = await Product.findByPk(item.product_id, { transaction: t });
-                await product.update({ stock: product.stock + item.quantity }, { transaction: t });
+                // Increment cleanly without loading Product mapping
+                await Product.increment('stock', { by: item.quantity, where: { id: item.product_id }, transaction: t });
             }
             
             await Cart.destroy({ where: { user_id: userId }, transaction: t });
@@ -165,7 +168,7 @@ const checkoutCart = async (req, res) => {
         let newCredit = 0;
         await sequelize.transaction(async (t) => {
             // Find user and cart
-            const user = await User.findByPk(userId, { transaction: t });
+            const user = await User.findByPk(userId, { attributes: ['credit'], transaction: t });
             const cartItems = await Cart.findAll({ 
                 where: { user_id: userId }, 
                 include: [{ model: Product }],
@@ -174,17 +177,16 @@ const checkoutCart = async (req, res) => {
 
             if (cartItems.length === 0) throw new Error('Your cart is empty!');
 
-            // Calculate total manually since we have the items eagerly loaded
-            let total = 0;
-            for (let item of cartItems) {
-                total += item.quantity * parseFloat(item.product.price);
-            }
+            // Calculate exact total cleanly via single line ES6 array reducer
+            const total = cartItems.reduce((sum, item) => sum + (item.quantity * parseFloat(item.product.price)), 0);
 
             const credit = parseFloat(user.credit);
             if (credit < total) throw new Error(`Insufficient funds! You have $${credit.toFixed(2)} but need $${total.toFixed(2)}.`);
 
             newCredit = credit - total;
-            await user.update({ credit: newCredit }, { transaction: t });
+            
+            // Deduct using explicit DB-level decrement wrapper safely
+            await User.decrement('credit', { by: total, where: { id: userId }, transaction: t });
 
             // Create Order
             const order = await Order.create({ user_id: userId, total_paid: total }, { transaction: t });
@@ -214,10 +216,8 @@ const getCartItemsTotal = async (req, res) => {
     try {
         const userId = 1;
         const cartItems = await Cart.findAll({ where: { user_id: userId }, include: [{ model: Product }] });
-        let total = 0;
-        for (let item of cartItems) {
-            total += item.quantity * parseFloat(item.product.price);
-        }
+        // Use clean ES6 Javascript reduction aggregations
+        const total = cartItems.reduce((sum, item) => sum + (item.quantity * parseFloat(item.product.price)), 0);
         res.send(`Cart total: ${total.toFixed(2)}`);
     } catch (error) {
         res.status(500).send(`Error getting cart total: ${error.message}`);
@@ -228,8 +228,9 @@ const getCartItemsTotal = async (req, res) => {
 const getCartItemCount = async (req, res) => {
     try {
         const userId = 1;
-        const count = await Cart.count({ where: { user_id: userId } });
-        res.send(`Cart item count: ${count}`);
+        // Use ORM raw SQL aggregator natively bypassing mapping entirely
+        const count = await Cart.sum('quantity', { where: { user_id: userId } });
+        res.send(`Cart item count: ${count || 0}`);
     } catch (error) {
         res.status(500).send(`Error getting cart item count: ${error.message}`);
     }

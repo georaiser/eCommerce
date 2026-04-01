@@ -42,23 +42,24 @@ const deleteUser = async (req, res) => {
 // PUT /users/:id
 const updateUser = async (req, res) => {
   try {
-    const { id } = req.params; // ID comes from the URL
-    let { name, email, password, role, credit } = req.body; // Data comes from the body
+    const { id } = req.params; 
+    
+    // Cleanly extract ONLY the provided fields bypassing blank inputs
+    const updates = {};
+    for (const key in req.body) {
+        if (req.body[key] !== undefined && req.body[key] !== '') {
+            updates[key] = req.body[key];
+        }
+    }
 
-    // Fetch the existing user first to protect blank fields like password
-    const existingUser = await User.findByPk(id); // Calls the model ORM!
+    // Perform a raw DB update directly. Returns array: [affectedCount]
+    const [updatedRows] = await User.update(updates, { where: { id } });
 
-    name = name || existingUser.name;
-    email = email || existingUser.email;
-    password = password || existingUser.password;
-    role = role || existingUser.role;
-    credit = credit || existingUser.credit;
+    if (updatedRows === 0) throw new Error("User not found");
 
-    // Save changes using Sequelize ORM syntax!
-    await existingUser.update({ name, email, password, role, credit });
-    res.send(`User ${name} updated successfully!`);
+    res.send(`User ${id} updated successfully!`);
   } catch (error) {
-    res.status(500).send(`Error updating user: ${error}`);
+    res.status(500).send(`Error updating user: ${error.message}`);
   }
 };
 

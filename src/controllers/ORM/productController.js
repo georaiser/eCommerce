@@ -36,21 +36,23 @@ const deleteProduct = async (req, res) => {
 const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    let { name, category, price, stock } = req.body;
 
-    // Fetch the existing product
-    const existingProduct = await Product.findByPk(id); // Calls the model ORM!
+    // Cleanly extract ONLY the provided fields bypassing blank inputs
+    const updates = {};
+    for (const key in req.body) {
+        if (req.body[key] !== undefined && req.body[key] !== '') {
+            updates[key] = req.body[key];
+        }
+    }
 
-    name = name || existingProduct.name;
-    category = category || existingProduct.category;
-    price = price || existingProduct.price;
-    stock = stock || existingProduct.stock;
+    // Perform a raw DB update directly. Returns array: [affectedCount]
+    const [updatedRows] = await Product.update(updates, { where: { id } });
+    
+    if (updatedRows === 0) throw new Error("Product not found");
 
-    // Save changes using Sequelize ORM syntax!
-    await existingProduct.update({ name, category, price, stock });
-    res.send(`Product ${name} updated successfully!`);
+    res.send(`Product ${id} updated successfully!`);
   } catch (error) {
-    res.status(500).send(`Error updating product: ${error}`);
+    res.status(500).send(`Error updating product: ${error.message}`);
   }
 };
 
