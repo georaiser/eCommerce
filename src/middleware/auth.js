@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-// 1. Enforces user is logged in
+// 1. Enforces user is logged in (Throws 401 API Error - ideal for Fetch scripts)
 export const requireAuth = (req, res, next) => {
     const token = req.cookies.jwt;
     if (!token) return res.status(401).send('Access denied. Please login to continue.');

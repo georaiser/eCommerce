@@ -55,7 +55,7 @@ const register = async (req, res) => {
 // GET /logout
 const logout = (req, res) => {
     res.clearCookie('jwt');
-    res.redirect('/');
+    res.redirect('/login');
 }
 
 export { loginPage, login, register, logout };

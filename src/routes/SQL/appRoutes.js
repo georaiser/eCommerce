@@ -3,7 +3,7 @@ import { home } from '../../controllers/SQL/appController.js';
 
 const router = express.Router();
 
-//home
+//home (Public)
 router.get('/', home);
 
 // Global Login UI
