@@ -156,6 +156,7 @@ In parallel with the raw SQL architecture, the `/ORM/` layer provides a 100% equ
 1. **Declarative Models:** Schema definitions, strict table mappings (to stop implicit pluralization mismatching), and constraints are maintained within the `models/ORM/` classes.
 2. **Relational Associations:** Table connections (e.g. `User.hasMany(Cart)`, `Cart.belongsTo(Product)`) are defined in `index.js`, enabling deep *Eager Loading* via `.findAll({ include: [...] })` arrays without writing complicated `LEFT JOIN` queries.
 3. **Managed Transactions:** instead of checking out dedicated `pg` connection clients and manually emitting `BEGIN` / `COMMIT`, the ORM layer uses Managed Transactions context callbacks. If any exception is thrown inside the callback, Sequelize automatically traces it and issues a `ROLLBACK`.
+4. **Advanced Optimizations:** Memory overhead and database payload speeds are aggressively optimized by utilizing atomic queries (`Product.decrement()`, `Cart.findOrCreate()`), seamlessly clearing out the need for verbose Javascript memory loading. In controllers that purely read data, `.findAll({ raw: true, nest: true })` restricts payload bloat strictly to vanilla JSON data, completely bypassing massive Model prototype generation!
 
 ```javascript
 // Controller — Managed ORM Transaction
