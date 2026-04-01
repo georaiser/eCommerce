@@ -15,6 +15,26 @@ import { seedDatabase } from './seed_db.js';
 
 // Mirrors the SQL boot sequence: verify connection + create/update tables
 const connectDB = async () => {
+    
+    // Step 0: Ensure the database exists natively using Sequelize (Complete Independence from SQL!)
+    const adminSequelize = new Sequelize('postgres', process.env.DB_USER, process.env.DB_PASSWORD, {
+        host: process.env.DB_HOST, port: process.env.DB_PORT, dialect: process.env.DB_DIALECT, logging: false
+    });
+
+    try {
+        const [results] = await adminSequelize.query(`SELECT 1 FROM pg_database WHERE datname = '${process.env.DB_DATABASE}'`);
+        if (results.length === 0) {
+            await adminSequelize.query(`CREATE DATABASE "${process.env.DB_DATABASE}"`);
+            console.log(`Database "${process.env.DB_DATABASE}" created successfully!`);
+        } else {
+            console.log(`Database "${process.env.DB_DATABASE}" already exists.`);
+        }
+    } catch (err) {
+        console.error('Error creating database natively:', err);
+    } finally {
+        await adminSequelize.close(); // Clean up the admin connection
+    }
+
     // Step 1: Verify the connection to the database
     await sequelize.authenticate();
     console.log('ORM database connection successful!');

@@ -1,8 +1,9 @@
 import pg from 'pg';
 import dotenv from 'dotenv';
 import createDatabase from './create_db.js';
-import {createUsersTable, createProductsTable, createCartTable, createOrdersTable, createOrderItemsTable} from './create_tables.js';
-import {seedDatabase} from './seed_db.js';
+import { createUsersTable, createProductsTable, createCartTable, createOrdersTable, createOrderItemsTable } from './create_tables.js';
+import { seedDatabase } from './seed_db.js';
+
 dotenv.config();
 
 const { Pool } = pg;
@@ -22,9 +23,6 @@ const config = {
     allowExitOnIdle: true
 };
 
-// create database if not exists (using Client)
-await createDatabase(config);
-
 // create pool to connect to the database and make queries
 const pool = new Pool({...config, 
     max: 10, // max number of connections
@@ -32,22 +30,29 @@ const pool = new Pool({...config,
     connectionTimeoutMillis: 2000 // max time to try to connect
 });
     
-try {
-    // verify database connection
-    const {rows} = await pool.query('SELECT NOW()');
-    console.log('Database connection successful at:', rows[0].now);
-    
-    // Create tables right after a successful connection
-    // TEMPORARILY DISABLED: So Sequelize can build the tables instead!
-    // await createUsersTable(pool);
-    // await createProductsTable(pool);
-    // await createCartTable(pool);
-    // await createOrdersTable(pool);
-    // await createOrderItemsTable(pool);
-    // await seedDatabase(pool);
+const connectSQL = async (options = { sync: false }) => {
+    try {
+        // create database if not exists (using Client)
+        await createDatabase(config);
 
-} catch (error) {
-    console.error('Database connection error:', error);
+        // verify database connection
+        const {rows} = await pool.query('SELECT NOW()');
+        console.log('SQL database connection successful at:', rows[0].now);
+
+        if (options.sync) {
+            console.log('🛠️ Rebuilding native SQL tables from scratch...');
+            await createUsersTable(pool);
+            await createProductsTable(pool);
+            await createCartTable(pool);
+            await createOrdersTable(pool);
+            await createOrderItemsTable(pool);
+            await seedDatabase(pool);
+        }
+
+    } catch (error) {
+        console.error('SQL Database connection error:', error);
+        throw error; // Throw upward so server.js catches it!
+    }
 }
 
-export { pool };
+export { pool, connectSQL };
