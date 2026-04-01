@@ -18,6 +18,7 @@ import express from 'express';
 
 // db postgresql products
 import { getProductsDB, addProductDB, updateProductDB, deleteProductDB, getProductByIdDB } from '../../controllers/SQL/productController.js';
+import { requireAuth, requireAdmin } from '../../middleware/auth.js';
 
 const router = express.Router();
 
@@ -31,9 +32,10 @@ const router = express.Router();
 
 //CRUD operations with db postgresql
 router.get('/products', getProductsDB);
-router.post('/product', addProductDB);
-router.put('/product/:id', updateProductDB);
-router.delete('/product/:id', deleteProductDB);
-router.get('/product/:id', getProductByIdDB);
+router.get('/product/:id', getProductByIdDB); // Moved here for logical flow
+
+router.post('/product', requireAuth, requireAdmin, addProductDB);
+router.put('/product/:id', requireAuth, requireAdmin, updateProductDB);
+router.delete('/product/:id', requireAuth, requireAdmin, deleteProductDB);
 
 export default router;

@@ -8,13 +8,14 @@
  */
 
 import express from 'express';
-import { login, register, logout } from '../../controllers/SQL/authController.js';
+import { loginPage, login, register, logout } from '../../controllers/SQL/authController.js';
 
 const router = express.Router();
 
 // ROUTES
-router.get('/login', login);
+router.get('/login', loginPage);
+router.post('/login', login);
 router.post('/register', register);
-router.post('/logout', logout);
+router.get('/logout', logout);
 
 export default router;

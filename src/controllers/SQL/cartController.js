@@ -7,7 +7,7 @@ import { pool } from '../../config/SQL/db.js';
 // GET /cart - render cart page
 const shoppingCart = async (req, res) => {
     try {
-        const userId = 1;
+        const userId = req.user.id;
         const userResult = await getUserById(userId); // user info
         const userCredit = userResult[0]?.credit || "0.00";
         const cart = await getShoppingCart(userId);
@@ -21,7 +21,7 @@ const shoppingCart = async (req, res) => {
 
 // POST /cart - add product to cart
 const addProductToCart = async (req, res) => {
-    const userId = 1;
+    const userId = req.user.id;
     const { productId, quantity } = req.body;
     const requestedQty = parseInt(quantity);
 
@@ -53,7 +53,7 @@ const addProductToCart = async (req, res) => {
 
 // PUT /cart/:id - update item quantity
 const updateCartItemQuantity = async (req, res) => {
-    const userId = 1;
+    const userId = req.user.id;
     const { id } = req.params;
     const newQty = parseInt(req.body.quantity);
 
@@ -83,7 +83,7 @@ const updateCartItemQuantity = async (req, res) => {
 
 // DELETE /cart/:id - remove one item
 const removeCartItem = async (req, res) => {
-    const userId = 1;
+    const userId = req.user.id;
     const { id } = req.params;
 
     const client = await pool.connect();
@@ -109,7 +109,7 @@ const removeCartItem = async (req, res) => {
 
 // DELETE /cart - clear entire cart
 const clearCartItems = async (req, res) => {
-    const userId = 1;
+    const userId = req.user.id;
 
     const client = await pool.connect();
     try {
@@ -136,7 +136,7 @@ const clearCartItems = async (req, res) => {
 
 // POST /cart/checkout - buy everything in cart
 const checkoutCart = async (req, res) => {
-    const userId = 1;
+    const userId = req.user.id;
 
     const client = await pool.connect();
     try {
@@ -190,7 +190,7 @@ const getCartItemCount = async (req, res) => {
 // GET /cart/history - render order history
 const orderHistoryPage = async (req, res) => {
     try {
-        const userId = 1;
+        const userId = req.user.id;
         const userResult = await getUserById(userId);
         const userCredit = userResult[0]?.credit || "0.00";
         const orders = await getOrderHistory(userId);

@@ -1,7 +1,10 @@
 import express from 'express';
 import { shoppingCart, addProductToCart, updateCartItemQuantity, removeCartItem, clearCartItems, getCartItemsTotal, getCartItemCount, checkoutCart, orderHistoryPage } from '../../controllers/ORM/cartController.js';
+import { requireAuth } from '../../middleware/auth.js';
 
 const router = express.Router();
+
+router.use(requireAuth);
 
 router.get('/cart', shoppingCart);
 router.post('/cart', addProductToCart);

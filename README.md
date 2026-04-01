@@ -221,11 +221,12 @@ The endpoints are cleanly namespaced. The `public/` JS scripts automatically pre
 - **ACID Transaction Management** — All cart mutations wrapped in database-isolated `BEGIN/COMMIT/ROLLBACK` protection constraints.
 - **Checkout System** — Deducts credit + verifies real-world funds natively preventing floating drift bugs.
 - **Full ORM Engine** — 100% feature-parity backend implementation running entirely on Sequelize Models, Eager Loading, and Managed Transactions.
+- **Authentication (JWT)** — Mathematical `bcryptjs` encryption and HTTP-Only session cookies.
+- **Role-Based Access Control** — Dynamic `req.user.id` bindings replacing hardcoded states, backed by strict Admin/User middleware partitioning.
 
 ## ⏳ What remains to be implemented?
 
-- User authentication & Role-based Access Control (RBAC).
-- Session management (replace the hardcoded `userId = 1` logic).
+- Frontend Integration: Connecting the dynamic Handlebars web-forms to effectively utilize the newly secured API Authentication layers!
 
 ---
 

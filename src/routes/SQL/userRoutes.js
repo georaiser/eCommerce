@@ -17,16 +17,13 @@ import express from 'express';
 
 // db postgresql users
 import { getUsersDB, addUserDB, updateUserDB, deleteUserDB, getUserByIdDB } from '../../controllers/SQL/userController.js';
+import { requireAuth, requireAdmin } from '../../middleware/auth.js';
 
 const router = express.Router();
 
-// CRUD operations with json file
-// router.get('/users', getUsers);
-// router.post('/user', addUser);
-// router.delete('/user/:id', deleteUser);
-// router.put('/user/:id', updateUser);
+// CRUD operations with db postgresql (Secured for Admins exclusively)
+router.use(requireAuth, requireAdmin);
 
-// CRUD operations with db postgresql
 router.get('/users', getUsersDB);
 router.post('/user', addUserDB);
 router.put('/user/:id', updateUserDB);

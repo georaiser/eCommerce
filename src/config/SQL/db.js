@@ -39,8 +39,8 @@ const connectSQL = async (options = { sync: false }) => {
         const {rows} = await pool.query('SELECT NOW()');
         console.log('SQL database connection successful at:', rows[0].now);
 
-        if (options.sync) {
-            console.log('🛠️ Rebuilding native SQL tables from scratch...');
+        if (options.sync || process.env.DB_SYNC_MODE === 'DROP') {
+            console.log('🛠️ Rebuilding native SQL tables from scratch based on DROP parameter...');
             await createUsersTable(pool);
             await createProductsTable(pool);
             await createCartTable(pool);

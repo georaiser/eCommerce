@@ -40,13 +40,12 @@ const connectDB = async () => {
     console.log('ORM database connection successful!');
 
     // Step 2: Sync all models (create tables if they don't exist)
-    // alter: true → safely updates columns without dropping data (safe for development)
-    // force: true → DROPS and recreates tables every boot (wipes all data, use with caution!)
-    await sequelize.sync({ alter: true });
-    console.log('ORM models synced successfully!');
+    const isDropMode = process.env.DB_SYNC_MODE === 'DROP';
+    await sequelize.sync({ force: isDropMode, alter: !isDropMode });
+    console.log('ORM models synced successfully' + (isDropMode ? ' (Force Rebuilt!)' : ''));
 
     // Step 3: Seed the database purely using ORM!
-    await seedDatabase();
+    if (isDropMode) await seedDatabase();
 };
 
 export { sequelize as default, connectDB };

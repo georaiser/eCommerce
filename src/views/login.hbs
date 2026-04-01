@@ -1,1 +1,28 @@
-<h1>Welcome to the login page</h1>
+<div class="card shadow-lg border-0" style="max-width: 400px; width: 100%; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border-radius: 15px;">
+    <div class="card-body p-5 text-center">
+        <div class="mb-4">
+            <i class="bi bi-fingerprint display-1 text-primary" style="filter: drop-shadow(0 0 10px rgba(13, 110, 253, 0.5));"></i>
+        </div>
+        <h3 class="fw-bold mb-4 text-white">Welcome Back</h3>
+        
+        <form action="/orm/auth/login" method="POST">
+            <div class="form-floating mb-3">
+                <input type="email" class="form-control bg-dark text-white border-secondary" id="email" name="email" placeholder="name@example.com" value="bob.johnson@example.com" required>
+                <label for="email" class="text-secondary">Email address</label>
+            </div>
+            
+            <div class="form-floating mb-4">
+                <input type="password" class="form-control bg-dark text-white border-secondary" id="password" name="password" placeholder="Password" value="1234" required>
+                <label for="password" class="text-secondary">Password</label>
+            </div>
+            
+            <button class="btn btn-primary w-100 py-3 fw-bold rounded-pill mb-3 shadow" type="submit" style="transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1); outline: none;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                Authenticate Securely <i class="bi bi-shield-lock ms-1"></i>
+            </button>
+            
+            <p class="text-secondary small mb-0 mt-0">Pre-filled with Admin credentials.</p>
+            <p class="text-secondary small mb-0 mt-0">Uses modern JWT HttpOnly Cookies.</p>
+            <p class="text-secondary small mb-0 mt-0">Only Admin can create users.</p>
+        </form>
+    </div>
+</div>

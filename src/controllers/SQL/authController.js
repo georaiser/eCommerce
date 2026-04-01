@@ -10,19 +10,52 @@
  * page often uses a dedicated, simpler layout (auth.hbs).
  */
 
-// Renders the login page using the special 'auth' layout.
-const login = (req, res) => {
+import { pool } from '../../config/SQL/db.js';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+
+// GET /login page
+const loginPage = (req, res) => {
     res.render('login', { pageName: 'Login', layout: 'auth' });
 };
 
-// Will handle creating a new user account and hashing the password.
-const register = (req, res) => {
-    res.send('Register');
+// POST /login
+const login = async (req, res) => {
+    const { email, password } = req.body;
+    try {
+        const { rows } = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+        if (rows.length === 0) return res.status(401).send('Invalid email or password.');
+
+        const user = rows[0];
+        const isValid = await bcrypt.compare(password, user.password);
+        if (!isValid) return res.status(401).send('Invalid email or password.');
+
+        // Token
+        const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '24h' });
+        res.cookie('jwt', token, { httpOnly: true, secure: false }); // secure: false for localhost dev
+        
+        res.redirect('/');
+    } catch (err) {
+        res.status(500).send('Login error: ' + err.message);
+    }
 };
 
-// Will clear the user's session or JWT cookie.
+// POST /register
+const register = async (req, res) => {
+    const { name, email, password } = req.body;
+    try {
+        const hashed = await bcrypt.hash(password, 8);
+        await pool.query('INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3, $4)', [name, email, hashed, 'user']);
+        res.send('Registration successful!');
+    } catch (err) {
+        res.status(500).send('Error registering: ' + err.message);
+    }
+}
+
+// GET /logout
 const logout = (req, res) => {
-    res.send('Logout');
-};
+    res.clearCookie('jwt');
+    res.redirect('/');
+}
 
-export { login, register, logout };
+export { loginPage, login, register, logout };

@@ -3,7 +3,7 @@ import { sequelize, User, Product, Cart, Order, OrderItem } from '../../models/O
 // GET /cart - render cart page
 const shoppingCart = async (req, res) => {
     try {
-        const userId = 1;
+        const userId = req.user.id;
         const user = await User.findByPk(userId); // user info
         const userCredit = user?.credit || "0.00";
         
@@ -59,7 +59,7 @@ const shoppingCart = async (req, res) => {
 
 // POST /cart - add product to cart
 const addProductToCart = async (req, res) => {
-    const userId = 1;
+    const userId = req.user.id;
     const { productId, quantity } = req.body;
     const requestedQty = parseInt(quantity);
 
@@ -93,7 +93,7 @@ const addProductToCart = async (req, res) => {
 
 // PUT /cart/:id - update item quantity
 const updateCartItemQuantity = async (req, res) => {
-    const userId = 1;
+    const userId = req.user.id;
     const productId = req.params.id;
     const newQty = parseInt(req.body.quantity);
 
@@ -119,7 +119,7 @@ const updateCartItemQuantity = async (req, res) => {
 
 // DELETE /cart/:id - remove one item
 const removeCartItem = async (req, res) => {
-    const userId = 1;
+    const userId = req.user.id;
     const productId = req.params.id;
 
     try {
@@ -140,7 +140,7 @@ const removeCartItem = async (req, res) => {
 
 // DELETE /cart - clear entire cart
 const clearCartItems = async (req, res) => {
-    const userId = 1;
+    const userId = req.user.id;
 
     try {
         await sequelize.transaction(async (t) => {
@@ -162,7 +162,7 @@ const clearCartItems = async (req, res) => {
 
 // POST /cart/checkout - buy everything in cart
 const checkoutCart = async (req, res) => {
-    const userId = 1;
+    const userId = req.user.id;
 
     try {
         let newCredit = 0;
@@ -214,7 +214,7 @@ const checkoutCart = async (req, res) => {
 // GET /cart/total
 const getCartItemsTotal = async (req, res) => {
     try {
-        const userId = 1;
+        const userId = req.user.id;
         const cartItems = await Cart.findAll({ where: { user_id: userId }, include: [{ model: Product }] });
         // Use clean ES6 Javascript reduction aggregations
         const total = cartItems.reduce((sum, item) => sum + (item.quantity * parseFloat(item.product.price)), 0);
@@ -227,7 +227,7 @@ const getCartItemsTotal = async (req, res) => {
 // GET /cart/count
 const getCartItemCount = async (req, res) => {
     try {
-        const userId = 1;
+        const userId = req.user.id;
         // Use ORM raw SQL aggregator natively bypassing mapping entirely
         const count = await Cart.sum('quantity', { where: { user_id: userId } });
         res.send(`Cart item count: ${count || 0}`);
@@ -239,7 +239,7 @@ const getCartItemCount = async (req, res) => {
 // GET /cart/history - render order history
 const orderHistoryPage = async (req, res) => {
     try {
-        const userId = 1;
+        const userId = req.user.id;
         const user = await User.findByPk(userId);
         const userCredit = user?.credit || "0.00";
         

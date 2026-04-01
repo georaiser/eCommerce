@@ -2,8 +2,12 @@ import express from 'express';
 
 // import cart controller functions
 import { shoppingCart, addProductToCart, updateCartItemQuantity, removeCartItem, clearCartItems, getCartItemsTotal, getCartItemCount, checkoutCart, orderHistoryPage } from '../../controllers/SQL/cartController.js';
+import { requireAuth } from '../../middleware/auth.js';
 
 const router = express.Router();
+
+// Enforce identity verification across all cart operations natively:
+router.use(requireAuth);
 
 // Routes
 router.get('/cart', shoppingCart);
