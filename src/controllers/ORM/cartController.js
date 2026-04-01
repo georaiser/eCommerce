@@ -11,7 +11,9 @@ const shoppingCart = async (req, res) => {
         const cartItemsRaw = await Cart.findAll({
             where: { user_id: userId },
             include: [{ model: Product }],
-            order: [['created_at', 'ASC']] // Try to keep consistent order
+            order: [['created_at', 'ASC']], // Try to keep consistent order
+            raw: true,
+            nest: true // Re-nests the included Product object neatly without instance bloat!
         });
 
         // Format exactly how Handlebars expects: { id, quantity, created_at, product_id, name, category, price, total }
@@ -34,7 +36,7 @@ const shoppingCart = async (req, res) => {
         });
 
         // Fetch all products for the store dropdown
-        const rawProducts = await Product.findAll({ order: [['id', 'ASC']] });
+        const rawProducts = await Product.findAll({ raw: true, order: [['id', 'ASC']] });
         const products = rawProducts.map(p => ({
             id: p.id,
             name: p.name,

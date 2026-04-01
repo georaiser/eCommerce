@@ -3,17 +3,12 @@ import { sequelize, User } from '../../models/ORM/index.js';
 // GET /users
 const getUsers = async (req, res) => {
     try {
-        const usersRaw = await User.findAll({ order: [['id', 'ASC']] });
+        const users = await User.findAll({ raw: true, order: [['id', 'ASC']] });
 
-        const users = usersRaw.map(user => ({
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            password: user.password,
-            role: user.role,
-            credit: user.credit,
-            created_at: new Date(user.created_at).toLocaleString(),
-        }));
+        // Format dates correctly for Handlebars
+        users.forEach(user => {
+            user.created_at = new Date(user.created_at).toLocaleString();
+        });
 
         res.render("users_page", { pageName: "Users", users });
     } catch (error) {
@@ -71,7 +66,9 @@ const updateUser = async (req, res) => {
 const getUserById = async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await User.findByPk(id); // Calls the ORM model!
+    const user = await User.findByPk(id, { raw: true }); // Calls the ORM model!
+    if (user) user.created_at = new Date(user.created_at).toLocaleString();
+    
     res.render("users_page", { pageName: "Users", users: [user] });
   } catch (error) {
     res.status(500).send(`Error getting user: ${error}`);
