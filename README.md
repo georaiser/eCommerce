@@ -176,6 +176,24 @@ await sequelize.transaction(async (t) => {
 
 ---
 
+## 👥 Default Accounts & Role Segregation
+
+Upon database initialization, mock accounts are actively seeded. **All default accounts share the identical password: `1234`** (encrypted mathematically via `bcryptjs`).
+
+The platform natively enforces strict Role-Based Access Control (RBAC) generating two entirely distinct platform footprints:
+
+### 🛡️ Administrator (`admin@example.com` / `1234`)
+- **Sanitized Shopping Hub**: Admins are structurally quarantined from interacting directly with the Shopping Cart or making mock purchases to strictly preserve business logic integrity.
+- **Global Order Radar**: Clicking into the History portal natively pivots the queries into a **Global Dashboard**, retrieving the entirety of network transactions cross-joined with Purchaser Names.
+- **CRUD Mastery**: Exclusive API authorization over the `/users` and `/products` endpoints to issue real-time updates scaling inventory parameters.
+
+### 🛒 Standard User (`user@example.com` / `1234`)
+- **Locked Catalog**: Standard users intercept a `403 Forbidden` firewall if attempting to poke into the `/users` or `/products` administration mechanisms natively.
+- **Unrestricted Commerce**: Full integration mapping the Storefront Catalog actions dynamically into the `Cart` transaction engine.
+- **Personal Logbook**: The History portal algorithmically restricts its output bounding explicitly to personal finalized receipts.
+
+---
+
 ## 📌 API Endpoints
 
 The endpoints are cleanly namespaced. The `public/` JS scripts automatically prepend the active mode suffix (`/sql` or `/orm`). 
@@ -196,15 +214,16 @@ The endpoints are cleanly namespaced. The `public/` JS scripts automatically pre
 | PUT | `/sql/product/:id` | Update a product |
 | DELETE | `/sql/product/:id` | Delete a product |
 
-### Cart
+### Cart & Orders
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/sql/cart` | View current user cart + credit balance |
-| POST | `/sql/cart` | Add product to cart — atomic: deducts shelf stock |
-| PUT | `/sql/cart/:id` | Edit item quantity — atomic: syncs shelf stock delta |
-| DELETE | `/sql/cart/:id` | Remove product — atomic: restores shelf stock |
-| DELETE | `/sql/cart` | Clear entire cart — atomic: restores all shelf stock |
-| POST | `/sql/cart/checkout` | Purchase cart — atomic: deducts user credit, clears cart |
+| GET | `/sql/cart` | View current user cart + credit balance. (Admins blocked) |
+| POST | `/sql/cart` | Add product to cart — atomic: deducts shelf stock. (Admins blocked) |
+| PUT | `/sql/cart/:id` | Edit item quantity — atomic: syncs shelf stock delta. (Admins blocked) |
+| DELETE | `/sql/cart/:id` | Remove product — atomic: restores shelf stock. (Admins blocked) |
+| DELETE | `/sql/cart` | Clear entire cart — atomic: restores all shelf stock. (Admins blocked) |
+| POST | `/sql/cart/checkout` | Purchase cart — atomic: deducts user credit, seals transaction into Order History. |
+| GET | `/sql/cart/history` | Dynamically routes User directly to their Personal Order History, or routes Admins to the entirety of the Global Order Dashboard natively joined with user identities. |
 
 *(Note: Both `/sql/*` and `/orm/*` endpoints are fully built and testable! Modify the URL in your browser to seamlessly switch between backend architectures.)*
 
@@ -218,16 +237,18 @@ The endpoints are cleanly namespaced. The `public/` JS scripts automatically pre
 - **User Management** — CRUD with per-user `credit` balance logic.
 - **Product Management** — CRUD with real-time `stock` tracking.
 - **Dynamic Inventory Management** — Real-time logical shelf stock allocations on every cart action with quantity upserting.
-- **ACID Transaction Management** — All cart mutations wrapped in database-isolated `BEGIN/COMMIT/ROLLBACK` protection constraints.
-- **Checkout System** — Deducts credit + verifies real-world funds natively preventing floating drift bugs.
-- **Full ORM Engine** — 100% feature-parity backend implementation running entirely on Sequelize Models, Eager Loading, and Managed Transactions.
-- **Authentication (JWT)** — Mathematical `bcryptjs` encryption and HTTP-Only session cookies. Unauthorized API hits are gracefully redirected to a sleek, standalone Login UI.
-- **Role-Based Access Control** — Dynamic `req.user.id` bindings replacing hardcoded states, backed by strict Admin/User middleware partitioning.
-- **Dynamic UX Navigation** — The Navbar conditionally renders `Login` and `Logout` actions globally depending on the presence of a secure JWT Cookie, while keeping the main storefront natively public.
+- **ACID Transaction Management** — All cart mutations wrapped in database-isolated `BEGIN/COMMIT/ROLLBACK` protection constraints natively avoiding inventory race conditions.
+- **Checkout System** — Deducts credit + verifies real-world funds natively preventing floating drift bugs, transferring Cart maps strictly into locked Order Histories.
+- **Full ORM Engine** — 100% feature-parity backend implementation running entirely on Sequelize Models.
+- **Authentication (JWT)** — Mathematical `bcryptjs` encryption and HTTP-Only session cookies backing identity verifications.
+- **Role-Based Access Control (RBAC)** — Securely segregates platform features. `Admins` manage users and products but are explicitly locked off native storefront purchases. `Users` have open cart freedom but are inherently blocked from `/product/` and `/user/` CRUD interfaces natively.
+- **Dynamic UX Navigation** — The Navbar conditionally renders layout components. Admins organically pull a `Global Orders` database link, completely hiding the Cart options present for shoppers.
+- **Global Order Dashboard** — Smart-queries natively joining `orders`, `order_items`, and `users` tables allowing Admins to strictly monitor global ecosystem flow.
 
-## ⏳ What remains to be implemented?
+## ⏳ Production Additions (Optional)
 
-- Frontend Integration: Connecting the dynamic Handlebars web-forms to effectively utilize the newly secured API Authentication layers!
+- **Payment Providers**: Bolting in real-world API Integrations (Stripe / PayPal) natively replacing the isolated DB Credit ledger.
+- **SMTP Hooking**: Linking the localized Checkout mechanism automatically into an email node to broadcast receipts securely.
 
 ---
 

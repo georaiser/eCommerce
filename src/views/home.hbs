@@ -12,9 +12,14 @@
                     <h4 class="fw-bold text-primary">SQL Mode</h4>
                     <p class="text-muted small">Raw PostgreSQL — <code>pg</code> pool<br><code>BEGIN / COMMIT / ROLLBACK</code></p>
                     <div class="d-grid gap-2 mt-3">
-                        <a href="/sql/users"    class="btn btn-outline-primary">👤 Users</a>
-                        <a href="/sql/products" class="btn btn-outline-primary">📦 Products</a>
-                        <a href="/sql/cart"     class="btn btn-primary fw-bold">🛒 Cart &amp; Checkout</a>
+                        {{#if isAdmin}}
+                            <a href="/sql/users"    class="btn btn-outline-primary">👤 Users</a>
+                            <a href="/sql/products" class="btn btn-outline-primary">📦 Products</a>
+                            <a href="/sql/cart/history" class="btn btn-primary fw-bold">🌍 Global Orders</a>
+                        {{else}}
+                            <a href="/sql/cart"     class="btn btn-primary fw-bold">🛒 Shop / Cart</a>
+                            <a href="/sql/cart/history" class="btn btn-outline-primary">📦 My Purchases</a>
+                        {{/if}}
                     </div>
                 </div>
                 <div class="card-footer text-center text-muted small">
@@ -30,9 +35,14 @@
                     <h4 class="fw-bold text-secondary">ORM Mode</h4>
                     <p class="text-muted small">Sequelize ORM — model classes<br><code>sequelize.transaction()</code></p>
                     <div class="d-grid gap-2 mt-3">
-                        <a href="/orm/users"    class="btn btn-outline-secondary">👤 Users</a>
-                        <a href="/orm/products" class="btn btn-outline-secondary">📦 Products</a>
-                        <a href="/orm/cart"     class="btn btn-secondary fw-bold">🛒 Cart &amp; Checkout</a>
+                        {{#if isAdmin}}
+                            <a href="/orm/users"    class="btn btn-outline-secondary">👤 Users</a>
+                            <a href="/orm/products" class="btn btn-outline-secondary">📦 Products</a>
+                            <a href="/orm/cart/history" class="btn btn-secondary fw-bold">🌍 Global Orders</a>
+                        {{else}}
+                            <a href="/orm/cart"     class="btn btn-secondary fw-bold">🛒 Shop / Cart</a>
+                            <a href="/orm/cart/history" class="btn btn-outline-secondary">📦 My Purchases</a>
+                        {{/if}}
                     </div>
                 </div>
                 <div class="card-footer text-center text-muted small">
@@ -45,44 +55,41 @@
 
     <!-- Status Section -->
     <div class="row justify-content-center mt-5">
-        <div class="col-md-5">
+        <div class="col-md-6">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-success text-white fw-bold">
                     <i class="bi bi-check-circle-fill me-2"></i>What is working?
                 </div>
                 <div class="card-body">
-                    <h6 class="text-success fw-bold mb-3">Dual Architecture Parity</h6>
                     <ul class="list-group list-group-flush border rounded shadow-sm">
                         <li class="list-group-item"><i class="bi bi-hdd-network text-secondary me-2"></i>Database & Table creation</li>
                         <li class="list-group-item"><i class="bi bi-code-square text-secondary me-2"></i>Raw SQL CRUD Operations</li>
                         <li class="list-group-item"><i class="bi bi-diagram-3 text-success me-2"></i>Sequelize ORM Parity (100%)</li>
                         <li class="list-group-item"><i class="bi bi-layout-text-window text-secondary me-2"></i>Shared Handlebars UI views</li>
-                        <li class="list-group-item"><i class="bi bi-cart-check text-secondary me-2"></i>Dynamic Shopping Cart</li>
-                        <li class="list-group-item"><i class="bi bi-shield-check text-secondary me-2"></i>Inventory Stock validations</li>
-                        <li class="list-group-item"><i class="bi bi-lock text-secondary me-2"></i>Managed ACID Transactions</li>
+                        <li class="list-group-item"><i class="bi bi-cart-check text-secondary me-2"></i>Checkout & Inventory Transactions</li>
                     </ul>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-5 mt-4 mt-md-0">
+        <div class="col-md-6 mt-4 mt-md-0">
             <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-warning text-dark fw-bold">
-                    <i class="bi bi-hourglass-split me-2"></i>What remains to be implemented?
+                <div class="card-header bg-primary text-white fw-bold">
+                    <i class="bi bi-shield-check me-2"></i>Security Mechanisms
                 </div>
                 <div class="card-body">
                     <ul class="list-group list-group-flush border rounded shadow-sm">
                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span><i class="bi bi-person-badge text-secondary me-2"></i>User Authentication</span>
-                            <span class="badge bg-primary rounded-pill">Next</span>
+                            <span><i class="bi bi-fingerprint text-primary me-2"></i>JWT Flow</span>
+                            <span class="badge bg-success rounded-pill">Active</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span><i class="bi bi-fingerprint text-secondary me-2"></i>Session Management</span>
-                            <span class="badge bg-secondary rounded-pill">Pending</span>
+                            <span><i class="bi bi-person-badge text-primary me-2"></i>Role Separation</span>
+                            <span class="badge bg-success rounded-pill">Active</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span><i class="bi bi-shield-lock text-secondary me-2"></i>Role Management (RBAC)</span>
-                            <span class="badge bg-secondary rounded-pill">Pending</span>
+                            <span><i class="bi bi-database-lock text-primary me-2"></i>DB Sync Syncs</span>
+                            <span class="badge bg-success rounded-pill">Active</span>
                         </li>
                     </ul>
                 </div>
