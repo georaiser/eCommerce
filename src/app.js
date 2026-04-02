@@ -4,7 +4,7 @@ import path from 'path';
 import cookieParser from 'cookie-parser';
 
 // General routes (no prefix)
-import appRoutes  from './routes/SQL/appRoutes.js';
+import appRoutes  from './routes/appRoutes.js';
 
 // SQL mode routes  →  /sql/*
 import sqlAuthRoutes    from './routes/SQL/authRoutes.js';
