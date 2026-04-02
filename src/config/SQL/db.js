@@ -39,7 +39,9 @@ const connectSQL = async () => {
         const {rows} = await pool.query('SELECT NOW()');
         console.log('SQL database connection successful at:', rows[0].now);
 
-        if (process.env.DB_SYNC_MODE === 'DROP') {
+        const syncMode = process.env.DB_SYNC_MODE || 'SAFE';
+
+        if (syncMode === 'DROP') {
             console.log('🛠️ Rebuilding native SQL tables from scratch based on DROP parameter...');
             await createUsersTable(pool);
             await createProductsTable(pool);
@@ -47,6 +49,10 @@ const connectSQL = async () => {
             await createOrdersTable(pool);
             await createOrderItemsTable(pool);
             await seedDatabase(pool);
+        } else if (syncMode === 'ALTER') {
+            console.log('ALTER mode is active. (Note: Raw SQL bypasses automated ALTERs and requires manual migrations). Skipping rebuild...');
+        } else {
+            console.log('SAFE mode active. Retaining existing native SQL records symmetrically.');
         }
 
     } catch (error) {

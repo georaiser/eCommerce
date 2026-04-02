@@ -48,15 +48,21 @@ const connectORM = async () => {
   await sequelize.authenticate();
   console.log("ORM database connection successful!");
 
-  // Step 2: Sync all models (create tables if they don't exist)
-  const isDropMode = process.env.DB_SYNC_MODE === "DROP";
-  await sequelize.sync({ force: isDropMode});
-  console.log(
-    "ORM models synced successfully" + (isDropMode ? " (Force Rebuilt!)" : ""),
-  );
+  // Step 2: Sync all models and seed dynamically based on .env
+  const syncMode = process.env.DB_SYNC_MODE || 'SAFE';
 
-  // Step 3: Seed the database purely using ORM!
-  if (isDropMode) await seedDatabase();
+  if (syncMode === 'DROP') {
+    await sequelize.sync({ force: true });
+    console.log("ORM models synced successfully (Force Rebuilt!)");
+    await seedDatabase();
+  } else if (syncMode === 'ALTER') {
+    await sequelize.sync({ alter: true });
+    console.log("ORM models synced successfully (Altered!)");
+  } else {
+    // SAFE mode natively defaults to gentle table creation without dropping or altering existing schemas
+    await sequelize.sync(); 
+    console.log("ORM models synced successfully (Safe Mode!)");
+  }
 };
 
 export { sequelize as default, connectORM };
