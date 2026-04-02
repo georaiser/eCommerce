@@ -1,9 +1,12 @@
-import { User, Product, Cart } from '../../models/ORM/index.js';
+import { User, Product, Cart, Order, OrderItem } from '../../models/ORM/index.js';
 
 const seedDatabase = async () => {
     await User.truncate({ cascade: true, restartIdentity: true }); // clean table
     await Product.truncate({ cascade: true, restartIdentity: true }); // clean table
     await Cart.truncate({ cascade: true, restartIdentity: true }); // clean table
+    await Order.truncate({ cascade: true, restartIdentity: true }); 
+    await OrderItem.truncate({ cascade: true, restartIdentity: true });
+    
     try {
         // Wait, checking if the tables are completely empty before seeding
         // so we don't accidentally insert duplicates if the server restarts
@@ -32,11 +35,11 @@ const seedDatabase = async () => {
         ]);
         console.log("ORM Seed: Inserted products.");
 
-        // Insert Cart Items
+        // Insert Cart Items (Map them to normal User ID=3, not Admin!)
         await Cart.bulkCreate([
-            { user_id: 1, product_id: 1, quantity: 2, created_at: '2026-03-25 09:45:00' },
-            { user_id: 1, product_id: 2, quantity: 1, created_at: '2026-03-25 09:47:00' },
-            { user_id: 1, product_id: 3, quantity: 3, created_at: '2026-03-25 09:50:00' }
+            { user_id: 3, product_id: 1, quantity: 2, created_at: '2026-03-25 09:45:00' },
+            { user_id: 3, product_id: 2, quantity: 1, created_at: '2026-03-25 09:47:00' },
+            { user_id: 3, product_id: 3, quantity: 3, created_at: '2026-03-25 09:50:00' }
         ]);
         console.log("ORM Seed: Inserted cart.");
 
