@@ -35,6 +35,8 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/"><i class="bi bi-house me-1"></i>Home</a>
                     </li>
+                    
+                    {{#if isAdmin}}
                     <li class="nav-item">
                         <a class="nav-link" href="{{prefix}}/users"><i class="bi bi-people me-1"></i>Users</a>
                     </li>
@@ -42,11 +44,16 @@
                         <a class="nav-link" href="{{prefix}}/products"><i class="bi bi-box-seam me-1"></i>Products</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="{{prefix}}/cart/history"><i class="bi bi-globe me-1"></i>Global Orders</a>
+                    </li>
+                    {{else}}
+                    <li class="nav-item">
                         <a class="nav-link" href="{{prefix}}/cart"><i class="bi bi-cart me-1"></i>Cart</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{prefix}}/cart/history"><i class="bi bi-clock-history me-1"></i>History</a>
-                    </li>   
+                        <a class="nav-link" href="{{prefix}}/cart/history"><i class="bi bi-clock-history me-1"></i>My Purchases</a>
+                    </li>
+                    {{/if}} 
                 </ul>
 
                 <ul class="navbar-nav ms-auto">

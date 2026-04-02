@@ -23,3 +23,11 @@ export const requireAdmin = (req, res, next) => {
     }
     next();
 };
+
+// 3. Quarantines standard cart logic from Admins natively.
+export const preventAdmin = (req, res, next) => {
+    if (req.user && req.user.role === 'admin') {
+        return res.status(403).send('Forbidden! Administrators are not standard shoppers and cannot manipulate the cart.');
+    }
+    next();
+};

@@ -1,19 +1,19 @@
 import express from 'express';
 import { shoppingCart, addProductToCart, updateCartItemQuantity, removeCartItem, clearCartItems, getCartItemsTotal, getCartItemCount, checkoutCart, orderHistoryPage } from '../../controllers/ORM/cartController.js';
-import { requireAuth } from '../../middleware/auth.js';
+import { requireAuth, preventAdmin } from '../../middleware/auth.js';
 
 const router = express.Router();
 
 router.use(requireAuth);
 
-router.get('/cart', shoppingCart);
-router.post('/cart', addProductToCart);
-router.put('/cart/:id', updateCartItemQuantity);
-router.delete('/cart/:id', removeCartItem);
-router.delete('/cart', clearCartItems);
-router.post('/cart/checkout', checkoutCart);
-router.get('/cart/total', getCartItemsTotal);
-router.get('/cart/count', getCartItemCount);
+router.get('/cart', preventAdmin, shoppingCart);
+router.post('/cart', preventAdmin, addProductToCart);
+router.put('/cart/:id', preventAdmin, updateCartItemQuantity);
+router.delete('/cart/:id', preventAdmin, removeCartItem);
+router.delete('/cart', preventAdmin, clearCartItems);
+router.post('/cart/checkout', preventAdmin, checkoutCart);
+router.get('/cart/total', preventAdmin, getCartItemsTotal);
+router.get('/cart/count', preventAdmin, getCartItemCount);
 router.get('/cart/history', orderHistoryPage);
 
 export default router;

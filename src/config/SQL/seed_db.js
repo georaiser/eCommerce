@@ -39,6 +39,23 @@ const seedDatabase = async (pool) => {
                 (1, 3, 3, '2026-03-25 09:50:00')
         `);
     console.log("Inserted cart.");
+
+    // Insert Past Orders natively to populate the Admin global dashboard
+    await pool.query(`
+        INSERT INTO orders (user_id, total_paid, created_at) 
+        VALUES 
+            (2, 498.99, '2026-03-20 10:00:00'), 
+            (3, 34.95, '2026-03-27 12:00:00')
+    `);
+    
+    await pool.query(`
+        INSERT INTO order_items (order_id, product_id, quantity, price_at_purchase) 
+        VALUES 
+            (1, 1, 1, 149.99), 
+            (1, 2, 1, 349.00), 
+            (2, 3, 1, 34.95)
+    `);
+    console.log("Inserted past orders.");
   } catch (error) {
     console.error("Error seeding database:", error.message);
   }

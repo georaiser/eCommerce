@@ -191,13 +191,17 @@ const getCartItemCount = async (req, res) => {
 const orderHistoryPage = async (req, res) => {
     try {
         const userId = req.user.id;
+        const isAdmin = req.user.role === 'admin';
         const userResult = await getUserById(userId);
         const userCredit = userResult[0]?.credit || "0.00";
-        const orders = await getOrderHistory(userId);
+        
+        // Route Admin identically to a Global History map
+        const orders = isAdmin ? await getOrderHistory(null) : await getOrderHistory(userId);
         
         // Format the grouped JSON directly from PostgreSQL for Handlebars
         const groupedOrders = orders.map(order => ({
             order_id: order.order_id,
+            purchaser_name: order.purchaser_name,
             total_paid: order.total_paid,
             created_at: new Date(order.created_at).toLocaleString(),
             items: order.items.map(item => ({

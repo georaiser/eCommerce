@@ -240,24 +240,34 @@ const getCartItemCount = async (req, res) => {
 const orderHistoryPage = async (req, res) => {
     try {
         const userId = req.user.id;
+        const isAdmin = req.user.role === 'admin';
         const user = await User.findByPk(userId);
         const userCredit = user?.credit || "0.00";
         
-        // Fetch all orders for this user, including nested products!
-        const orders = await Order.findAll({
-            where: { user_id: userId },
-            include: [{ 
-                model: Product,
-                through: { attributes: ['quantity', 'price_at_purchase'] } // only pull what we need from OrderItem
-            }],
+        const queryOptions = {
+            include: [
+                { model: User, attributes: ['name'] },
+                { 
+                    model: Product,
+                    through: { attributes: ['quantity', 'price_at_purchase'] } // only pull what we need from OrderItem
+                }
+            ],
             order: [['created_at', 'DESC']]
-        });
+        };
+
+        if (!isAdmin) {
+            queryOptions.where = { user_id: userId };
+        }
+        
+        // Fetch conditionally
+        const orders = await Order.findAll(queryOptions);
         
         // Formatting for Handlebars
-        // Handlebars expects: [{ order_id, total_paid, created_at, items: [ { product_name, quantity, price_at_purchase, item_total } ] }]
+        // Handlebars expects: [{ order_id, purchaser_name, total_paid, created_at, items: [ { product_name, quantity, price_at_purchase, item_total } ] }]
         const groupedOrders = orders.map(order => {
             return {
                 order_id: order.id,
+                purchaser_name: order.user?.name,
                 total_paid: parseFloat(order.total_paid).toFixed(2),
                 created_at: new Date(order.created_at).toLocaleString(),
                 items: order.products.map(product => {

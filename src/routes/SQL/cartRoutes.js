@@ -2,7 +2,7 @@ import express from 'express';
 
 // import cart controller functions
 import { shoppingCart, addProductToCart, updateCartItemQuantity, removeCartItem, clearCartItems, getCartItemsTotal, getCartItemCount, checkoutCart, orderHistoryPage } from '../../controllers/SQL/cartController.js';
-import { requireAuth } from '../../middleware/auth.js';
+import { requireAuth, preventAdmin } from '../../middleware/auth.js';
 
 const router = express.Router();
 
@@ -10,15 +10,15 @@ const router = express.Router();
 router.use(requireAuth);
 
 // Routes
-router.get('/cart', shoppingCart);
+router.get('/cart', preventAdmin, shoppingCart);
 router.get('/cart/history', orderHistoryPage);
-router.post('/cart', addProductToCart);
-router.post('/cart/checkout', checkoutCart);
-router.put('/cart/:id', updateCartItemQuantity);
-router.delete('/cart/:id', removeCartItem);
-router.delete('/cart', clearCartItems);
-router.get('/cart/total', getCartItemsTotal);
-router.get('/cart/count', getCartItemCount);
+router.post('/cart', preventAdmin, addProductToCart);
+router.post('/cart/checkout', preventAdmin, checkoutCart);
+router.put('/cart/:id', preventAdmin, updateCartItemQuantity);
+router.delete('/cart/:id', preventAdmin, removeCartItem);
+router.delete('/cart', preventAdmin, clearCartItems);
+router.get('/cart/total', preventAdmin, getCartItemsTotal);
+router.get('/cart/count', preventAdmin, getCartItemCount);
 
 
 export default router

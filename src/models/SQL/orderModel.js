@@ -21,10 +21,18 @@ const insertOrderItems = async (userId, orderId, dbClient = pool) => {
     await dbClient.query(query, data);
 };
 
-// get user's order history
-const getOrderHistory = async (userId, dbClient = pool) => {
+// get user's (or ALL users if userId is null) order history correctly mapped with user names
+const getOrderHistory = async (userId = null, dbClient = pool) => {
+    let whereClause = '';
+    const data = [];
+    
+    if (userId) {
+        whereClause = 'WHERE o.user_id = $1';
+        data.push(userId);
+    }
+    
     const query = `
-        SELECT o.id AS order_id, o.total_paid, o.created_at, 
+        SELECT o.id AS order_id, o.total_paid, o.created_at, u.name AS purchaser_name,
                json_agg(
                    json_build_object(
                        'product_name', p.name,
@@ -34,13 +42,14 @@ const getOrderHistory = async (userId, dbClient = pool) => {
                    )
                ) AS items
         FROM orders o
+        JOIN users u ON o.user_id = u.id
         JOIN order_items oi ON o.id = oi.order_id
         JOIN products p ON oi.product_id = p.id
-        WHERE o.user_id = $1
-        GROUP BY o.id
+        ${whereClause}
+        GROUP BY o.id, u.name
         ORDER BY o.created_at DESC
     `;
-    const data = [userId];
+    
     const { rows } = await dbClient.query(query, data);
     return rows;
 };

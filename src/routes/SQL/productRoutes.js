@@ -24,16 +24,9 @@ const router = express.Router();
 
 // ROUTES
 
-// CRUD operations with json file
-// router.get('/products', getProducts);
-// router.post('/product', addProduct);
-// router.delete('/product/:id', deleteProduct);
-// router.put('/product/:id', updateProduct);
-
-//CRUD operations with db postgresql
-router.get('/products', getProductsDB);
-router.get('/product/:id', getProductByIdDB); // Moved here for logical flow
-
+// Secure Product Management (Admin Only) - Cart natively contains the storefront!
+router.get('/products', requireAuth, requireAdmin, getProductsDB);
+router.get('/product/:id', requireAuth, requireAdmin, getProductByIdDB); 
 router.post('/product', requireAuth, requireAdmin, addProductDB);
 router.put('/product/:id', requireAuth, requireAdmin, updateProductDB);
 router.delete('/product/:id', requireAuth, requireAdmin, deleteProductDB);

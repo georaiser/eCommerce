@@ -2,6 +2,7 @@ import express from 'express';
 import exphbs from 'express-handlebars';
 import path from 'path';
 import cookieParser from 'cookie-parser';
+import jwt from 'jsonwebtoken';
 
 // General routes (no prefix)
 import appRoutes  from './routes/appRoutes.js';
@@ -40,7 +41,21 @@ app.engine('hbs', exphbs.engine({
 // Global middleware to set the active mode prefix for all Handlebars templates
 app.use((req, res, next) => {
     res.locals.prefix = req.originalUrl.startsWith('/orm') ? '/orm' : '/sql';
-    res.locals.isAuthenticated = !!req.cookies.jwt; // Tell the navbar if we are logged in!
+    
+    const token = req.cookies.jwt;
+    res.locals.isAuthenticated = !!token;
+    
+    if (token) {
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            res.locals.isAdmin = (decoded.role === 'admin');
+        } catch(err) {
+            res.locals.isAdmin = false;
+        }
+    } else {
+        res.locals.isAdmin = false;
+    }
+    
     next();
 });
 

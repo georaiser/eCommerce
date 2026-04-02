@@ -5,12 +5,10 @@ import { requireAuth, requireAdmin } from '../../middleware/auth.js';
 const router = express.Router();
 
 // Secure User Management (Admin Only)
-router.use(requireAuth, requireAdmin);
-
-router.get('/users', getUsers);
-router.post('/user', addUser);
-router.delete('/user/:id', deleteUser);
-router.put('/user/:id', updateUser);
-router.get('/user/:id', getUserById);
+router.get('/users', requireAuth, requireAdmin, getUsers);
+router.post('/user', requireAuth, requireAdmin, addUser);
+router.delete('/user/:id', requireAuth, requireAdmin, deleteUser);
+router.put('/user/:id', requireAuth, requireAdmin, updateUser);
+router.get('/user/:id', requireAuth, requireAdmin, getUserById);
 
 export default router;

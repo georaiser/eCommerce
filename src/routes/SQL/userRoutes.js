@@ -22,12 +22,10 @@ import { requireAuth, requireAdmin } from '../../middleware/auth.js';
 const router = express.Router();
 
 // CRUD operations with db postgresql (Secured for Admins exclusively)
-router.use(requireAuth, requireAdmin);
-
-router.get('/users', getUsersDB);
-router.post('/user', addUserDB);
-router.put('/user/:id', updateUserDB);
-router.delete('/user/:id', deleteUserDB);
-router.get('/user/:id', getUserByIdDB);
+router.get('/users', requireAuth, requireAdmin, getUsersDB);
+router.post('/user', requireAuth, requireAdmin, addUserDB);
+router.put('/user/:id', requireAuth, requireAdmin, updateUserDB);
+router.delete('/user/:id', requireAuth, requireAdmin, deleteUserDB);
+router.get('/user/:id', requireAuth, requireAdmin, getUserByIdDB);
 
 export default router;

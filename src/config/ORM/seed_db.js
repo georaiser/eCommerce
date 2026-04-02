@@ -40,6 +40,18 @@ const seedDatabase = async () => {
         ]);
         console.log("ORM Seed: Inserted cart.");
 
+        // Insert Past Orders natively to populate the Admin global dashboard
+        await Order.bulkCreate([
+            { user_id: 2, total_paid: 498.99, created_at: '2026-03-20 10:00:00' },
+            { user_id: 3, total_paid: 34.95, created_at: '2026-03-27 12:00:00' }
+        ]);
+        await OrderItem.bulkCreate([
+            { order_id: 1, product_id: 1, quantity: 1, price_at_purchase: 149.99 },
+            { order_id: 1, product_id: 2, quantity: 1, price_at_purchase: 349.00 },
+            { order_id: 2, product_id: 3, quantity: 1, price_at_purchase: 34.95 }
+        ]);
+        console.log("ORM Seed: Inserted past orders.");
+
     } catch (error) {
         console.error("Error seeding ORM database:", error.message);
     }

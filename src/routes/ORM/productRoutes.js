@@ -4,11 +4,9 @@ import { requireAuth, requireAdmin } from '../../middleware/auth.js';
 
 const router = express.Router();
 
-// Public facing routes
-router.get('/products', getProducts);
-router.get('/product/:id', getProductById);
-
-// Admin-only operations
+// Secure Product Management (Admin Only) - Cart natively contains the storefront!
+router.get('/products', requireAuth, requireAdmin, getProducts);
+router.get('/product/:id', requireAuth, requireAdmin, getProductById);
 router.post('/product', requireAuth, requireAdmin, addProduct);
 router.put('/product/:id', requireAuth, requireAdmin, updateProduct);
 router.delete('/product/:id', requireAuth, requireAdmin, deleteProduct);
