@@ -30,7 +30,7 @@ const pool = new Pool({...config,
     connectionTimeoutMillis: 2000 // max time to try to connect
 });
     
-const connectSQL = async (options = { sync: false }) => {
+const connectSQL = async () => {
     try {
         // create database if not exists (using Client)
         await createDatabase(config);
@@ -39,7 +39,7 @@ const connectSQL = async (options = { sync: false }) => {
         const {rows} = await pool.query('SELECT NOW()');
         console.log('SQL database connection successful at:', rows[0].now);
 
-        if (options.sync || process.env.DB_SYNC_MODE === 'DROP') {
+        if (process.env.DB_SYNC_MODE === 'DROP') {
             console.log('🛠️ Rebuilding native SQL tables from scratch based on DROP parameter...');
             await createUsersTable(pool);
             await createProductsTable(pool);
