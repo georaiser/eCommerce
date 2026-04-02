@@ -20,8 +20,8 @@ const getUsers = async (req, res) => {
 const addUser = async (req, res) => {
   try {
     const { name, email, password, role, credit } = req.body;
-    //credit = credit? credit : 0.0; credit value always is required in body
-    await User.create({ name, email, password, role, credit});
+    // Fallback to 0.0 if the administrator leaves the credit input completely blank!
+    await User.create({ name, email, password, role, credit: credit || 0.0 });
     res.send(`User ${name} added successfully!`);
   } catch (error) {
     res.status(500).send(`Error saving user: ${error}`);
@@ -53,7 +53,10 @@ const updateUser = async (req, res) => {
     }
 
     // Perform a raw DB update directly. Returns array: [affectedCount]
-    const [updatedRows] = await User.update(updates, { where: { id } });
+    const [updatedRows] = await User.update(updates, { 
+        where: { id }, 
+        individualHooks: true // Forces Sequelize to mathematically encrypt the password!
+    });
 
     if (updatedRows === 0) throw new Error("User not found");
 

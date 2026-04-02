@@ -16,6 +16,7 @@
  *    → users.json         (temporary file-based data store, replaces a DB for now)
  */
 
+import bcrypt from 'bcryptjs';
 import {
   getAllUsers,
   createUser,
@@ -39,7 +40,8 @@ const getUsersDB = async (req, res) => {
 const addUserDB = async (req, res) => {
   try {
     const { name, email, password, role, credit } = req.body;
-    await createUser(name, email, password, role, credit || 0.0); // Calls the model!
+    const hashedPassword = await bcrypt.hash(password, 8);
+    await createUser(name, email, hashedPassword, role, credit || 0.0); // Calls the model!
     res.send(`User ${name} added successfully!`);
   } catch (error) {
     res.status(500).send(`Error saving user: ${error}`);
@@ -69,11 +71,14 @@ const updateUserDB = async (req, res) => {
 
     name = name || existingUser.name;
     email = email || existingUser.email;
-    password = password || existingUser.password;
+    
+    // Mathematically encrypt the password if updating, otherwise copy the encrypted hash.
+    const finalPassword = password ? await bcrypt.hash(password, 8) : existingUser.password;
+    
     role = role || existingUser.role;
     credit = credit || existingUser.credit;
 
-    await updateUser(id, name, email, password, role, credit); // Calls the model!
+    await updateUser(id, name, email, finalPassword, role, credit); // Calls the model!
     res.send(`User ${name} updated successfully!`);
   } catch (error) {
     res.status(500).send(`Error updating user: ${error}`);
