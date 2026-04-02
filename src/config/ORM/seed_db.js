@@ -16,9 +16,9 @@ const seedDatabase = async () => {
         // Insert Users using bulkCreate (the ORM equivalent of INSERT INTO ... VALUES)
         // individualHooks MUST be true so the User.js 'beforeCreate' password hashing hook fires for every row!
         await User.bulkCreate([
-            { name: 'Bob Johnson', email: 'bob.johnson@example.com', password: '1234', role: 'admin', credit: 1000.00, created_at: '2024-01-17 09:45:00' },
-            { name: 'jorge antonio', email: 'jorge@example.com', password: '1234', role: 'user', credit: 500.00, created_at: '2026-03-12 09:45:00' },
-            { name: 'jorge', email: 'jorge1@example.com', password: '1234', role: 'user', credit: 25.00, created_at: '2026-03-26 19:45:00' }
+            { name: 'Admin', email: 'admin@example.com', password: '1234', role: 'admin', credit: 1500.00, created_at: '2024-01-17 09:45:00' },
+            { name: 'Jorge Antonio', email: 'jorge@example.com', password: '1234', role: 'user', credit: 500.00, created_at: '2026-03-12 09:45:00' },
+            { name: 'User', email: 'user@example.com', password: '1234', role: 'user', credit: 2500.00, created_at: '2026-03-26 19:45:00' }
         ], { individualHooks: true });
         console.log("ORM Seed: Inserted users.");
 
