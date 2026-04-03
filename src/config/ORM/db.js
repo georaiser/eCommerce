@@ -30,12 +30,14 @@ const connectORM = async () => {
   await sequelize.authenticate();
   console.log("ORM database connection successful!");
 
+  // Step 3: Sync Models dynamically
   const mode = DB_SYNC_MODE || 'SAFE';
   
   // Condense the sync options natively intercepting the Environment Variable
   await sequelize.sync({ force: mode === 'DROP', alter: mode === 'ALTER' });
   console.log(`ORM models synced successfully (${mode} Mode)!`);
   
+  // Step 4: Seed Database if in DROP mode
   if (mode === 'DROP') await seedDatabase();
 };
 

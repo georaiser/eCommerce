@@ -1,20 +1,23 @@
 import { User, Product, Cart, Order, OrderItem } from '../../models/ORM/index.js';
 
 const seedDatabase = async () => {
-    await User.truncate({ cascade: true, restartIdentity: true }); // clean table
-    await Product.truncate({ cascade: true, restartIdentity: true }); // clean table
-    await Cart.truncate({ cascade: true, restartIdentity: true }); // clean table
+    // Clean tables
+    await User.truncate({ cascade: true, restartIdentity: true }); 
+    await Product.truncate({ cascade: true, restartIdentity: true }); 
+    await Cart.truncate({ cascade: true, restartIdentity: true }); 
     await Order.truncate({ cascade: true, restartIdentity: true }); 
     await OrderItem.truncate({ cascade: true, restartIdentity: true });
     
     try {
         // Wait, checking if the tables are completely empty before seeding
         // so we don't accidentally insert duplicates if the server restarts
-        const userCount = await User.count();
-        if (userCount > 0) {
-            console.log("ORM Database already seeded. Skipping seed.");
-            return;
-        }
+        // we have truncated the tables, so we don't need to check if the tables are empty
+        
+        // const userCount = await User.count();
+        // if (userCount > 0) {
+        //     console.log("ORM Database already seeded. Skipping seed.");
+        //     return;
+        // }
 
         // Insert Users using bulkCreate (the ORM equivalent of INSERT INTO ... VALUES)
         // individualHooks MUST be true so the User.js 'beforeCreate' password hashing hook fires for every row!
