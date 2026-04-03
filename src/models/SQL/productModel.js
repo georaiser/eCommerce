@@ -7,10 +7,10 @@ const getAllProducts = async () => {
 };
 
 //Add a new product
-const addProduct = async (name, category, price, stock) => {
+const addProduct = async (name, category, price, stock, image_url = null) => {
   const query =
-    "INSERT INTO products (name, category, price, stock) VALUES ($1, $2, $3, $4) RETURNING *";
-  const data = [name, category, price, stock];
+    "INSERT INTO products (name, category, price, stock, image_url) VALUES ($1, $2, $3, $4, $5) RETURNING *";
+  const data = [name, category, price, stock, image_url];
   const { rows } = await pool.query(query, data);
   //console.log(rows);
   return rows[0];

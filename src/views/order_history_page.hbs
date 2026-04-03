@@ -33,7 +33,18 @@
                             <tbody>
                                 {{#each this.items}}
                                 <tr>
-                                    <td>{{this.product_name}}</td>
+                                    <td>
+                                      <div class="d-flex align-items-center">
+                                        {{#if this.image_url}}
+                                          <img src="/{{this.image_url}}" class="rounded me-2" style="width: 30px; height: 30px; object-fit: cover;">
+                                        {{else}}
+                                          <div class="bg-light border rounded me-2 d-flex justify-content-center align-items-center text-muted" style="width: 30px; height: 30px;">
+                                            <i class="bi bi-box"></i>
+                                          </div>
+                                        {{/if}}
+                                        <span class="ms-1">{{this.product_name}}</span>
+                                      </div>
+                                    </td>
                                     <td>${{this.price_at_purchase}}</td>
                                     <td>{{this.quantity}}</td>
                                     <td class="text-end fw-semibold">${{this.item_total}}</td>

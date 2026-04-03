@@ -12,8 +12,8 @@ try {
 
     // To natively test SQL table generation: set DB_SYNC_MODE to DROP in .env and turn off ORM boot!
 
-    await connectSQL(); // 1. Raw PostgreSQL Pool
-    await connectORM();                // 2. Sequelize Engine
+    // await connectSQL();     // 1. Raw PostgreSQL Pool
+    await connectORM();       // 2. Sequelize Engine
 
     app.listen(PORT, () => {
         console.log(`Server running at http://localhost:${PORT}`);

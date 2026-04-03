@@ -206,6 +206,7 @@ const orderHistoryPage = async (req, res) => {
             created_at: new Date(order.created_at).toLocaleString(),
             items: order.items.map(item => ({
                 product_name: item.product_name,
+                image_url: item.image_url,
                 quantity: item.quantity,
                 price_at_purchase: parseFloat(item.price_at_purchase).toFixed(2),
                 item_total: parseFloat(item.item_total).toFixed(2)

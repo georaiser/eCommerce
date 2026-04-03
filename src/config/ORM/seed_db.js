@@ -27,11 +27,11 @@ const seedDatabase = async () => {
 
         // Insert Products
         await Product.bulkCreate([
-            { name: 'Wireless Headphones', category: 'Electronics', price: 149.99, stock: 85 },
-            { name: 'Ergonomic Office Chair', category: 'Furniture', price: 349.00, stock: 40 },
-            { name: 'Stainless Steel Water Bottle', category: 'Kitchen', price: 34.95, stock: 200 },
-            { name: 'Mechanical Gaming Keyboard', category: 'Electronics', price: 119.99, stock: 0 },
-            { name: 'Running Shoes', category: 'Footwear', price: 89.99, stock: 120 }
+            { name: 'Wireless Headphones', category: 'Electronics', price: 149.99, stock: 85, image_url: 'WirelessHeadphones.webp' },
+            { name: 'Ergonomic Office Chair', category: 'Furniture', price: 349.00, stock: 40, image_url: 'WirelessHeadphones.webp' },
+            { name: 'Stainless Steel Water Bottle', category: 'Kitchen', price: 34.95, stock: 200, image_url: 'WirelessHeadphones.webp' },
+            { name: 'Mechanical Gaming Keyboard', category: 'Electronics', price: 119.99, stock: 0, image_url: 'WirelessHeadphones.webp' },
+            { name: 'Running Shoes', category: 'Footwear', price: 89.99, stock: 120, image_url: 'WirelessHeadphones.webp' }
         ]);
         console.log("ORM Seed: Inserted products.");
 

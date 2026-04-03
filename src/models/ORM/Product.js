@@ -6,7 +6,8 @@ const Product = sequelize.define('product', {
     name: { type: DataTypes.STRING, allowNull: false },
     category: { type: DataTypes.STRING, allowNull: false },
     price: { type: DataTypes.DECIMAL(10, 2), allowNull: false },
-    stock: { type: DataTypes.INTEGER, defaultValue: 0 }
+    stock: { type: DataTypes.INTEGER, defaultValue: 0 },
+    image_url: { type: DataTypes.STRING, allowNull: true }
 }, { timestamps: false, tableName: 'products' });
 
 export default Product;

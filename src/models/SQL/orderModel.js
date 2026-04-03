@@ -36,6 +36,7 @@ const getOrderHistory = async (userId = null, dbClient = pool) => {
                json_agg(
                    json_build_object(
                        'product_name', p.name,
+                       'image_url', p.image_url,
                        'quantity', oi.quantity,
                        'price_at_purchase', oi.price_at_purchase,
                        'item_total', (oi.quantity * oi.price_at_purchase)

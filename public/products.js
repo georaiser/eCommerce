@@ -29,33 +29,27 @@ document.addEventListener("DOMContentLoaded", () => {
     // Prevent the browser from doing a native form POST (wrong encoding)
     event.preventDefault();
 
-    // Build the product object from the form inputs    <------
-    const product = {
-      name: document.getElementById("name").value.trim(),
-      category: document.getElementById("category").value.trim(),
-      price: parseFloat(document.getElementById("price").value),
-      stock: parseInt(document.getElementById("stock").value)
-    };
+    // Build a native FormData array strictly preserving physical files & raw multipart boundary structures
+    const formData = new FormData(form);
 
-    // Client-side Validation: Check if any field is empty or invalid
+    // Client-side Validation natively reading explicit keys
     if (
-      !product.name ||
-      !product.category ||
-      isNaN(product.price) ||
-      isNaN(product.stock)
+      !formData.get('name').trim() ||
+      !formData.get('category').trim() ||
+      isNaN(parseFloat(formData.get('price'))) ||
+      isNaN(parseInt(formData.get('stock')))
     ) {
-      alert(
-        "Please fill in all fields (Name, Category, valid Price and Stock) before submitting.",
-      );
+      alert("Please fill in all fields (Name, Category, valid Price and Stock) before submitting.");
       return; // Stop execution here
     }
 
     try {
-      // Send JSON to POST /product  (mapped to addProductDB in productController.js)
+      // Send FormData seamlessly mapped intercepting physical '.webp' mappings!
       const response = await fetch(`${window.API_PREFIX}/product`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(product),
+        body: formData,
+        // CRITICAL NOTE: We intentionally OMIT the Content-Type JSON header! 
+        // The Browser mathematically dynamically appends "multipart/form-data" + explicit byte Boundaries autonomously!
       });
 
       if (response.ok) {

@@ -42,7 +42,8 @@ const shoppingCart = async (req, res) => {
             name: p.name,
             category: p.category,
             price: parseFloat(p.price).toFixed(2),
-            stock: p.stock
+            stock: p.stock,
+            image_url: p.image_url // Explicitly retain the image URL dropping through the map!
         }));
 
         res.render("cart_page", { 
@@ -276,6 +277,7 @@ const orderHistoryPage = async (req, res) => {
                     const priceAtPurchase = parseFloat(product.orderItem.price_at_purchase);
                     return {
                         product_name: product.name,
+                        image_url: product.image_url,
                         quantity: quantity,
                         price_at_purchase: priceAtPurchase.toFixed(2),
                         item_total: (quantity * priceAtPurchase).toFixed(2)

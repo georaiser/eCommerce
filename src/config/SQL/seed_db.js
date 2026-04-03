@@ -20,13 +20,13 @@ const seedDatabase = async (pool) => {
 
     // Insert Products
     await pool.query(`
-            INSERT INTO products (name, category, price, stock)
+            INSERT INTO products (name, category, price, stock, image_url)
             VALUES
-                ('Wireless Headphones', 'Electronics', 149.99, 85),
-                ('Ergonomic Office Chair', 'Furniture', 349.00, 40),
-                ('Stainless Steel Water Bottle', 'Kitchen', 34.95, 200),
-                ('Mechanical Gaming Keyboard', 'Electronics', 119.99, 0),
-                ('Running Shoes', 'Footwear', 89.99, 120)
+                ('Wireless Headphones', 'Electronics', 149.99, 85, 'WirelessHeadphones.webp'),
+                ('Ergonomic Office Chair', 'Furniture', 349.00, 40, 'WirelessHeadphones.webp'),
+                ('Stainless Steel Water Bottle', 'Kitchen', 34.95, 200, 'WirelessHeadphones.webp'),
+                ('Mechanical Gaming Keyboard', 'Electronics', 119.99, 0, 'WirelessHeadphones.webp'),
+                ('Running Shoes', 'Footwear', 89.99, 120, 'WirelessHeadphones.webp')
         `);
     console.log("Inserted products.");
 

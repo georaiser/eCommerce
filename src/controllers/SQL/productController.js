@@ -56,7 +56,15 @@ const getProductsDB = async (req, res) => {
 const addProductDB = async (req, res) => {
   try {
     const { name, category, price, stock } = req.body;
-    await addProduct(name, category, price, stock); // Calls the model!
+    let image_url = null;
+
+    if (req.files && req.files.product_image) {
+      const file = req.files.product_image;
+      image_url = `${Date.now()}-${file.name.replace(/\s+/g, '_')}`;
+      await file.mv(`./uploads/${image_url}`);
+    }
+
+    await addProduct(name, category, price, stock, image_url); // Calls the model!
     console.log(`Product ${name} added successfully!`); // Debug log
     res.send(`Product ${name} added successfully!`);
   } catch (error) {

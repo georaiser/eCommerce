@@ -14,7 +14,15 @@ const getProducts = async (req, res) => {
 const addProduct = async (req, res) => {
     try {
         const { name, category, price, stock } = req.body;
-        await Product.create({ name, category, price, stock });
+        let image_url = null;
+
+        if (req.files && req.files.product_image) {
+            const file = req.files.product_image;
+            image_url = `${Date.now()}-${file.name.replace(/\s+/g, '_')}`;
+            await file.mv(`./uploads/${image_url}`);
+        }
+
+        await Product.create({ name, category, price, stock, image_url });
         res.send(`Product ${name} added successfully!`);
     } catch (error) {
         res.status(500).send(`Error saving product: ${error}`);

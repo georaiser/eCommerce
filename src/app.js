@@ -3,9 +3,10 @@ import exphbs from 'express-handlebars';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import jwt from 'jsonwebtoken';
+import fileUpload from 'express-fileupload';
 
 // General routes (no prefix)
-import appRoutes  from './routes/appRoutes.js';
+import appRoutes  from './routes/appRoutes.js'; // login / home / health
 
 // SQL mode routes  →  /sql/*
 import sqlAuthRoutes    from './routes/SQL/authRoutes.js';
@@ -26,8 +27,12 @@ const __dirname = path.resolve();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(fileUpload());
 
+// Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
+// Serve uploaded files
+app.use(express.static(path.join(__dirname, 'uploads')));
 
 // Handlebars view engine
 app.set('view engine', 'hbs');
