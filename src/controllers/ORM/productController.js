@@ -75,6 +75,4 @@ const getProductById = async (req, res) => {
   }
 };
 
-
-
 export { getProducts, addProduct, deleteProduct, updateProduct, getProductById };

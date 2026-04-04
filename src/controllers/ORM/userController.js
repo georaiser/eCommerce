@@ -58,7 +58,7 @@ const updateUser = async (req, res) => {
         individualHooks: true // Forces Sequelize to mathematically encrypt the password!
     });
 
-    if (updatedRows === 0) throw new Error("User not found");
+    if (updatedRows === 0) {throw new Error("User not found")};
 
     res.send(`User ${id} updated successfully!`);
   } catch (error) {
@@ -71,7 +71,7 @@ const getUserById = async (req, res) => {
   try {
     const { id } = req.params;
     const user = await User.findByPk(id, { raw: true }); // Calls the ORM model!
-    if (user) user.created_at = new Date(user.created_at).toLocaleString();
+    if (user) {user.created_at = new Date(user.created_at).toLocaleString()};
     
     res.render("users_page", { pageName: "Users", users: [user] });
   } catch (error) {

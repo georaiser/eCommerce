@@ -20,15 +20,16 @@ const loginPage = (req, res) => {
 };
 
 // POST /login
+// change the HTML form action to action="/sql/auth/login" to use this controller (src/views/login.hbs)
 const login = async (req, res) => {
     const { email, password } = req.body;
     try {
         const { rows } = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
-        if (rows.length === 0) return res.status(401).send('Invalid email or password.');
-
+        //console.log(rows);
+        if (rows.length === 0) {return res.status(401).send('Invalid email or password.')};
         const user = rows[0];
         const isValid = await bcrypt.compare(password, user.password);
-        if (!isValid) return res.status(401).send('Invalid email or password.');
+        if (!isValid) {return res.status(401).send('Invalid email or password.')};
 
         // Token
         const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '24h' });

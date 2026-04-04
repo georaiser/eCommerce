@@ -1,10 +1,12 @@
 import { User } from '../../models/ORM/index.js';
 import jwt from 'jsonwebtoken';
 
+// GET /login
 const loginPage = (req, res) => {
     res.render('login', { pageName: 'Login', layout: 'auth' });
 };
 
+// POST /login
 const login = async (req, res) => {
     const { email, password } = req.body;
     try {
