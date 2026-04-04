@@ -1,26 +1,31 @@
+// src/controllers/ORM/cartController.js
+
 import { sequelize, User, Product, Cart, Order, OrderItem } from '../../models/ORM/index.js';
 
 // GET /cart - render cart page
 const shoppingCart = async (req, res) => {
     try {
-        const userId = req.user.id;
+        const userId = req.user.id; // user id from token
         const user = await User.findByPk(userId); // user info
         const userCredit = user?.credit || "0.00";
         
         // Fetch cart items with associated products
         const cartItemsRaw = await Cart.findAll({
             where: { user_id: userId },
-            include: [{ model: Product }],
+            include: [{ model: Product }], // Thanks to belongsTo
             order: [['created_at', 'ASC']], // Try to keep consistent order
             raw: true,
             nest: true // Re-nests the included Product object neatly without instance bloat!
         });
 
+        //console.log(cartItemsRaw);
+
         // Format exactly how Handlebars expects: { id, quantity, created_at, product_id, name, category, price, total }
         let cartTotal = 0;
         const cart = cartItemsRaw.map(item => {
+            //console.log(item.product);
             const product = item.product; // Thanks to belongsTo
-            const total = item.quantity * product.price;
+            const total = product.price * item.quantity;  
             cartTotal += total;
             
             return {
@@ -36,15 +41,7 @@ const shoppingCart = async (req, res) => {
         });
 
         // Fetch all products for the store dropdown
-        const rawProducts = await Product.findAll({ raw: true, order: [['id', 'ASC']] });
-        const products = rawProducts.map(p => ({
-            id: p.id,
-            name: p.name,
-            category: p.category,
-            price: parseFloat(p.price).toFixed(2),
-            stock: p.stock,
-            image_url: p.image_url // Explicitly retain the image URL dropping through the map!
-        }));
+        const products = await Product.findAll({ raw: true, order: [['id', 'ASC']] });
 
         res.render("cart_page", { 
             pageName: "Cart", 
@@ -72,6 +69,7 @@ const addProductToCart = async (req, res) => {
             if (requestedQty > product.stock) throw new Error(`Only ${product.stock} units available in stock!`);
 
             // Find or strictly create to save an if/else block!
+            // findOrCreate returns an array: [instance, created]
             const [cartItem, created] = await Cart.findOrCreate({
                 where: { user_id: userId, product_id: productId },
                 defaults: { quantity: requestedQty },
@@ -92,7 +90,7 @@ const addProductToCart = async (req, res) => {
     }
 };
 
-// PUT /cart/:id - update item quantity
+// PUT /cart/:id - update cart item quantity (edit button) - user's own cart
 const updateCartItemQuantity = async (req, res) => {
     const userId = req.user.id;
     const productId = req.params.id;
@@ -148,11 +146,13 @@ const clearCartItems = async (req, res) => {
             const cartItems = await Cart.findAll({ where: { user_id: userId }, transaction: t });
             if (cartItems.length === 0) throw new Error('Cart is already empty!');
 
+            // Increment strictly via math in transaction mode
             for (let item of cartItems) {
                 // Increment cleanly without loading Product mapping
                 await Product.increment('stock', { by: item.quantity, where: { id: item.product_id }, transaction: t });
             }
             
+            // Destroy all cart items in transaction mode
             await Cart.destroy({ where: { user_id: userId }, transaction: t });
         });
         res.send(`Cart cleared and all items returned to shelf!`);
@@ -161,7 +161,7 @@ const clearCartItems = async (req, res) => {
     }
 };
 
-// POST /cart/checkout - buy everything in cart
+// POST /cart/checkout - buy everything in cart - user's own cart - transaction mode
 const checkoutCart = async (req, res) => {
     const userId = req.user.id;
 
@@ -217,7 +217,7 @@ const getCartItemsTotal = async (req, res) => {
     try {
         const userId = req.user.id;
         const cartItems = await Cart.findAll({ where: { user_id: userId }, include: [{ model: Product }] });
-        // Use clean ES6 Javascript reduction aggregations
+        // reduction aggregations
         const total = cartItems.reduce((sum, item) => sum + (item.quantity * parseFloat(item.product.price)), 0);
         res.send(`Cart total: ${total.toFixed(2)}`);
     } catch (error) {
@@ -229,7 +229,7 @@ const getCartItemsTotal = async (req, res) => {
 const getCartItemCount = async (req, res) => {
     try {
         const userId = req.user.id;
-        // Use ORM raw SQL aggregator natively bypassing mapping entirely
+        // sum aggregation
         const count = await Cart.sum('quantity', { where: { user_id: userId } });
         res.send(`Cart item count: ${count || 0}`);
     } catch (error) {
