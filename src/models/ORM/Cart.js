@@ -7,6 +7,6 @@ const Cart = sequelize.define('cart', {
     product_id: { type: DataTypes.INTEGER, allowNull: false },
     quantity: { type: DataTypes.INTEGER, allowNull: false },
     created_at: { type: DataTypes.DATE, defaultValue: Sequelize.literal('CURRENT_TIMESTAMP') }
-}, { timestamps: false, tableName: 'cart' });
+}, { timestamps: false});
 
 export default Cart;

@@ -2,7 +2,7 @@ import { DataTypes, Sequelize } from "sequelize";
 import sequelize from "../../config/ORM/db.js";
 import bcrypt from 'bcryptjs';
 
-const User = sequelize.define('user', {
+const User = sequelize.define('users', {
     //id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true }, // Removed to let Sequelize handle it
     name: { type: DataTypes.STRING, allowNull: false },
     email: { type: DataTypes.STRING, allowNull: false },
@@ -12,7 +12,6 @@ const User = sequelize.define('user', {
     created_at: { type: DataTypes.DATE, defaultValue: Sequelize.literal('CURRENT_TIMESTAMP') }
 }, { 
     timestamps: false, 
-    tableName: 'users',
     hooks: {
         beforeCreate: async (user) => {
             if (user.password) {user.password = await bcrypt.hash(user.password, 8)};
