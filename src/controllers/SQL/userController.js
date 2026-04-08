@@ -40,7 +40,8 @@ const getUsersDB = async (req, res) => {
 const addUserDB = async (req, res) => {
   try {
     const { name, email, password, role, credit } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 8);
+    const salt = await bcrypt.genSalt(10); // salt is a random string that is added to the password before hashing
+    const hashedPassword = await bcrypt.hash(password, salt);
     await createUser(name, email, hashedPassword, role, credit || 0.0); // Calls the model!
     res.send(`User ${name} added successfully!`);
   } catch (error) {
@@ -73,7 +74,8 @@ const updateUserDB = async (req, res) => {
     email = email || existingUser.email;
     
     // Mathematically encrypt the password if updating, otherwise copy the encrypted hash.
-    const finalPassword = password ? await bcrypt.hash(password, 8) : existingUser.password;
+    const salt = await bcrypt.genSalt(10); // salt is a random string that is added to the password before hashing
+    const finalPassword = password ? await bcrypt.hash(password, salt) : existingUser.password;
     
     role = role || existingUser.role;
     credit = credit || existingUser.credit;

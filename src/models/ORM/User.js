@@ -14,10 +14,16 @@ const User = sequelize.define('users', {
     timestamps: false, 
     hooks: {
         beforeCreate: async (user) => {
-            if (user.password) {user.password = await bcrypt.hash(user.password, 8)};
+            if (user.password) {
+                const salt = await bcrypt.genSalt(10);  // salt is a random string that is added to the password before hashing
+                user.password = await bcrypt.hash(user.password, salt);
+            };
         },
         beforeUpdate: async (user) => {
-            if (user.changed('password')) {user.password = await bcrypt.hash(user.password, 8)};
+            if (user.changed('password')) {
+                const salt = await bcrypt.genSalt(10);
+                user.password = await bcrypt.hash(user.password, salt);
+            };
         }
     }
 });
