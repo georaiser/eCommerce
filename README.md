@@ -28,13 +28,14 @@ commerceManager/
 │   ├── config/
 │   │   ├── SQL/                    
 │   │   │   ├── db.js               ← Raw PostgreSQL connection pool
-│   │   │   ├── create_db.js        ← Initialization script to create db_jre
-│   │   │   ├── create_tables.js    ← Initialization script to build tables
-│   │   │   └── seed_db.js          ← Initialization script to INSERT default data
+│   │   │   ├── create_db.js        ← Initialization script to inherently create db_jre
+│   │   │   ├── create_tables.js    ← Initialization script to build physical tables
+│   │   │   └── seed_db.js          ← Initialization script to INSERT default schema data
 │   │   │
 │   │   └── ORM/                    
-│   │       ├── db.js               ← Sequelize connection & Model sync()
-│   │       └── seed_db.js          ← Seeding script using bulkCreate()
+│   │       ├── db.js               ← Sequelize connection & DB_SYNC_MODE logic handler (DROP/ALTER/SAFE)
+│   │       ├── create_db.js        ← Independent pg_database builder mapping schemas BEFORE Sequelize initialization
+│   │       └── seed_db.js          ← Seeding script dynamically passing mapped image parameters into bulkCreate()
 │   │
 │   ├── models/
 │   │   ├── SQL/                    
@@ -86,11 +87,14 @@ commerceManager/
 │       └── layouts/
 │           └── main.hbs            ← Base layout wrapper — dynamically routes navbar links via {{prefix}}
 │
-├── public/                         ← Dynamic client-side scripts (adapts fetch calls via window.API_PREFIX)
+├── public/                         ← Dynamic client-side scripts (adapts fetch calls via window.API_PREFIX and native FormData mapping)
 │   ├── css/style.css               
 │   ├── products.js                 
 │   ├── users.js                    
 │   └── cart.js                     
+│
+├── uploads/                        ← Physical local directory mapped dynamically by Express for storing image bytes natively
+│   └── 17...WirelessHeadphones.webp
 │
 ├── .env                            ← Environment variables
 ├── package.json                    
@@ -246,6 +250,8 @@ The endpoints are cleanly namespaced. The `public/` JS scripts automatically pre
 - **Role-Based Access Control (RBAC)** — Securely segregates platform features. `Admins` manage users and products but are explicitly locked off native storefront purchases. `Users` have open cart freedom but are inherently blocked from `/product/` and `/user/` CRUD interfaces natively.
 - **Dynamic UX Navigation** — The Navbar conditionally renders layout components. Admins organically pull a `Global Orders` database link, completely hiding the Cart options present for shoppers.
 - **Global Order Dashboard** — Smart-queries natively joining `orders`, `order_items`, and `users` tables allowing Admins to strictly monitor global ecosystem flow.
+- **Multipart Node Binary Integrations** — Native interceptors securely extracting byte boundaries replacing purely text-based logic internally bypassing JSON serialization constraints strictly using native Client Form Data bindings mapped to the Express `file-upload` engine natively saving strings dynamically combining Epoch Timestamps with Generic explicit image mapping.
+- **Dynamic Startup Schematics** — Rebuilt initialization sequence logically tracking `.env` (`DB_SYNC_MODE`) modes passing `DROP` / `ALTER` / `SAFE` states mapping Independent Connection configurations to physically destroy and remake native database infrastructures flawlessly across reboots.
 
 ## ⏳ Production Additions (Optional)
 
