@@ -34,7 +34,7 @@ const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
     await Product.destroy({ where: { id: id }})
-    res.redirect(req.originalUrl);
+    res.redirect(req.baseUrl + '/products');
   } catch (error) {
     res.status(500).send(`Error deleting product: ${error}`);
   }

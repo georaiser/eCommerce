@@ -9,6 +9,6 @@ router.get('/products', requireAuth, requireAdmin, getProducts);
 router.get('/product/:id', requireAuth, requireAdmin, getProductById);
 router.post('/products', requireAuth, requireAdmin, addProduct);
 router.put('/product/:id', requireAuth, requireAdmin, updateProduct);
-router.delete('/product/:id', requireAuth, requireAdmin, deleteProduct);
+router.post('/product/:id', requireAuth, requireAdmin, deleteProduct);
 
 export default router;
