@@ -29,12 +29,12 @@ const addProduct = async (req, res) => {
     }
 };
 
-// DELETE /products/:id
+// DELETE /product/:id
 const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
     await Product.destroy({ where: { id: id }})
-    res.send(`Product ${id} deleted successfully!`);
+    res.redirect(req.originalUrl);
   } catch (error) {
     res.status(500).send(`Error deleting product: ${error}`);
   }

@@ -29,6 +29,6 @@ router.get('/products', requireAuth, requireAdmin, getProductsDB);
 router.get('/product/:id', requireAuth, requireAdmin, getProductByIdDB); 
 router.post('/products', requireAuth, requireAdmin, addProductDB);
 router.put('/product/:id', requireAuth, requireAdmin, updateProductDB);
-router.delete('/product/:id', requireAuth, requireAdmin, deleteProductDB);
+router.post('/product/:id', requireAuth, requireAdmin, deleteProductDB);
 
 export default router;

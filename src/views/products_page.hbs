@@ -7,24 +7,27 @@
         <div class="card-header">
           <h4>Add Product</h4>
         </div>
-        <form action="{{prefix}}/products" method="POST" id="product-form" class="card-body" enctype="multipart/form-data">
+        <form action="{{prefix}}/products" method="POST" id="product-form" class="card-body"
+          enctype="multipart/form-data">
           <div class="form-group mb-3">
             <input type="text" id="name" name="name" placeholder="Product Name" class="form-control" required />
           </div>
           <div class="form-group mb-3">
-            <input type="text" id="category" name="category" placeholder="Product Category" class="form-control" required />
-          </div>
-          <div class="form-group mb-3">
-            <input type="number" id="price" name="price" placeholder="Product Price" class="form-control" min="0" step="1"
+            <input type="text" id="category" name="category" placeholder="Product Category" class="form-control"
               required />
           </div>
           <div class="form-group mb-3">
-            <input type="number" id="stock" name="stock" placeholder="Product Stock" class="form-control" min="0" step="1"
-              required />
+            <input type="number" id="price" name="price" placeholder="Product Price" class="form-control" min="0"
+              step="1" required />
+          </div>
+          <div class="form-group mb-3">
+            <input type="number" id="stock" name="stock" placeholder="Product Stock" class="form-control" min="0"
+              step="1" required />
           </div>
           <div class="form-group mb-4">
             <label class="form-label small text-muted">Product Image (Optional)</label>
-            <input type="file" id="product_image" name="product_image" class="form-control form-control-sm" accept="image/*">
+            <input type="file" id="product_image" name="product_image" class="form-control form-control-sm"
+              accept="image/*">
           </div>
 
           <input type="submit" value="Add Product" class="btn btn-primary w-100 rounded-5" />
@@ -49,11 +52,13 @@
             <td>
               <div class="d-flex align-items-center">
                 {{#if this.image_url}}
-                  <img src="/{{this.image_url}}" class="rounded me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                <img src="/{{this.image_url}}" class="rounded me-2"
+                  style="width: 40px; height: 40px; object-fit: cover;">
                 {{else}}
-                  <div class="bg-light border rounded me-2 d-flex justify-content-center align-items-center text-muted" style="width: 40px; height: 40px;">
-                    <i class="bi bi-box"></i>
-                  </div>
+                <div class="bg-light border rounded me-2 d-flex justify-content-center align-items-center text-muted"
+                  style="width: 40px; height: 40px;">
+                  <i class="bi bi-box"></i>
+                </div>
                 {{/if}}
                 <span class="ms-1">{{this.name}}</span>
               </div>
@@ -62,11 +67,16 @@
             <td>{{this.price}}</td>
             <td>{{this.stock}}</td>
             <td>
-              <button data-id="{{this.id}}" class="btn btn-secondary btn-sm btn-edit">Edit</button>
-              <button data-id="{{this.id}}" class="btn btn-danger btn-sm btn-delete">Del</button>
+              <div class="d-flex" style="gap: 10px;">
+                <form action="{{prefix}}/product/{{this.id}}" method="POST">
+                  <button data-id="{{this.id}}" class="btn btn-secondary btn-sm btn-edit">Edit</button>
+                </form>
+                <form action="{{../prefix}}/product/{{this.id}}" method="POST">
+                  <button type="submit" class="btn btn-danger btn-sm btn-delete">Del</button>
+                </form>
+              </div>
             </td>
-          </tr>
-          {{/each}}
+          </tr> {{/each}}
         </tbody>
       </table>
     </div>

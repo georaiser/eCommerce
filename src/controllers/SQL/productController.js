@@ -66,19 +66,18 @@ const addProductDB = async (req, res) => {
 
     await addProduct(name, category, price, stock, image_url); // Calls the model!
     console.log(`Product ${name} added successfully!`); // Debug log
-    //res.send(`Product ${name} added successfully!`);
     res.redirect(req.originalUrl);
   } catch (error) {
     res.status(500).send(`Error saving product: ${error}`);
   }
 };
 
-// DELETE /products/:id
+// DELETE /product/:id
 const deleteProductDB = async (req, res) => {
   try {
     const { id } = req.params;
     await deleteProduct(id); // Calls the model!
-    res.send(`Product ${id} deleted successfully!`);
+    res.redirect(req.baseUrl + '/products');
   } catch (error) {
     res.status(500).send(`Error deleting product: ${error}`);
   }

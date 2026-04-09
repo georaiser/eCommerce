@@ -68,34 +68,34 @@ document.addEventListener("DOMContentLoaded", () => {
   //   }
   // });
 
-  // Add event listeners for delete buttons
-  document.addEventListener("click", async (event) => {
-    if (event.target.classList.contains("btn-delete")) {
-      // Read the ID from data-id "{{this.id}}"
-      const productId = event.target.getAttribute("data-id");
+  // // Add event listeners for delete buttons
+  // document.addEventListener("click", async (event) => {
+  //   if (event.target.classList.contains("btn-delete")) {
+  //     // Read the ID from data-id "{{this.id}}"
+  //     const productId = event.target.getAttribute("data-id");
 
-      // Ask for confirmation before deleting
-      if (!confirm("Are you sure you want to delete this product?")) return;
-      try {
-        // Make a DELETE HTTP request to /user/:id
-        const response = await fetch(
-          `${window.API_PREFIX}/product/${productId}`,
-          {
-            method: "DELETE",
-          },
-        );
-        if (response.ok) {
-          window.location.reload(); // Refresh to see the updated table
-          //event.target.closest("tr").remove();
-        } else {
-          alert(await response.text());
-        }
-      } catch (error) {
-        console.error("Error deleting product:", error);
-        alert("An error occurred.");
-      }
-    }
-  });
+  //     // Ask for confirmation before deleting
+  //     if (!confirm("Are you sure you want to delete this product?")) return;
+  //     try {
+  //       // Make a DELETE HTTP request to /user/:id
+  //       const response = await fetch(
+  //         `${window.API_PREFIX}/product/${productId}`,
+  //         {
+  //           method: "DELETE",
+  //         },
+  //       );
+  //       if (response.ok) {
+  //         window.location.reload(); // Refresh to see the updated table
+  //         //event.target.closest("tr").remove();
+  //       } else {
+  //         alert(await response.text());
+  //       }
+  //     } catch (error) {
+  //       console.error("Error deleting product:", error);
+  //       alert("An error occurred.");
+  //     }
+  //   }
+  // });
 
   // Add event listeners for edit buttons
   document.addEventListener("click", async (event) => {
