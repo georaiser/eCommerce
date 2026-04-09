@@ -3,7 +3,7 @@ import { pool } from '../../config/SQL/db.js';
 //get all users
 const getAllUsers = async () => {
     //const {rows} = await pool.query('SELECT * FROM users');
-    const {rows} = await pool.query("SELECT id, name, email, role, credit, TO_CHAR(created_at, 'MM/DD/YYYY HH:MI') as created_at FROM users");
+    const {rows} = await pool.query("SELECT id, name, email, role, credit, TO_CHAR(created_at, 'MM/DD/YYYY HH:MI') as created_at FROM users ORDER BY id ASC");
     return rows;
 };
 

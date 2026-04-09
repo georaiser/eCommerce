@@ -2,7 +2,7 @@ import { pool } from "../../config/SQL/db.js";
 
 // get all products
 const getAllProducts = async () => {
-  const { rows } = await pool.query("SELECT * FROM products");
+  const { rows } = await pool.query("SELECT * FROM products ORDER BY id ASC");
   return rows;
 };
 
