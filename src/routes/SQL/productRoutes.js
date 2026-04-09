@@ -27,7 +27,7 @@ const router = express.Router();
 // Secure Product Management (Admin Only) - Cart natively contains the storefront!
 router.get('/products', requireAuth, requireAdmin, getProductsDB);
 router.get('/product/:id', requireAuth, requireAdmin, getProductByIdDB); 
-router.post('/product', requireAuth, requireAdmin, addProductDB);
+router.post('/products', requireAuth, requireAdmin, addProductDB);
 router.put('/product/:id', requireAuth, requireAdmin, updateProductDB);
 router.delete('/product/:id', requireAuth, requireAdmin, deleteProductDB);
 

@@ -52,7 +52,7 @@ const getProductsDB = async (req, res) => {
   }
 };
 
-// POST /products
+// POST /product
 const addProductDB = async (req, res) => {
   try {
     const { name, category, price, stock } = req.body;
@@ -66,7 +66,8 @@ const addProductDB = async (req, res) => {
 
     await addProduct(name, category, price, stock, image_url); // Calls the model!
     console.log(`Product ${name} added successfully!`); // Debug log
-    res.send(`Product ${name} added successfully!`);
+    //res.send(`Product ${name} added successfully!`);
+    res.redirect(req.originalUrl);
   } catch (error) {
     res.status(500).send(`Error saving product: ${error}`);
   }

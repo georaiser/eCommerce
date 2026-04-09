@@ -23,7 +23,7 @@ const addProduct = async (req, res) => {
         }
 
         await Product.create({ name, category, price, stock, image_url });
-        res.send(`Product ${name} added successfully!`);
+        res.redirect(req.originalUrl);
     } catch (error) {
         res.status(500).send(`Error saving product: ${error}`);
     }

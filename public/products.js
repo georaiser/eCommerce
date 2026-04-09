@@ -23,47 +23,50 @@
  *  They communicate only through the HTTP request/response cycle.
  */
 
+
 document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("product-form");
-  form.addEventListener("submit", async (event) => {
-    // Prevent the browser from doing a native form POST (wrong encoding)
-    event.preventDefault();
 
-    // Build a native FormData array strictly preserving physical files & raw multipart boundary structures
-    const formData = new FormData(form);
+  //// commented for HTML Native Form Submission
+  // const form = document.getElementById("product-form");
+  // form.addEventListener("submit", async (event) => {
+  //   // Prevent the browser from doing a native form POST (wrong encoding)
+  //   event.preventDefault();
 
-    // Client-side Validation natively reading explicit keys
-    if (
-      !formData.get('name').trim() ||
-      !formData.get('category').trim() ||
-      isNaN(parseFloat(formData.get('price'))) ||
-      isNaN(parseInt(formData.get('stock')))
-    ) {
-      alert("Please fill in all fields (Name, Category, valid Price and Stock) before submitting.");
-      return; // Stop execution here
-    }
+  //   // Build a native FormData array strictly preserving physical files & raw multipart boundary structures
+  //   const formData = new FormData(form);
 
-    try {
-      // Send FormData seamlessly mapped intercepting physical '.webp' mappings!
-      const response = await fetch(`${window.API_PREFIX}/product`, {
-        method: "POST",
-        body: formData,
-        // CRITICAL NOTE: We intentionally OMIT the Content-Type JSON header! 
-        // The Browser mathematically dynamically appends "multipart/form-data" + explicit byte Boundaries autonomously!
-      });
+  //   // Client-side Validation natively reading explicit keys
+  //   if (
+  //     !formData.get('name').trim() ||
+  //     !formData.get('category').trim() ||
+  //     isNaN(parseFloat(formData.get('price'))) ||
+  //     isNaN(parseInt(formData.get('stock')))
+  //   ) {
+  //     alert("Please fill in all fields (Name, Category, valid Price and Stock) before submitting.");
+  //     return; // Stop execution here
+  //   }
 
-      if (response.ok) {
-        form.reset();
-        // Reload so the HBS template re-renders the updated product list
-        window.location.reload();
-      } else {
-        alert(await response.text());
-      }
-    } catch (error) {
-      console.error("Error adding product:", error);
-      alert("An error occurred. Check the console for details.");
-    }
-  });
+  //   try {
+  //     // Send FormData seamlessly mapped intercepting physical '.webp' mappings!
+  //     const response = await fetch(`${window.API_PREFIX}/product`, {
+  //       method: "POST",
+  //       body: formData,
+  //       // CRITICAL NOTE: We intentionally OMIT the Content-Type JSON header! 
+  //       // The Browser mathematically dynamically appends "multipart/form-data" + explicit byte Boundaries autonomously!
+  //     });
+
+  //     if (response.ok) {
+  //       form.reset();
+  //       // Reload so the HBS template re-renders the updated product list
+  //       window.location.reload();
+  //     } else {
+  //       alert(await response.text());
+  //     }
+  //   } catch (error) {
+  //     console.error("Error adding product:", error);
+  //     alert("An error occurred. Check the console for details.");
+  //   }
+  // });
 
   // Add event listeners for delete buttons
   document.addEventListener("click", async (event) => {
