@@ -68,10 +68,8 @@
             <td>{{this.stock}}</td>
             <td>
               <div class="d-flex" style="gap: 10px;">
-                <form action="{{prefix}}/product/{{this.id}}" method="POST">
-                  <button data-id="{{this.id}}" class="btn btn-secondary btn-sm btn-edit">Edit</button>
-                </form>
-                <form action="{{../prefix}}/product/{{this.id}}" method="POST">
+                <a href="{{../prefix}}/product-edit/{{this.id}}" class="btn btn-secondary btn-sm">Edit</a>
+                <form action="{{../prefix}}/product-delete/{{this.id}}" method="POST">
                   <button type="submit" class="btn btn-danger btn-sm btn-delete">Del</button>
                 </form>
               </div>

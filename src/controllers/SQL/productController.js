@@ -72,7 +72,7 @@ const addProductDB = async (req, res) => {
   }
 };
 
-// DELETE /product/:id
+// POST /product-delete/:id
 const deleteProductDB = async (req, res) => {
   try {
     const { id } = req.params;
@@ -83,23 +83,25 @@ const deleteProductDB = async (req, res) => {
   }
 };
 
-// PUT /products/:id
+// GET /product-edit/:id
+const renderEditProductDB = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const existingProduct = await getProductById(id); 
+    res.render("products_edit", { pageName: "Product Edit", products: [existingProduct] });
+  } catch (error) {
+    res.status(500).send(`Error loading edit page: ${error}`);
+  }
+};
+
+// POST /product-update/:id
 const updateProductDB = async (req, res) => {
   try {
     const { id } = req.params;
     let { name, category, price, stock } = req.body;
 
-    // Fetch the existing product first to protect blank fields like password
-    const existingProduct = await getProductById(id); // Calls the model!
-
-    name = name || existingProduct.name;
-    category = category || existingProduct.category;
-    price = price || existingProduct.price;
-    stock = stock || existingProduct.stock;
-
-    await updateProduct(id, name, category, price, stock); // Calls the model!
-    
-    res.send(`Product ${name} updated successfully!`);
+    await updateProduct(id, name, category, price, stock); 
+    res.redirect(req.baseUrl + '/products');
   } catch (error) {
     res.status(500).send(`Error updating product: ${error}`);
   }
@@ -119,6 +121,7 @@ const getProductByIdDB = async (req, res) => {
 export {
   getProductsDB,
   addProductDB,
+  renderEditProductDB,
   updateProductDB,
   deleteProductDB,
   getProductByIdDB,

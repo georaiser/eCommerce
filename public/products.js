@@ -24,7 +24,7 @@
  */
 
 
-document.addEventListener("DOMContentLoaded", () => {
+////document.addEventListener("DOMContentLoaded", () => {
 
   //// commented for HTML Native Form Submission
   // const form = document.getElementById("product-form");
@@ -97,61 +97,61 @@ document.addEventListener("DOMContentLoaded", () => {
   //   }
   // });
 
-  // Add event listeners for edit buttons
-  document.addEventListener("click", async (event) => {
-    if (event.target.classList.contains("btn-edit")) {
-      const productId = event.target.getAttribute("data-id");
-      console.log(productId);
+//   // Add event listeners for edit buttons
+//   document.addEventListener("click", async (event) => {
+//     if (event.target.classList.contains("btn-edit")) {
+//       const productId = event.target.getAttribute("data-id");
+//       console.log(productId);
 
-      // Get the current row to find existing data
-      const row = event.target.closest("tr");
-      const currentName = row.children[0].innerText;
-      const currentCategory = row.children[1].innerText;
-      const currentPrice = row.children[2].innerText;
-      const currentStock = row.children[3].innerText;
+//       // Get the current row to find existing data
+//       const row = event.target.closest("tr");
+//       const currentName = row.children[0].innerText;
+//       const currentCategory = row.children[1].innerText;
+//       const currentPrice = row.children[2].innerText;
+//       const currentStock = row.children[3].innerText;
 
-      // Ask the user for the new data (Simple implementation)
-      const newName = prompt("Enter new name:", currentName);
-      if (newName === null) return; // User clicked Cancel
+//       // Ask the user for the new data (Simple implementation)
+//       const newName = prompt("Enter new name:", currentName);
+//       if (newName === null) return; // User clicked Cancel
 
-      const newCategory = prompt("Enter new category:", currentCategory);
-      if (newCategory === null) return;
+//       const newCategory = prompt("Enter new category:", currentCategory);
+//       if (newCategory === null) return;
 
-      const newPrice = prompt("Enter new price:", currentPrice);
-      if (newPrice === null) return;
+//       const newPrice = prompt("Enter new price:", currentPrice);
+//       if (newPrice === null) return;
 
-      const newStock = prompt("Enter new stock:", currentStock);
-      if (newStock === null) return;
+//       const newStock = prompt("Enter new stock:", currentStock);
+//       if (newStock === null) return;
 
-      // Build the payload
-      const updatedProduct = {
-        name: newName.trim(),
-        category: newCategory.trim(),
-        price: parseFloat(newPrice),
-        stock: parseInt(newStock)
-      };
+//       // Build the payload
+//       const updatedProduct = {
+//         name: newName.trim(),
+//         category: newCategory.trim(),
+//         price: parseFloat(newPrice),
+//         stock: parseInt(newStock)
+//       };
 
-      try {
-        // Send PUT request WITH the body payload
-        const response = await fetch(
-          `${window.API_PREFIX}/product/${productId}`,
-          {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(updatedProduct),
-          },
-        );
+//       try {
+//         // Send PUT request WITH the body payload
+//         const response = await fetch(
+//           `${window.API_PREFIX}/product/${productId}`,
+//           {
+//             method: "PUT",
+//             headers: { "Content-Type": "application/json" },
+//             body: JSON.stringify(updatedProduct),
+//           },
+//         );
 
-        if (response.ok) {
-          // Reload to see the fresh data
-          window.location.reload();
-        } else {
-          alert(await response.text());
-        }
-      } catch (error) {
-        console.error("Error editing user:", error);
-        alert("An error occurred.");
-      }
-    }
-  });
-});
+//         if (response.ok) {
+//           // Reload to see the fresh data
+//           window.location.reload();
+//         } else {
+//           alert(await response.text());
+//         }
+//       } catch (error) {
+//         console.error("Error editing user:", error);
+//         alert("An error occurred.");
+//       }
+//     }
+//   });
+// });

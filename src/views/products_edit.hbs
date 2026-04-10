@@ -1,0 +1,57 @@
+<h1>Products management</h1>
+
+<div class="container">
+  <div id="app" class="row mt-4">
+    <div class="col-md-8">
+      <table class="table table-hover align-middle">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each products}}
+          <tr>
+            <td>
+              <div class="d-flex align-items-center">
+                {{#if this.image_url}}
+                <img src="/{{this.image_url}}" class="rounded me-2"
+                  style="width: 40px; height: 40px; object-fit: cover;">
+                {{else}}
+                <div class="bg-light border rounded me-2 d-flex justify-content-center align-items-center text-muted"
+                  style="width: 40px; height: 40px;">
+                  <i class="bi bi-box"></i>
+                </div>
+                {{/if}}
+                <input type="text" name="name" value="{{this.name}}" form="edit-form-{{this.id}}">
+              </div>
+            </td>
+            <td>
+              <input type="text" name="category" value="{{this.category}}" form="edit-form-{{this.id}}">
+            </td>
+            <td>
+              <input type="number" name="price" value="{{this.price}}" form="edit-form-{{this.id}}">
+            </td>
+            <td>
+              <input type="number" name="stock" value="{{this.stock}}" form="edit-form-{{this.id}}">
+            </td>
+            <td>
+              <div class="d-flex" style="gap: 10px;">
+                <form id="edit-form-{{this.id}}" action="{{../prefix}}/product-update/{{this.id}}" method="POST">
+                  <button type="submit" class="btn btn-primary w-100 rounded-5">Save</button>
+                </form>
+              </div>
+            </td>
+          </tr> {{/each}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>window.API_PREFIX = '{{prefix}}';</script>
+<script type="module" src="/products.js"></script>

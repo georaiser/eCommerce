@@ -40,31 +40,31 @@ const deleteProduct = async (req, res) => {
   }
 };
 
-// PUT /products/:id
-const updateProduct = async (req, res) => {
+// GET /product-edit/:id
+const renderEditProduct = async (req, res) => {
   try {
     const { id } = req.params;
+    const existingProduct = await Product.findByPk(id, { raw: true });
+    res.render("products_edit", { pageName: "Product Edit", products: [existingProduct] });
 
-    // Cleanly extract ONLY the provided fields bypassing blank inputs
-    const updates = {};
-    for (const key in req.body) {
-        if (req.body[key] !== undefined && req.body[key] !== '') {
-            updates[key] = req.body[key];
-        }
-    }
-
-    // Perform a raw DB update directly. Returns array: [affectedCount]
-    const [updatedRows] = await Product.update(updates, { where: { id } });
-    
-    if (updatedRows === 0) throw new Error("Product not found");
-
-    res.send(`Product ${id} updated successfully!`);
   } catch (error) {
     res.status(500).send(`Error updating product: ${error.message}`);
   }
 };
 
-// GET /products/:id
+// POST /product-update/:id
+const updateProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    let { name, category, price, stock } = req.body;
+    await Product.update({ name, category, price, stock }, { where: { id } });
+    res.redirect(req.baseUrl + '/products');
+  } catch (error) {
+    res.status(500).send(`Error updating product: ${error.message}`);
+  }
+};
+
+// GET /product/:id
 const getProductById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -75,4 +75,4 @@ const getProductById = async (req, res) => {
   }
 };
 
-export { getProducts, addProduct, deleteProduct, updateProduct, getProductById };
+export { getProducts, addProduct, deleteProduct, renderEditProduct, updateProduct, getProductById };

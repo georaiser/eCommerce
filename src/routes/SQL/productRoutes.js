@@ -17,7 +17,7 @@ import express from 'express';
 //import { getProducts, addProduct, deleteProduct, updateProduct } from '../controllers/productController_json.js';
 
 // db postgresql products
-import { getProductsDB, addProductDB, updateProductDB, deleteProductDB, getProductByIdDB } from '../../controllers/SQL/productController.js';
+import { getProductsDB, addProductDB, renderEditProductDB, updateProductDB, deleteProductDB, getProductByIdDB } from '../../controllers/SQL/productController.js';
 import { requireAuth, requireAdmin } from '../../middleware/auth.js';
 
 const router = express.Router();
@@ -25,10 +25,11 @@ const router = express.Router();
 // ROUTES
 
 // Secure Product Management (Admin Only) - Cart natively contains the storefront!
-router.get('/products', requireAuth, requireAdmin, getProductsDB);
-router.get('/product/:id', requireAuth, requireAdmin, getProductByIdDB); 
-router.post('/products', requireAuth, requireAdmin, addProductDB);
-router.put('/product/:id', requireAuth, requireAdmin, updateProductDB);
-router.post('/product/:id', requireAuth, requireAdmin, deleteProductDB);
+router.get('/products', requireAuth, requireAdmin, getProductsDB);              // get all products
+router.get('/product/:id', requireAuth, requireAdmin, getProductByIdDB);        // get product by id
+router.post('/products', requireAuth, requireAdmin, addProductDB);              // add product
+router.get('/product-edit/:id', requireAuth, requireAdmin, renderEditProductDB); // render edit page
+router.post('/product-update/:id', requireAuth, requireAdmin, updateProductDB); // update product
+router.post('/product-delete/:id', requireAuth, requireAdmin, deleteProductDB); // delete product
 
 export default router;
