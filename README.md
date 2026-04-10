@@ -105,7 +105,10 @@ commerceManager/
 
 ## 🔄 Client–Server Architecture
 
-The application uses standard Model-View-Controller (MVC) paradigms tied to client-side Fetch API interactions. Forms do not submit HTTP natively; instead `public/*.js` scripts intercept inputs, dynamically prepend `API_PREFIX` logic (allowing side-by-side mode comparisons), and interface directly with the backend.
+The application uses a hybrid approach to Client-Server interaction, demonstrating both traditional and modern paradigms:
+
+- **Products (Native HTML)**: The Product CRUD pipeline is completely refactored to rely exclusively on strict Native HTML Forms. Actions like Add, Edit, and Delete are processed directly via mathematical `POST` requests mapped natively, completely eliminating the need for client-side Javascript.
+- **Users & Cart (JS Fetch)**: The User and Shopping Cart modules utilize modern Client-Side interactions. Forms do not submit HTTP natively; instead `public/*.js` scripts intercept inputs, dynamically prepend `API_PREFIX` logic (allowing side-by-side mode comparisons), and interface directly with the backend using REST payloads.
 
 ```
 Browser (e.g. cart.js)                  Server (cartController.js → cartModel.js)
@@ -212,13 +215,14 @@ The endpoints are cleanly namespaced. The `public/` JS scripts automatically pre
 | PUT | `/sql/user/:id` | Update a user (incl. credit amount) |
 | DELETE | `/sql/user/:id` | Delete a user |
 
-### Products
+### Products (Native HTML Flow)
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/sql/products` | List all products |
-| POST | `/sql/product` | Create a product |
-| PUT | `/sql/product/:id` | Update a product |
-| DELETE | `/sql/product/:id` | Delete a product |
+| POST | `/sql/products` | Create a product |
+| GET | `/sql/product-edit/:id` | Render the HTML Form dedicated for Product Editing |
+| POST | `/sql/product-update/:id` | Update a product (HTML Native replacement for PUT) |
+| POST | `/sql/product-delete/:id` | Delete a product (HTML Native replacement for DELETE) |
 
 ### Cart & Orders
 | Method | Endpoint | Description |
@@ -252,6 +256,7 @@ The endpoints are cleanly namespaced. The `public/` JS scripts automatically pre
 - **Global Order Dashboard** — Smart-queries natively joining `orders`, `order_items`, and `users` tables allowing Admins to strictly monitor global ecosystem flow.
 - **Multipart Node Binary Integrations** — Native interceptors securely extracting byte boundaries replacing purely text-based logic internally bypassing JSON serialization constraints strictly using native Client Form Data bindings mapped to the Express `file-upload` engine natively saving strings dynamically combining Epoch Timestamps with Generic explicit image mapping.
 - **Dynamic Startup Schematics** — Rebuilt initialization sequence logically tracking `.env` (`DB_SYNC_MODE`) modes passing `DROP` / `ALTER` / `SAFE` states mapping Independent Connection configurations to physically destroy and remake native database infrastructures flawlessly across reboots.
+- **Native HTML Pipeline Migrations** — Physically converted complex Client-Side Javascript REST flows within the Products Portal strictly back into pure Native HTML5 configurations dynamically leveraging decoupled HTML5 anchor bindings mapped directly into explicit `POST` routing schemas representing traditional robust SSR architecture.
 
 ## ⏳ Production Additions (Optional)
 
