@@ -189,6 +189,13 @@ await sequelize.transaction(async (t) => {
 
 Upon database initialization, mock accounts are actively seeded. **All default accounts share the identical password: `1234`** (encrypted mathematically via `bcryptjs`).
 
+### 🔐 Security & Authentication (JWT + Bcrypt)
+The platform is fully secured against unauthorized access using industry-standard techniques across both SQL and ORM paradigms:
+- **Password Hashing:** Plain-text passwords are never stored. `bcryptjs` computationally hashes passwords before inserting into the database, both during seeding and user registration.
+- **Session Management:** Upon successful login, the server generates a JSON Web Token (`jsonwebtoken`) embedding the user's ID and Role.
+- **HTTP-Only Cookies:** The JWT is transmitted to the client inside an `httpOnly` cookie, rendering it inaccessible to malicious client-side JavaScript (XSS protection).
+- **Middleware Validation:** Every sensitive route intercepts the incoming request using authentication middlewares (`requireAuth`, `requireAdmin`) to natively verify the JWT signature before authorizing data access.
+
 The platform natively enforces strict Role-Based Access Control (RBAC) generating two entirely distinct platform footprints:
 
 ### 🛡️ Administrator (`admin@example.com` / `1234`)
@@ -250,7 +257,7 @@ The endpoints are cleanly namespaced. The `public/` JS scripts automatically pre
 - **ACID Transaction Management** — All cart mutations wrapped in database-isolated `BEGIN/COMMIT/ROLLBACK` protection constraints natively avoiding inventory race conditions.
 - **Checkout System** — Deducts credit + verifies real-world funds natively preventing floating drift bugs, transferring Cart maps strictly into locked Order Histories.
 - **Full ORM Engine** — 100% feature-parity backend implementation running entirely on Sequelize Models.
-- **Authentication (JWT)** — Mathematical `bcryptjs` encryption and HTTP-Only session cookies backing identity verifications.
+- **Authentication (JWT & bcrypt)** — Passwords are computationally hashed with `bcryptjs` and session tokens are signed with `jsonwebtoken` stored natively in HTTP-Only cookies.
 - **Role-Based Access Control (RBAC)** — Securely segregates platform features. `Admins` manage users and products but are explicitly locked off native storefront purchases. `Users` have open cart freedom but are inherently blocked from `/product/` and `/user/` CRUD interfaces natively.
 - **Dynamic UX Navigation** — The Navbar conditionally renders layout components. Admins organically pull a `Global Orders` database link, completely hiding the Cart options present for shoppers.
 - **Global Order Dashboard** — Smart-queries natively joining `orders`, `order_items`, and `users` tables allowing Admins to strictly monitor global ecosystem flow.
